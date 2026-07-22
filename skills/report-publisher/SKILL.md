@@ -64,12 +64,17 @@ Then, and only then, the body — with the heavy material folded away.
    many items, or a relationship is worth drawing. Default to a clean table or
    stat tiles unless a graph reveals something text can't.
 
-4. **Build the HTML — start from a template if one fits, through the
-   `frontend-design` skill.** First check `assets/templates/INDEX.md`: if a
-   template matches the shape of the report (e.g. `security-dossier.html` for any
-   findings/severity/audit-style report), copy it and replace the content in its
-   marked slots — the shell already satisfies every design rule, so you skip
-   rebuilding it and just adapt. If nothing fits, build fresh. Either way, always
+4. **Build the HTML — through the `frontend-design` skill, using a style
+   reference for the look.** Check `assets/templates/INDEX.md`: these are
+   **style references, not layouts to clone.** Pick one whose look fits (e.g.
+   `material-dark.html`), then **lift its visual system** — theme tokens, tonal
+   surfaces, Material components (pill buttons, tiles, collapsible panels with the
+   icon-button + ripple, the persistent nav, the D3 recipe), and interaction rules
+   — and **build the structure around the actual report.** Do NOT copy the file and
+   swap words: a benchmark, a research writeup, and a security review each need a
+   different structure (different sections, maybe no severity tiles, a different or
+   no chart). Design that structure for the content, then dress it in the reference's
+   style so it stays consistent with your other reports. Always
    invoke the `frontend-design` skill for the visual build. It's the purpose-built skill for
    distinctive, production-grade UI and exists precisely to avoid the generic
    AI-template look a report should never have. Do not hand-roll the visual layer

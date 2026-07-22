@@ -1,17 +1,19 @@
-# Report templates
+# Style references
 
-Pre-built, on-spec HTML report shells. Each is a **filled worked example** — copy
-the file, keep the `<style>`/nav/chart/controls, replace the content in the marked
-slots (see the comment block at the top of each file). They already satisfy the
-skill's design rules (dark Material, ≥12px, collapsible sections, one persistent
-nav, permanent here.now publish), so starting from one saves rebuilding the shell.
+These are **look-and-feel references**, not layouts to clone. Each is a self-
+contained HTML page demonstrating a complete visual system — theme tokens,
+components, motion, navigation. Reuse the *style* so every report reads as one
+coherent system; **build the structure to fit the report**, don't copy the demo's
+sections slot-for-slot.
 
-Pick by shape of the content, not just topic — a benchmark writeup can use the
-dossier shell if it's finding/severity-shaped.
+Read the comment block at the top of each file: it separates what to REUSE (the
+CSS / components / interactions) from what to ADAPT (which sections exist, whether
+there are severity tiles, whether a chart earns its place) and the INVARIANTS that
+hold no matter the structure (see `../design-system.md`).
 
-| Template | Best for | Look |
-|----------|----------|------|
-| `security-dossier.html` | Findings/severity reports: security reviews, audits, risk assessments, post-mortems, QA/bug triage — anything that's a ranked list of issues with fixes, a verdict, and a remediation plan. | Material 3 dark. Signal-red critical accent + severity scale. Masthead, stat tiles, D3 severity bar, collapsible sections each holding item cards, persistent side-nav (FAB+drawer on narrow), staged remediation table. |
+| Reference | Look | Reuse for |
+|-----------|------|-----------|
+| `material-dark.html` | Material 3 dark: tonal surfaces, elevation, pill buttons, stat tiles, collapsible panels with a circular icon-button + ripple, persistent side-nav (FAB+drawer on narrow), D3 bar. Signal-red accent. | Any dark, modern, professional report — security reviews, audits, research writeups, benchmarks, status updates, teardowns. The demo content is findings/severity-shaped only because that was the first report; the *style* suits any of them. Adapt the structure to what you're actually writing. |
 
-<!-- Add a row per new template. Keep each template a self-contained single HTML
-     file with the slot-guide comment at the top. -->
+<!-- Add a row per new style reference. Keep each a self-contained single HTML file
+     whose top comment separates REUSE (the look) from ADAPT (the structure). -->

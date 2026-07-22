@@ -1,30 +1,40 @@
 <!doctype html>
 <!--
-  TEMPLATE: security-dossier  ·  Material 3 dark, findings/severity report
+  STYLE REFERENCE: material-dark  ·  Material 3 dark report look-and-feel
   ────────────────────────────────────────────────────────────────────────
-  This is a filled worked example (a real security review). To reuse it,
-  COPY this file and replace the content; keep the <style> block, the nav,
-  the chart script, and the Material controls exactly as-is — that shell is
-  the template.
+  THIS IS A LOOK, NOT A LAYOUT TO CLONE. Do NOT copy this file wholesale and
+  swap words. Take the *visual system* from it and build whatever structure
+  the report actually needs. A security review is findings/severity-shaped so
+  it happens to use tiles+sections+a remediation table; a research writeup, a
+  benchmark, a status update, a competitive teardown each want a DIFFERENT
+  structure. Design that structure for the content, then dress it in this style.
 
-  SLOTS to replace (everything else is chrome you keep):
-    • <title> + <h1> + .sub            — report name / subtitle
-    • .chips (.chip-m)                  — metadata strip (subject, date, scope…)
-    • .verdict                          — the one-line thesis
-    • .tiles (.tile)                    — 3–6 headline metrics (here: severity counts)
-    • #chart data[] in the <script>     — the summary chart (drop if no chart earns it)
-    • .takeaways                        — 3–6 self-contained bullets
-    • #sidenav / #drawer links + counts — one entry per section (keep in sync w/ sections)
-    • details.sect (×N)                 — one per top-level section; the <summary> IS the header
-        └ details.p (×N)               — item cards inside a section (severity class on the p)
+  REUSE (the reference — keep these consistent so every report reads as one system):
+    • The whole <style> block: theme tokens (:root), tonal dark surfaces --s1..--s4,
+      type scale, elevation (--e1..--e3), the shared easing (--ease).
+    • The Material components: pill buttons (.mbtn), stat tiles (.tile), cards
+      (.card), collapsible panels (details.sect / details.p) with the circular
+      icon-button + ripple, badges/chips, the persistent nav (side nav ≥1200px,
+      FAB+drawer below), the D3 bar recipe in <script>.
+    • The interaction rules: ≥44px targets, ripple on press, chevron rotate,
+      one shared easing, prefers-reduced-motion honored.
 
-  RULES baked into this shell (don't break them — see the skill's design-system.md):
-    • Body sans, ≥12px everywhere, dark Material surfaces, ≥44px tap targets + ripple.
-    • Every section collapses as a unit; expand/collapse-all hits sections AND items.
-    • ONE persistent nav (side nav ≥1200px, FAB+drawer below); space reserved so it
-      never overlaps content. No duplicate top-of-page TOC card.
-    • Publish PERMANENTLY to here.now (see references/publishing.md) — not a 24h link.
-  Severity palette + tonal surfaces live in :root; swap --crit/--high/… for your domain.
+  ADAPT (don't treat as fixed):
+    • Which sections exist, how many, what each contains — driven by the report.
+    • Whether there are severity tiles at all (a benchmark shows metrics, not
+      Crit/High/Med/Low). Recolor --crit/--high/… or repurpose them.
+    • Whether a chart earns its place, and which chart. Drop #chart if not.
+    • Item cards (details.p) vs prose vs tables — pick per section.
+
+  INVARIANTS (from the skill's design-system.md — hold regardless of structure):
+    • Body sans, ≥12px everywhere, dark, big-picture-first (verdict + metrics up top).
+    • Every top-level section collapses as a unit; expand/collapse-all hits both levels.
+    • Exactly ONE persistent nav; its space is reserved so it never overlaps content.
+    • Publish PERMANENTLY to here.now (references/publishing.md) — not a 24h link.
+
+  The placeholder content below ({{...}}, "Example finding") is a DEMO of the
+  components, not a template to fill in slot-for-slot. Read it to see how each
+  component is built, then compose your own page.
 -->
 <html lang="en">
 <head>
