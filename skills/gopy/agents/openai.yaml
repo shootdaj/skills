@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gopy"
+  short_description: "Create and copy concise goal text"
+  default_prompt: "Use $gopy to turn the current task into a concise goal and copy it."
