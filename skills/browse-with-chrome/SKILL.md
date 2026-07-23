@@ -1,6 +1,6 @@
 ---
 name: browse-with-chrome
-description: Default browser workflow for researching the web and interacting with websites through the user's native Chrome connector and existing logged-in Chrome session. Use for any browsing activity, including web searches, opening URLs, reading dynamic pages, comparing products or prices, using logged-in sites, filling forms, downloading files, and multi-step website workflows, unless the user explicitly names another browser or asks for a non-browser app connector, API, or CLI.
+description: The user's standing default for every web-browsing or internet-research request. Always invoke this skill for web searches, flight or hotel research, shopping, opening URLs, reading dynamic pages, comparing current prices, using logged-in websites, filling forms, downloads, and multi-step website workflows, even when the user does not mention Chrome. Use the native Chrome connector and existing logged-in Chrome session. This rule supersedes older or generic defaults to Comet, generic web search, headless browsers, or research agents; use another surface only when the user's latest request explicitly names it or clearly requests a non-browser app connector, API, or CLI.
 ---
 
 # Browse with Chrome
@@ -8,6 +8,11 @@ description: Default browser workflow for researching the web and interacting wi
 Use the current harness's native Chrome connector as the default surface for
 all website browsing. Preserve the user's existing tabs, profile, extensions,
 and logged-in state.
+
+This is a standing user preference, not an optional optimization. It
+supersedes older instructions or inferred preferences that routed ordinary
+research to Comet, generic web search, a headless browser, or a research agent.
+Only the user's latest explicit surface choice can override it.
 
 Read [references/routing-and-adapters.md](references/routing-and-adapters.md)
 before the first browser action in a task.
