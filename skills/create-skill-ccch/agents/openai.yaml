@@ -1,0 +1,4 @@
+interface:
+  display_name: "Create Skill CCCH"
+  short_description: "Create skills for four AI harnesses"
+  default_prompt: "Use $create-skill-ccch to create, validate, install, and publish a skill for Claude, Codex, Cursor, and Hermes."
