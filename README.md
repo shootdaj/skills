@@ -38,6 +38,7 @@ npx skills update -g
 | **grillme** | Deep-interview mode (RU) — asks probing questions to fully scope a topic before work begins. |
 | **clean-my-ai-harness-codex** | (Codex) Map the harness Codex can see and prepare a safe cleanup plan after model/instruction changes. |
 | **use-claude** | (Codex) Delegate implementation or frontend work to real Claude Code from Codex. |
+| **browse-with-chrome** | Default all website research and interaction to the user's native, logged-in Chrome connector across Claude Code, Codex, Cursor, and Hermes. |
 
 > The last several are vendored copies of third-party skills for portability across my machines; they carry their upstream authors' credit and licenses.
 
