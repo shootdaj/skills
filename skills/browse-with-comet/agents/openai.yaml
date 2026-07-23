@@ -1,0 +1,6 @@
+interface:
+  display_name: "Browse with Comet"
+  short_description: "Use Comet only when explicitly requested"
+  default_prompt: "Use $browse-with-comet to complete this explicitly requested Comet browsing task."
+policy:
+  allow_implicit_invocation: true
