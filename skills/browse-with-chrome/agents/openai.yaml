@@ -1,0 +1,6 @@
+interface:
+  display_name: "Browse with Chrome"
+  short_description: "Use native Chrome for all browser activity"
+  default_prompt: "Use $browse-with-chrome to research or interact with the web in my logged-in Chrome session."
+policy:
+  allow_implicit_invocation: true
