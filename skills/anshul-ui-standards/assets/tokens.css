@@ -1,0 +1,128 @@
+/* anshul-ui-standards starter tokens — adapt hues per design direction, KEEP the token names.
+   Components consume semantic tokens only. Never raw hex in components. */
+
+:root {
+  /* ---------- light theme (default) ---------- */
+  --surface: #FAF9F7;
+  --surface-container: #F1EFEB;
+  --surface-container-high: #E9E6E0;
+  --on-surface: #1B1C1E;
+  --on-surface-variant: #5B5E63;
+
+  --primary: #2A5DB0;
+  --on-primary: #FFFFFF;
+  --primary-container: #D8E2FF;
+  --on-primary-container: #001A43;
+
+  --secondary: #58627A;
+  --outline: #B9BDC6;
+  --outline-variant: #E0E2E8;
+
+  --success: #1E7F4F;
+  --warning: #9A6B00;
+  --error: #B3261E;
+  --on-error: #FFFFFF;
+
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 40%, transparent);
+
+  --elevation-1: 0 1px 2px rgb(0 0 0 / .08), 0 1px 3px rgb(0 0 0 / .06);
+  --elevation-2: 0 2px 6px rgb(0 0 0 / .10), 0 1px 2px rgb(0 0 0 / .06);
+  --elevation-3: 0 6px 16px rgb(0 0 0 / .12), 0 2px 4px rgb(0 0 0 / .08);
+  --elevation-4: 0 12px 28px rgb(0 0 0 / .16), 0 4px 8px rgb(0 0 0 / .10);
+
+  /* shape scale */
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+  --radius-full: 999px;
+
+  /* spacing grid (4/8) */
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+
+  /* type scale (adapt faces per direction; sizes stay) */
+  --type-display: 600 2.25rem/1.15 var(--font-display, sans-serif);
+  --type-headline: 600 1.5rem/1.25 var(--font-display, sans-serif);
+  --type-title: 600 1.125rem/1.35 var(--font-body, sans-serif);
+  --type-body: 400 1rem/1.55 var(--font-body, sans-serif);
+  --type-label: 500 .8125rem/1.3 var(--font-body, sans-serif);
+  --type-data: 400 .875rem/1.4 var(--font-mono, monospace);
+
+  --state-hover: .08;
+  --state-focus: .10;
+  --state-press: .12;
+  --disabled-content: .38;
+  --disabled-container: .12;
+}
+
+/* ---------- dark theme values ---------- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface: #101318;
+    --surface-container: #171B22;
+    --surface-container-high: #1F2530;
+    --on-surface: rgb(255 255 255 / .87);
+    --on-surface-variant: rgb(255 255 255 / .60);
+
+    --primary: #A6C4FF;
+    --on-primary: #0A2E63;
+    --primary-container: #234373;
+    --on-primary-container: #D8E2FF;
+
+    --secondary: #B8C2DE;
+    --outline: #3A4150;
+    --outline-variant: #262C38;
+
+    --success: #58D598;
+    --warning: #F1C051;
+    --error: #F2B8B5;
+    --on-error: #601410;
+
+    --elevation-1: 0 1px 2px rgb(0 0 0 / .40);
+    --elevation-2: 0 2px 8px rgb(0 0 0 / .45);
+    --elevation-3: 0 6px 18px rgb(0 0 0 / .50);
+    --elevation-4: 0 12px 32px rgb(0 0 0 / .55);
+  }
+}
+
+/* ---------- manual toggle wins, both directions ---------- */
+:root[data-theme="light"] {
+  --surface: #FAF9F7; --surface-container: #F1EFEB; --surface-container-high: #E9E6E0;
+  --on-surface: #1B1C1E; --on-surface-variant: #5B5E63;
+  --primary: #2A5DB0; --on-primary: #FFFFFF; --primary-container: #D8E2FF; --on-primary-container: #001A43;
+  --secondary: #58627A; --outline: #B9BDC6; --outline-variant: #E0E2E8;
+  --success: #1E7F4F; --warning: #9A6B00; --error: #B3261E; --on-error: #FFFFFF;
+  --elevation-1: 0 1px 2px rgb(0 0 0 / .08), 0 1px 3px rgb(0 0 0 / .06);
+  --elevation-2: 0 2px 6px rgb(0 0 0 / .10), 0 1px 2px rgb(0 0 0 / .06);
+  --elevation-3: 0 6px 16px rgb(0 0 0 / .12), 0 2px 4px rgb(0 0 0 / .08);
+  --elevation-4: 0 12px 28px rgb(0 0 0 / .16), 0 4px 8px rgb(0 0 0 / .10);
+}
+:root[data-theme="dark"] {
+  --surface: #101318; --surface-container: #171B22; --surface-container-high: #1F2530;
+  --on-surface: rgb(255 255 255 / .87); --on-surface-variant: rgb(255 255 255 / .60);
+  --primary: #A6C4FF; --on-primary: #0A2E63; --primary-container: #234373; --on-primary-container: #D8E2FF;
+  --secondary: #B8C2DE; --outline: #3A4150; --outline-variant: #262C38;
+  --success: #58D598; --warning: #F1C051; --error: #F2B8B5; --on-error: #601410;
+  --elevation-1: 0 1px 2px rgb(0 0 0 / .40);
+  --elevation-2: 0 2px 8px rgb(0 0 0 / .45);
+  --elevation-3: 0 6px 18px rgb(0 0 0 / .50);
+  --elevation-4: 0 12px 32px rgb(0 0 0 / .55);
+}
+
+/* ---------- fierce-waffle REPORT palette (use for report pages, rule 8) ---------- */
+:root[data-report] {
+  --surface: #0B0F17;
+  --surface-container: #111726;
+  --surface-container-high: #18202F;
+  --on-surface: rgb(235 240 250 / .92);
+  --on-surface-variant: rgb(235 240 250 / .60);
+  --primary: #3DC5FF;
+  --success: #3DDC97;
+  --warning: #FFC24B;
+  --error: #FF6B6B;
+  --outline: #223047;
+  --outline-variant: #1A2436;
+  --font-display: 'Sora', sans-serif;
+  --font-body: 'Schibsted Grotesk', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
