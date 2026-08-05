@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lazada Shopping"
+  short_description: "Research and compare Lazada products visually"
+  default_prompt: "Use $lazada-shopping to research Lazada products and publish a visual shortlist."

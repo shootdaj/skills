@@ -1,0 +1,23 @@
+{
+  "skill_name": "lazada-shopping",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Find me a railing-hanging balcony table on Lazada Thailand. I think I already have some in my cart, so check those too. I want photos, direct links, delivered prices, scores, and a quick verdict.",
+      "expected_output": "Uses native logged-in Chrome, scans the complete cart for relevant items without changing it, inspects real Lazada product pages, ranks candidates, and publishes a verified Visual Product Shortlist with working photos and direct links.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Compare these two Lazada coffee tables in my cart. They look identical, so tell me whether they are actually the same design or just different sizes. Do not change my cart.",
+      "expected_output": "Treats the cart as read-only, compares selected variants and exact dimensions and delivered-price delta, and states plainly when the products are the same design rather than inventing distinctions.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Search Lazada for six compact air purifiers under 4000 baht. Make it visual and keep the text short, but show any shipping or voucher uncertainty.",
+      "expected_output": "Uses current Lazada pages in Chrome, normalizes delivered totals and voucher conditions, scores with uncertainty penalties, and defaults to the Visual Product Shortlist with six loaded images and exact product CTAs.",
+      "files": []
+    }
+  ]
+}

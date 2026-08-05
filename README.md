@@ -1,10 +1,10 @@
 # skills
 
-My portable [agent skills](https://skills.sh) for **Claude Code** and **Codex** — one source of truth, synced across every machine (laptop, work box, remote servers).
+My portable [agent skills](https://skills.sh) for **Claude Code**, **Codex**, **Cursor**, and **Hermes** — one source of truth, synced across every machine (laptop, work box, remote servers).
 
-Installed with the [`skills`](https://github.com/vercel-labs/skills) CLI, which symlinks each skill into both agents so an edit + `git pull` propagates everywhere.
+Each shared skill is symlinked into all four harnesses so an edit + `git pull` propagates everywhere.
 
-## Install everything (one command, per machine)
+## Bootstrap Claude Code + Codex (one command, per machine)
 
 ```bash
 npx skills add shootdaj/skills --skill '*' -g -a claude-code -a codex
@@ -16,6 +16,9 @@ npx skills add shootdaj/skills --skill '*' -g -a claude-code -a codex
 
 Just one? `npx skills add shootdaj/skills --skill report-publisher -g -a claude-code -a codex`
 
+When creating or updating a reusable skill, use `create-skill-ccch`. It maintains
+the shared source and installs symlinks for Claude Code, Codex, Cursor, and Hermes.
+
 ## Update (after `git push` from any machine)
 
 ```bash
@@ -26,7 +29,8 @@ npx skills update -g
 
 | Skill | What it does |
 |-------|--------------|
-| **report-publisher** | Build a polished, professional report as a single self-contained HTML page and publish it permanently to here.now. Big-picture-first, collapsible sections, Material dark, charts only where they earn ink. Ships a `security-dossier` template. |
+| **report-publisher** | Build and publish polished HTML reports. Includes the image-led `visual-product-shortlist` template, which is the default for shopping and product comparisons. |
+| **lazada-shopping** | Research Lazada Thailand in the user's logged-in browser, compare live listings and cart items, and publish a scored visual shortlist with photos and direct links. |
 | **recap** | Fast "catch me up / where are we" status when returning to a project after time away. |
 | **capcut-draft-builder** | Generate a working CapCut desktop draft from a timeline/EDL so an exact edit can be recreated in CapCut. |
 | **gopy** | (Codex) Go ↔ Python workflow helper. |

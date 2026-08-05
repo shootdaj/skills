@@ -25,6 +25,52 @@ read (structured, digestible, honest), and it must actually land online as a
 permanent link. Getting the writeup right but leaving it as a local file, or
 publishing something that expires in 24 hours, both count as failing the task.
 
+## Choose the report template
+
+Read `assets/templates/INDEX.md` before structuring the report. Offer the user a
+short template choice unless they already named a template or their requested
+format makes the choice explicit:
+
+- **Standard Pyramid** — verdict, headline metrics, takeaways, persistent
+  navigation, and collapsible evidence. Best for audits, research, benchmarks,
+  status reports, post-mortems, and findings-heavy work.
+- **Visual Product Shortlist** — the default for shopping and product-comparison
+  reports; compact decision strip plus ranked, image-led
+  cards with scores, state badges, price/value, concise facts, verdict, and direct
+  links. Best for shopping research, recommendations, vendor/venue shortlists,
+  and other discrete visual choices.
+
+Make this a **non-blocking choice**. State the recommended template and say that
+you will use it if the user does not answer. When the environment supports a
+timed or auto-resolving input, allow about 60 seconds; otherwise present the two
+options in commentary and continue with the recommendation. Do not stall a report
+because the user ignored template selection.
+
+Choose the default from the content:
+
+- Default to **Visual Product Shortlist** for shopping, buying research, product
+  comparisons, wishlists/cart reviews, and recommendation reports. Also use it
+  when there are 4–12 comparable items with real images and direct action links,
+  or when the user asks for a highly visual report with minimal text.
+- Default to **Standard Pyramid** for analytical or evidence-heavy reports.
+- If the fit is ambiguous, use **Standard Pyramid** as the fallback default.
+
+## Required frontend ownership
+
+Real Claude Code owns report creation and frontend design, and must use the
+`frontend-design` skill for the visual build.
+
+- In Claude Code, read and follow `frontend-design` directly.
+- In Codex, read and follow `use-claude`; send Claude the verified report data,
+  selected template, and exact links, and instruct it to use `frontend-design`.
+- In Cursor or Hermes, use the configured Claude delegation route. If none is
+  available, report the blocker instead of silently designing the frontend with
+  another model.
+
+Codex may prepare and verify data, orchestrate the task, publish the finished
+HTML, and inspect the live result. It must not substitute for Claude on the
+report frontend.
+
 ## The one rule that governs everything: pyramid, not journey
 
 A report reader is a busy person deciding whether to keep reading. Give them the
@@ -33,18 +79,22 @@ screen walk away knowing the verdict, the numbers that matter, and what to do
 about them. Everything below exists to let a motivated reader verify and go
 deeper — it is support, not suspense.
 
-This is why detail lives in **collapsible sections**: the page should be short
-when skimmed and long when interrogated. A reader chooses their own depth. Never
-make someone scroll through methodology to reach the conclusion.
+In the Standard Pyramid template, this is why detail lives in **collapsible
+sections**: the page should be short when skimmed and long when interrogated. In
+the Visual Product Shortlist template, the same principle is expressed through a
+decision strip followed immediately by concise image cards; there is no separate
+methodology or long-form body to collapse.
 
-Concretely, every report opens with:
+Concretely, every Standard Pyramid report opens with:
 - **A one-line verdict / thesis** — the single most important sentence.
 - **Headline metrics or a summary visual** — the 3–6 numbers or one chart that
   frame the whole thing (counts, severity breakdown, pass rate, deltas).
 - **Key takeaways** — a tight bulleted or tabular list of what matters, each
   point self-contained (no "as discussed below").
 
-Then, and only then, the body — with the heavy material folded away.
+Then, and only then, the body — with the heavy material folded away. A Visual
+Product Shortlist instead opens with a compact title/meta line and 2–3 decisive
+actions, then moves directly into the ranked card grid.
 
 ## Workflow
 
@@ -53,10 +103,12 @@ Then, and only then, the body — with the heavy material folded away.
    audit, research), use those actual results — never invent or pad. If the
    source material is thin, say so rather than inflating it with filler.
 
-2. **Structure as a pyramid.** Decide the verdict, the headline metrics, and the
-   3–6 takeaways before writing any HTML. Group the detail into sections that
-   each collapse. Draft the information architecture first; the visual polish
-   comes after the structure is right.
+2. **Select and structure the template.** Offer the non-blocking choice above,
+   then proceed with the recommendation if the user does not answer. For Standard
+   Pyramid, decide the verdict, headline metrics, and 3–6 takeaways, then group
+   detail into collapsible sections. For Visual Product Shortlist, decide the
+   primary buy/keep/skip actions, rank the candidates, and reduce each item to one
+   image, score, price/value, up to three facts, one-line verdict, and one CTA.
 
 3. **Decide what genuinely needs a visual.** Read `references/design-system.md`
    → "Charts: earn the ink" before adding any chart. A chart that just restates
@@ -64,17 +116,20 @@ Then, and only then, the body — with the heavy material folded away.
    many items, or a relationship is worth drawing. Default to a clean table or
    stat tiles unless a graph reveals something text can't.
 
-4. **Build the HTML — through the `frontend-design` skill, using a style
-   reference for the look.** Check `assets/templates/INDEX.md`: these are
-   **style references, not layouts to clone.** Pick one whose look fits (e.g.
-   `material-dark.html`), then **lift its visual system** — theme tokens, tonal
+4. **Have Claude build the HTML through the `frontend-design` skill, using the
+   selected template correctly.** Check `assets/templates/INDEX.md` for whether the asset
+   is a style reference or a layout template. For a style reference such as
+   `material-dark.html`, **lift its visual system** — theme tokens, tonal
    surfaces, Material components (pill buttons, tiles, collapsible panels with the
    icon-button + ripple, the persistent nav, the D3 recipe), and interaction rules
    — and **build the structure around the actual report.** Do NOT copy the file and
    swap words: a benchmark, a research writeup, and a security review each need a
    different structure (different sections, maybe no severity tiles, a different or
    no chart). Design that structure for the content, then dress it in the reference's
-   style so it stays consistent with your other reports. Always
+   style so it stays consistent with your other reports. For a layout template
+   such as `visual-product-shortlist.html`, preserve its card-led information
+   structure while replacing all example data, photos, links, labels, and accent
+   semantics with verified content. Always
    invoke the `frontend-design` skill for the visual build. It's the purpose-built skill for
    distinctive, production-grade UI and exists precisely to avoid the generic
    AI-template look a report should never have. Do not hand-roll the visual layer
@@ -119,9 +174,15 @@ Then, and only then, the body — with the heavy material folded away.
   reveal, not motion everywhere. Pull a component pattern from 21st.dev or a
   layout cue from Mobbin when it genuinely sharpens the design — skip them when
   plain HTML already reads well.
+- **Template rules are intentional.** Standard Pyramid uses the persistent nav
+  and collapsible-detail system. Visual Product Shortlist deliberately omits nav,
+  collapsibles, charts, methodology, and comparison tables so the photos, prices,
+  verdicts, and outbound links dominate.
 
 ## When to read the references
 
+- `assets/templates/INDEX.md` — before structuring the report. Template names,
+  types, selection guidance, and which structure to preserve.
 - `references/design-system.md` — before writing any HTML. Dark theme tokens,
   the pyramid layout, collapsible/`<details>` pattern, metadata strip, chart
   decision guide + D3 recipes, the animation/3D library menu, and how to use

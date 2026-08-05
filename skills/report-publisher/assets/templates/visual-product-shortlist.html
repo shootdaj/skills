@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<!--
+  TEMPLATE: Visual Product Shortlist
+  ------------------------------------------------------------------------
+  USE FOR
+    - Shopping research, product recommendations, vendor shortlists, or any
+      comparison where the reader chooses among discrete visual items.
+    - Best with 4-12 candidates that each have a real image and outbound link.
+
+  STRUCTURE TO REUSE
+    - Compact masthead with source and absolute checked date.
+    - Three-item decision strip: the primary buy, the item to keep/consider,
+      and the item to skip. Adapt the action verbs to the domain.
+    - Ranked image cards in a responsive 3 / 2 / 1-column grid.
+    - Every card: large uncropped image, rank, score, optional state badge
+      (for example IN YOUR CART or OWNED), total price/value, no more than
+      three fact chips, one short verdict, and one obvious outbound CTA.
+
+  INTENTIONAL EXCEPTIONS TO THE STANDARD PYRAMID TEMPLATE
+    - No side navigation, collapsible sections, methodology block, charts,
+      or comparison table. The cards are the report.
+    - Images dominate. Supporting copy stays short enough to scan in seconds.
+
+  INVARIANTS
+    - Replace every example product, price, score, verdict, image, and link
+      with current verified data. Never publish the sample dataset unchanged.
+    - Keep image wells at least 260px tall and use object-fit:contain so the
+      product is not cropped. Do not darken or obscure product photos.
+    - Keep all readable text at least 12px and CTAs at least 44px high.
+    - Verify every image loads and every CTA points to the exact product page.
+    - Dark page chrome, responsive cards, no horizontal scrolling.
+
+  The balcony-table content below is sample content demonstrating the component
+  hierarchy. It is not boilerplate data to carry into a new report.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balcony tables worth buying</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&amp;family=Instrument+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#131110;
+    --bg-raised:#1b1917;
+    --card:#201d1a;
+    --well:#efe9df;
+    --ink:#f3efe8;
+    --ink-dim:#b5ac9f;
+    --ink-faint:#89816f;
+    --line:#2e2a26;
+    --green:#4ade80;
+    --green-deep:#16a34a;
+    --blue:#60a5fa;
+    --violet:#a78bfa;
+    --amber:#fbbf24;
+    --red:#f87171;
+    --radius:18px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Instrument Sans",system-ui,sans-serif;
+    line-height:1.45;
+    -webkit-font-smoothing:antialiased;
+    background-image:radial-gradient(ellipse 80% 50% at 50% -10%, rgba(74,222,128,.05), transparent);
+  }
+  a{color:inherit}
+  a:focus-visible, button:focus-visible{
+    outline:3px solid var(--green);
+    outline-offset:3px;
+    border-radius:6px;
+  }
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* masthead */
+  header{padding:40px 0 8px}
+  h1{
+    font-family:"Bricolage Grotesque",serif;
+    font-weight:800;
+    font-size:clamp(30px,5vw,52px);
+    letter-spacing:-.02em;
+    line-height:1.05;
+  }
+  .meta{
+    margin-top:8px;
+    font-size:13px;
+    color:var(--ink-faint);
+    letter-spacing:.04em;
+    text-transform:uppercase;
+  }
+
+  /* decision strip */
+  .decisions{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin:26px 0 34px;
+  }
+  .decision{
+    border:1px solid var(--line);
+    background:var(--bg-raised);
+    border-radius:14px;
+    padding:16px 18px;
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .decision .tag{
+    font-family:"Bricolage Grotesque",serif;
+    font-weight:800;
+    font-size:clamp(18px,2.4vw,24px);
+    letter-spacing:.01em;
+    white-space:nowrap;
+  }
+  .decision .what{font-size:14px;color:var(--ink-dim);font-weight:500}
+  .decision.buy .tag{color:var(--green)}
+  .decision.keep .tag{color:var(--blue)}
+  .decision.skip .tag{color:var(--red)}
+
+  /* grid */
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+    padding-bottom:40px;
+  }
+  @media (max-width:940px){
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .decisions{grid-template-columns:1fr}
+  }
+  @media (max-width:600px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  /* card */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    overflow:hidden;
+    display:flex;
+    flex-direction:column;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .card:hover{transform:translateY(-4px)}
+  .card.best{
+    border-color:rgba(74,222,128,.55);
+    box-shadow:0 0 0 1px rgba(74,222,128,.35), 0 8px 40px rgba(74,222,128,.13);
+  }
+  .card.best:hover{box-shadow:0 0 0 1px rgba(74,222,128,.5), 0 14px 48px rgba(74,222,128,.2)}
+  .card.cart-pick{
+    border-color:rgba(96,165,250,.45);
+    box-shadow:0 0 0 1px rgba(96,165,250,.25), 0 8px 34px rgba(96,165,250,.10);
+  }
+
+  .imgwell{
+    position:relative;
+    background:#fff;
+    height:290px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .imgwell img{
+    max-width:92%;
+    max-height:92%;
+    width:auto;height:auto;
+    object-fit:contain;
+  }
+  .badge-rank{
+    position:absolute;top:12px;left:12px;
+    font-family:"Bricolage Grotesque",serif;
+    font-weight:800;font-size:17px;
+    background:#141210;color:var(--ink);
+    padding:5px 13px;border-radius:999px;
+    letter-spacing:.02em;
+  }
+  .card.best .badge-rank{background:var(--green-deep);color:#08130b}
+  .badge-score{
+    position:absolute;top:12px;right:12px;
+    font-weight:700;font-size:14px;
+    background:rgba(20,18,16,.88);color:var(--amber);
+    padding:6px 12px;border-radius:999px;
+    display:flex;align-items:center;gap:5px;
+  }
+  .badge-score svg{width:13px;height:13px;fill:var(--amber)}
+  .badge-cart{
+    position:absolute;bottom:12px;left:12px;
+    font-size:12px;font-weight:700;
+    letter-spacing:.08em;
+    background:rgba(48,38,80,.92);color:#d8ccff;
+    border:1px solid rgba(167,139,250,.45);
+    padding:6px 12px;border-radius:999px;
+    display:flex;align-items:center;gap:6px;
+  }
+  .badge-cart svg{width:13px;height:13px;fill:none;stroke:var(--violet);stroke-width:2}
+
+  .body{padding:18px 20px 22px;display:flex;flex-direction:column;gap:12px;flex:1}
+  .name{
+    font-family:"Bricolage Grotesque",serif;
+    font-weight:600;font-size:19px;letter-spacing:-.01em;
+  }
+  .price{
+    font-family:"Bricolage Grotesque",serif;
+    font-weight:800;
+    font-size:clamp(34px,4vw,42px);
+    letter-spacing:-.02em;
+    line-height:1;
+  }
+  .price small{
+    font-family:"Instrument Sans",sans-serif;
+    font-size:12px;font-weight:600;
+    color:var(--ink-faint);
+    letter-spacing:.07em;text-transform:uppercase;
+    display:block;margin-bottom:6px;
+  }
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{
+    font-size:12.5px;font-weight:600;
+    color:var(--ink-dim);
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    padding:5px 11px;border-radius:999px;
+    white-space:nowrap;
+  }
+  .verdict{
+    font-size:14.5px;font-weight:500;
+    color:var(--ink-dim);
+  }
+  .card.best .verdict{color:var(--green)}
+  .card.cart-pick .verdict{color:var(--blue)}
+  .cta{
+    margin-top:auto;
+    display:flex;align-items:center;justify-content:center;gap:9px;
+    min-height:48px;
+    background:var(--ink);color:#151310;
+    font-weight:700;font-size:15px;
+    border-radius:12px;text-decoration:none;
+    transition:background .2s ease, transform .15s ease;
+  }
+  .cta:hover{background:#fff}
+  .cta:active{transform:scale(.98)}
+  .cta svg{width:15px;height:15px;fill:currentColor}
+  .card.best .cta{background:var(--green);color:#08130b}
+  .card.best .cta:hover{background:#6ee7a0}
+
+  /* footer note */
+  footer{
+    padding:6px 0 56px;
+    text-align:center;
+    font-size:13px;color:var(--ink-faint);
+  }
+
+  /* entrance motion */
+  @media (prefers-reduced-motion:no-preference){
+    .card{animation:rise .5s ease backwards}
+    .card:nth-child(1){animation-delay:.03s}
+    .card:nth-child(2){animation-delay:.09s}
+    .card:nth-child(3){animation-delay:.15s}
+    .card:nth-child(4){animation-delay:.21s}
+    .card:nth-child(5){animation-delay:.27s}
+    .card:nth-child(6){animation-delay:.33s}
+    @keyframes rise{from{opacity:0;transform:translateY(14px)}}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Balcony tables worth buying</h1>
+    <p class="meta">Lazada Thailand &middot; checked 6 Aug 2026</p>
+  </header>
+
+  <section class="decisions" aria-label="Quick decisions">
+    <div class="decision buy"><span class="tag">BUY #1</span><span class="what">Balcony Decor 80&nbsp;cm</span></div>
+    <div class="decision keep"><span class="tag">KEEP #3</span><span class="what">Living_HOME 60&nbsp;cm</span></div>
+    <div class="decision skip"><span class="tag">SKIP #6</span><span class="what">Rustproof 60&times;40&nbsp;cm</span></div>
+  </section>
+
+  <main class="grid">
+
+    <article class="card best">
+      <div class="imgwell">
+        <img src="https://img.lazcdn.com/g/p/903be024ed1d8efaf46a4c3431ff4a99.jpg_720x720q80.jpg_.webp" alt="Balcony Decor 80 cm railing table mounted on a balcony rail" loading="eager">
+        <span class="badge-rank">#1</span>
+        <span class="badge-score"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.4 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>9.4</span>
+      </div>
+      <div class="body">
+        <h2 class="name">Balcony Decor 80&nbsp;cm</h2>
+        <p class="price"><small>Delivered total</small>&#3647;2,215</p>
+        <div class="chips">
+          <span class="chip">30&times;80 cm</span>
+          <span class="chip">rail &le;16 cm</span>
+          <span class="chip">30 kg</span>
+        </div>
+        <p class="verdict">Best overall. Proven, adjustable, weather-ready.</p>
+        <a class="cta" href="https://www.lazada.co.th/products/pdp-i276372841.html" target="_blank" rel="noopener noreferrer">View on Lazada<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4L9.4 16 8 14.6 17.6 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg></a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="imgwell">
+        <img src="https://img.lazcdn.com/g/p/5cd5d4d37cca7a75fbc234a64a27a89c.jpg_720x720q80.jpg_.webp" alt="Balcony Decor 60 cm aluminum railing table" loading="lazy">
+        <span class="badge-rank">#2</span>
+        <span class="badge-score"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.4 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>9.0</span>
+      </div>
+      <div class="body">
+        <h2 class="name">Balcony Decor 60&nbsp;cm</h2>
+        <p class="price"><small>Delivered total</small>&#3647;1,895</p>
+        <div class="chips">
+          <span class="chip">30&times;60 cm</span>
+          <span class="chip">rail &le;16 cm</span>
+          <span class="chip">aluminum</span>
+        </div>
+        <p class="verdict">Safest compact pick.</p>
+        <a class="cta" href="https://www.lazada.co.th/products/pdp-i276360096.html" target="_blank" rel="noopener noreferrer">View on Lazada<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4L9.4 16 8 14.6 17.6 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg></a>
+      </div>
+    </article>
+
+    <article class="card cart-pick">
+      <div class="imgwell">
+        <img src="https://img.lazcdn.com/g/ff/kf/S9966f4ade4fb4c3d9c292c84377cf391M.png_720x720q80.png_.webp" alt="Living_HOME 60 cm folding balcony rail table" loading="lazy">
+        <span class="badge-rank">#3</span>
+        <span class="badge-score"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.4 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>8.5</span>
+        <span class="badge-cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 2h3l3.6 10.6a1 1 0 00.95.68h7.9a1 1 0 00.95-.68L22 6H6.4"/></svg>IN YOUR CART</span>
+      </div>
+      <div class="body">
+        <h2 class="name">Living_HOME 60&nbsp;cm</h2>
+        <p class="price"><small>Delivered total</small>&#3647;1,344</p>
+        <div class="chips">
+          <span class="chip">60&times;30 cm</span>
+          <span class="chip">folds flat</span>
+          <span class="chip">round/square rail</span>
+        </div>
+        <p class="verdict">Best value in your cart.</p>
+        <a class="cta" href="https://www.lazada.co.th/products/i16087746865-s126727912974.html" target="_blank" rel="noopener noreferrer">View on Lazada<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4L9.4 16 8 14.6 17.6 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg></a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="imgwell">
+        <img src="https://img.lazcdn.com/g/ff/kf/S38c7214dcc424a7ca037cfe616b5e65e5.jpg_720x720q80.jpg_.webp" alt="TMCG BT002 90 cm balcony railing table" loading="lazy">
+        <span class="badge-rank">#4</span>
+        <span class="badge-score"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.4 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>8.3</span>
+      </div>
+      <div class="body">
+        <h2 class="name">TMCG BT002</h2>
+        <p class="price"><small>Delivered total</small>&#3647;1,287</p>
+        <div class="chips">
+          <span class="chip">90 cm</span>
+          <span class="chip">rail &le;11 cm</span>
+          <span class="chip">40 kg+</span>
+        </div>
+        <p class="verdict">Huge specs for the money.</p>
+        <a class="cta" href="https://www.lazada.co.th/products/pdp-i16051784158.html" target="_blank" rel="noopener noreferrer">View on Lazada<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4L9.4 16 8 14.6 17.6 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg></a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="imgwell">
+        <img src="https://img.lazcdn.com/g/p/469e3894830ee37103aef6418ae1def9.jpg_720x720q80.jpg_.webp" alt="Furnism balcony bar table hooked over a railing" loading="lazy">
+        <span class="badge-rank">#5</span>
+        <span class="badge-score"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.4 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>7.9</span>
+      </div>
+      <div class="body">
+        <h2 class="name">Furnism Balcony Bar</h2>
+        <p class="price"><small>Delivered total</small>&#3647;3,134</p>
+        <div class="chips">
+          <span class="chip">58/90 cm</span>
+          <span class="chip">fixed rail lips</span>
+          <span class="chip">preorder</span>
+        </div>
+        <p class="verdict">Only for an exact rail fit.</p>
+        <a class="cta" href="https://www.lazada.co.th/products/pdp-i3146989262.html" target="_blank" rel="noopener noreferrer">View on Lazada<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4L9.4 16 8 14.6 17.6 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg></a>
+      </div>
+    </article>
+
+    <article class="card">
+      <div class="imgwell">
+        <img src="https://img.lazcdn.com/g/ff/kf/Sd6bc3361b34f4ccbb02d3db4abcec9d3r.jpg_720x720q80.jpg_.webp" alt="Rustproof 60 by 40 cm mesh-top balcony table" loading="lazy">
+        <span class="badge-rank">#6</span>
+        <span class="badge-score"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.6 7.1.7-5.4 4.8 1.6 7L12 17.4 5.8 21l1.6-7L2 9.3l7.1-.7z"/></svg>7.4</span>
+        <span class="badge-cart"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18a2 2 0 100 4 2 2 0 000-4zm10 0a2 2 0 100 4 2 2 0 000-4zM3 2h3l3.6 10.6a1 1 0 00.95.68h7.9a1 1 0 00.95-.68L22 6H6.4"/></svg>IN YOUR CART</span>
+      </div>
+      <div class="body">
+        <h2 class="name">Rustproof 60&times;40&nbsp;cm</h2>
+        <p class="price"><small>Delivered total</small>&#3647;1,399</p>
+        <div class="chips">
+          <span class="chip">60&times;40 cm</span>
+          <span class="chip">mesh top</span>
+          <span class="chip">fit unknown</span>
+        </div>
+        <p class="verdict">Skip unless depth matters most.</p>
+        <a class="cta" href="https://www.lazada.co.th/products/i16045178851-s126212356425.html" target="_blank" rel="noopener noreferrer">View on Lazada<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7h-2V6.4L9.4 16 8 14.6 17.6 5H14V3zM5 5h6v2H7v10h10v-4h2v6H5V5z"/></svg></a>
+      </div>
+    </article>
+
+  </main>
+
+  <footer>Measure rail thickness before buying. Prices and shipping can change.</footer>
+
+</div>
+</body>
+</html>

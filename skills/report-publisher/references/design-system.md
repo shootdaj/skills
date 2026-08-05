@@ -61,6 +61,10 @@ the user asked. Otherwise commit to dark and make it excellent.
 The whole point of the report is that the answer comes first. Structure the page
 in this order, top to bottom:
 
+This section defines the **Standard Pyramid** template. When **Visual Product
+Shortlist** is selected, use the alternate profile in §2b instead; its explicit
+exceptions override the navigation and collapsible-section requirements below.
+
 ```
 ┌─────────────────────────────────────────────┐
 │  Title            [ meta strip: date · scope ]│  ← who/what/when
@@ -144,6 +148,36 @@ viewport. Don't fight that with clever `calc()` offsets — **reserve the space*
   links, same behaviour — just a presentation that fits a narrow screen.
 
 One nav, always present, no duplicate list in the document flow.
+
+### 2b. Visual Product Shortlist profile
+
+Use `assets/templates/visual-product-shortlist.html` for image-led comparisons
+of discrete choices. It keeps the answer-first principle but replaces the long
+analytical body with a fast visual decision surface:
+
+```text
+┌─────────────────────────────────────────────┐
+│ Compact title · source · checked date       │
+├──────────────┬──────────────┬───────────────┤
+│ BUY / PICK   │ KEEP / ALT   │ SKIP / AVOID  │
+├──────────────┴──────────────┴───────────────┤
+│ [large image card] [large image card] [...] │
+│ rank · score · state · price · facts · CTA  │
+└─────────────────────────────────────────────┘
+```
+
+- Use a responsive 3 / 2 / 1-column grid for desktop / tablet / mobile.
+- Let real images dominate: image wells at least 260px tall, `object-fit:contain`,
+  no cropping, dimming, blend mode, or overlay that obscures the item.
+- Each card contains one rank, one score, an optional state badge, one prominent
+  total price/value, no more than three fact chips, exactly one short verdict,
+  and one ≥44px outbound CTA.
+- Keep the decision strip to the 2–3 actions that materially help the choice.
+- Do not add a side nav, drawer, collapsibles, methodology, charts, or a duplicate
+  comparison table. The grid is the report and the user should understand it in
+  seconds.
+- Verify every photo has a nonzero natural size in the browser and every CTA uses
+  the exact destination URL. A card without a working image or link is incomplete.
 
 ---
 
@@ -484,6 +518,13 @@ everything still reads as one coherent document.
 ## 10. Pre-flight checklist
 
 Before publishing, confirm:
+- [ ] The selected template is named and its specific profile was followed.
+- [ ] For Visual Product Shortlist: the decision strip is concise; every card has
+      a large loaded photo, rank/score, optional state badge, prominent total,
+      ≤3 fact chips, one-line verdict, and ≥44px exact outbound link; there is no
+      nav, collapsible body, chart, methodology section, or duplicate table.
+- [ ] For Standard Pyramid: apply the navigation, collapsible section, verdict,
+      metrics, takeaways, and detail checks below.
 - [ ] Verdict + headline metrics + takeaways are visible without expanding or
       scrolling past context.
 - [ ] Exactly **one** navigation surface: a persistent, always-visible side nav
