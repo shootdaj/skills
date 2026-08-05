@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anshul UI Standards"
+  short_description: "Apply Anshul’s Material-grade UI house standards"
+  default_prompt: "Use $anshul-ui-standards to design and verify this interface."
