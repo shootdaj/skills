@@ -7,6 +7,13 @@ description: MUST be used for ANY UI, frontend, dashboard, mock, control surface
 
 Binding rules for every page, mock, dashboard, and report. The `frontend-design` skill supplies aesthetic boldness and `ui-ux-pro-max` supplies UX/a11y depth — load both with this skill. When rules conflict: **this file wins**.
 
+## Claude Fable owns frontend design
+
+- For every frontend design or implementation task, use real Claude Code with the `fable` model and load `frontend-design` alongside this skill.
+- In Codex or another orchestrating harness, invoke Claude Code explicitly with `--model fable`; the orchestrator may prepare inputs, review, test, and integrate, but must not substitute another model for the frontend design work.
+- In Claude Code, keep the task on Fable. If Fable is unavailable, stop and report the blocker instead of silently falling back to Sonnet, Opus, or another model.
+- A user may explicitly override the model for a specific task; otherwise Fable is mandatory.
+
 ## 1. The skeleton is Material Design 3 — always
 
 - Every page gets a real MD3 chassis: top app bar, navigation rail or drawer, card grid, chips, FAB where apt.
