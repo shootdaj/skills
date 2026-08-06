@@ -35,10 +35,11 @@ format makes the choice explicit:
   navigation, and collapsible evidence. Best for audits, research, benchmarks,
   status reports, post-mortems, and findings-heavy work.
 - **Visual Product Shortlist** — the default for shopping and product-comparison
-  reports; compact decision strip plus ranked, image-led
-  cards with scores, state badges, price/value, concise facts, verdict, and direct
-  links. Best for shopping research, recommendations, vendor/venue shortlists,
-  and other discrete visual choices.
+  reports; the validated **Material 3 Standard Feed (Template A)** with a real app
+  bar, functional filter chips, and a responsive ranked, image-led card grid.
+  Cards carry scores, decision/cart badges, price/value, concise facts, verdict,
+  and direct links. Best for shopping research, recommendations, vendor/venue
+  shortlists, and other discrete visual choices.
 
 Make this a **non-blocking choice**. State the recommended template and say that
 you will use it if the user does not answer. When the environment supports a
@@ -57,12 +58,13 @@ Choose the default from the content:
 
 ## Required frontend ownership
 
-Real Claude Code owns report creation and frontend design, and must use the
-`frontend-design` skill for the visual build.
+Real Claude Code using the **Fable model** owns report creation and frontend
+design, and must use the `frontend-design` skill for the visual build.
 
-- In Claude Code, read and follow `frontend-design` directly.
-- In Codex, read and follow `use-claude`; send Claude the verified report data,
-  selected template, and exact links, and instruct it to use `frontend-design`.
+- In Claude Code, stay on Fable and read and follow `frontend-design` directly.
+- In Codex, read and follow `use-claude`; invoke real Claude Code explicitly with
+  `--model fable`, send it the verified report data, selected template, and exact
+  links, and instruct it to use `frontend-design`.
 - In Cursor or Hermes, use the configured Claude delegation route. If none is
   available, report the blocker instead of silently designing the frontend with
   another model.
@@ -93,8 +95,9 @@ Concretely, every Standard Pyramid report opens with:
   point self-contained (no "as discussed below").
 
 Then, and only then, the body — with the heavy material folded away. A Visual
-Product Shortlist instead opens with a compact title/meta line and 2–3 decisive
-actions, then moves directly into the ranked card grid.
+Product Shortlist instead opens with a compact Material app bar and immediately
+useful filter chips, then moves directly into the ranked card grid. The #1 card
+must make the top recommendation obvious without adding an editorial preamble.
 
 ## Workflow
 
@@ -109,6 +112,7 @@ actions, then moves directly into the ranked card grid.
    detail into collapsible sections. For Visual Product Shortlist, decide the
    primary buy/keep/skip actions, rank the candidates, and reduce each item to one
    image, score, price/value, up to three facts, one-line verdict, and one CTA.
+   Use the validated Template A app-bar, filter-chip, and card-grid structure.
 
 3. **Decide what genuinely needs a visual.** Read `references/design-system.md`
    → "Charts: earn the ink" before adding any chart. A chart that just restates
@@ -155,7 +159,8 @@ actions, then moves directly into the ranked card grid.
 ## Non-negotiables (from hard experience)
 
 - **Dark mode by default.** Professional dark palette, easy on the eyes, no
-  bright-white glare. Light mode only if the user asks.
+  bright-white glare. The Visual Product Shortlist also carries Template A's
+  deliberate persistent light/dark toggle; dark remains the initial presentation.
 - **Minimize fluff and redundancy.** Say a thing once, in the right place. Cut
   throat-clearing intros, restated section summaries, and hedge words. Density is
   a feature; padding insults the reader.
@@ -175,9 +180,10 @@ actions, then moves directly into the ranked card grid.
   layout cue from Mobbin when it genuinely sharpens the design — skip them when
   plain HTML already reads well.
 - **Template rules are intentional.** Standard Pyramid uses the persistent nav
-  and collapsible-detail system. Visual Product Shortlist deliberately omits nav,
-  collapsibles, charts, methodology, and comparison tables so the photos, prices,
-  verdicts, and outbound links dominate.
+  and collapsible-detail system. Visual Product Shortlist uses the validated
+  Material 3 Standard Feed (Template A): app bar, working filter chips, responsive
+  ranked cards, large photos, decision/cart chips, and direct CTAs. It deliberately
+  omits report navigation, collapsibles, charts, methodology, and comparison tables.
 
 ## When to read the references
 

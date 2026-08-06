@@ -26,10 +26,12 @@ Before acting:
    existing logged-in profile. If the user's latest message explicitly names a
    different browser surface, that explicit choice wins.
 2. For a multi-product report, read and follow `report-publisher`. Use its
-   **Visual Product Shortlist** template as the shopping default.
-3. Real Claude Code owns the report frontend and must use `frontend-design`.
-   In Claude Code, use `frontend-design` directly. In Codex, read and follow
-   `use-claude`. In Cursor or Hermes, use the configured Claude delegation route.
+   **Visual Product Shortlist — Material 3 Standard Feed (Template A)** as the
+   mandatory Lazada default.
+3. Real Claude Code on the **Fable model** owns the report frontend and must use
+   `frontend-design`. In Claude Code, stay on Fable and use `frontend-design`
+   directly. In Codex, read and follow `use-claude` and invoke Claude Code with
+   `--model fable`. In Cursor or Hermes, use the configured Claude Fable route.
    If no Claude route is available, report the blocker rather than silently
    building the report frontend with another model. Codex may prepare verified
    data, orchestrate, publish, and inspect the result.
@@ -146,22 +148,26 @@ for verification, but keep the published report visually concise.
 ### 7. Publish the shopping report
 
 For multi-product research, comparisons, or cart reviews, default to a permanent
-HTML report using `report-publisher` → **Visual Product Shortlist**. If the user
-explicitly asks for only a quick answer, a full report is optional.
+HTML report using `report-publisher` → **Visual Product Shortlist — Material 3
+Standard Feed (Template A)**. All Lazada reports use this structure unless the
+user explicitly chooses another template. If the user explicitly asks for only a
+quick answer, a full report is optional.
 
 The report should normally contain 4–8 strong candidates and must be image-led:
 
-- compact title with Lazada Thailand and an absolute checked date;
-- a decisive strip such as **BUY #1**, **KEEP #best cart item**, and **SKIP #weakest**;
-- one ranked card per candidate with a large uncropped photo;
+- a real Material 3 top app bar with Lazada Thailand, absolute checked date, and
+  a persistent light/dark toggle (dark by default);
+- working filter chips for All, Buy, Keep, Consider, Skip, and In cart;
+- a responsive ranked card grid with one large uncropped photo per candidate;
 - score, delivered total, no more than three useful fact chips, and one short
   verdict;
+- an obvious **Top pick** state on the #1 card plus Buy/Keep/Consider/Skip chips;
 - **IN YOUR CART** badges for every relevant cart candidate;
 - one obvious **View on Lazada** button pointing to the exact product page;
 - minimal prose: no duplicate table, methodology section, chart, navigation, or
   long explanation unless the user explicitly asks for detail.
 
-Delegate the frontend to Claude with the verified product dataset and exact URLs.
+Delegate the frontend to Claude Fable with the verified product dataset and exact URLs.
 Publish permanently through here.now, then open the live URL in Chrome.
 
 ### 8. Verify from the user's perspective
