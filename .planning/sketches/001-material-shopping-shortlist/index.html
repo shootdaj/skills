@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balcony Table Shortlist — Material Sketches</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0" rel="stylesheet">
+<link rel="stylesheet" href="../themes/default.css">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--surface-container-lowest);
+    color: var(--on-surface);
+    min-height: 100vh;
+  }
+  .ms {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal; font-style: normal;
+    font-size: 24px; line-height: 1;
+    display: inline-block; vertical-align: middle;
+    letter-spacing: normal; text-transform: none;
+    white-space: nowrap; word-wrap: normal; direction: ltr;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    -webkit-font-smoothing: antialiased;
+  }
+  .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* ---------- interactive base: state layer + ripple + focus + 48px targets ---------- */
+  .ia {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    isolation: isolate;
+  }
+  .ia::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 120ms ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .ia:hover::after { opacity: var(--state-hover); }
+  .ia:focus-visible::after { opacity: var(--state-focus); }
+  .ia:active::after { opacity: var(--state-press); }
+  .ia:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  .ia:disabled { cursor: default; opacity: var(--disabled-content); }
+  .ripple {
+    position: absolute; border-radius: 50%;
+    background: currentColor; opacity: .18;
+    transform: scale(0); pointer-events: none;
+    animation: ripple 480ms ease-out forwards;
+  }
+  @keyframes ripple { to { transform: scale(2.6); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .ripple { animation: none; opacity: 0; }
+    * { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+  }
+
+  /* ---------- sketch chrome (not part of the mock) ---------- */
+  .sketchbar {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; flex-wrap: wrap; gap: var(--sp-2); align-items: center;
+    padding: var(--sp-2) var(--sp-4);
+    background: var(--surface-container-high);
+    border-bottom: 1px solid var(--outline-variant);
+    box-shadow: var(--elevation-2);
+  }
+  .sketchbar .label {
+    font-size: 12px; letter-spacing: .8px; text-transform: uppercase;
+    color: var(--on-surface-variant); margin-right: var(--sp-1);
+  }
+  .seg { display: flex; border: 1px solid var(--outline); border-radius: var(--shape-full); overflow: hidden; }
+  .seg button {
+    min-height: 40px; min-width: 56px; padding: 0 var(--sp-4);
+    color: var(--on-surface); font-size: 14px; font-weight: 500;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .seg button + button { border-left: 1px solid var(--outline); }
+  .seg button[aria-pressed="true"] { background: var(--secondary-container); color: var(--on-secondary-container); }
+  .sketchbar .spacer { flex: 1; }
+  #themeToggle {
+    min-width: 48px; min-height: 48px; border-radius: var(--shape-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--on-surface);
+  }
+  .frame-wrap { display: flex; justify-content: center; padding: var(--sp-4) 0 var(--sp-8); }
+  #frame {
+    width: 100%; max-width: 1400px;
+    background: var(--surface);
+    transition: max-width 240ms ease;
+    box-shadow: var(--elevation-1);
+    container-type: inline-size;
+    container-name: frame;
+    min-height: 80vh;
+  }
+  #frame.w412 { max-width: 412px; }
+  #frame.w840 { max-width: 840px; }
+  .template { display: none; }
+  .template.active { display: block; }
+
+  /* ---------- shared product bits ---------- */
+  .price { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .score-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--primary-container); color: var(--on-primary-container);
+    border-radius: var(--shape-s); padding: 2px 8px;
+    font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: 32px; padding: 0 var(--sp-3);
+    border-radius: var(--shape-s);
+    border: 1px solid var(--outline);
+    font-size: 14px; font-weight: 500;
+    color: var(--on-surface-variant);
+    background: transparent;
+  }
+  .chip .ms { font-size: 18px; }
+  .chip.on { background: var(--secondary-container); color: var(--on-secondary-container); border-color: transparent; }
+  .chip.tone-buy { background: var(--success-container); color: var(--on-success-container); border-color: transparent; }
+  .chip.tone-keep { background: var(--primary-container); color: var(--on-primary-container); border-color: transparent; }
+  .chip.tone-consider { background: var(--warning-container); color: var(--on-warning-container); border-color: transparent; }
+  .chip.tone-skip { background: var(--error-container); color: var(--on-error-container); border-color: transparent; }
+  .chip.cart { background: var(--tertiary-container); color: var(--on-tertiary-container); border-color: transparent; }
+  .facts { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin: 0; padding: 0; list-style: none; }
+  .facts li {
+    font-size: 12px; color: var(--on-surface-variant);
+    background: var(--surface-container-high);
+    border-radius: var(--shape-xs); padding: 3px 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .verdict { font-size: 14px; color: var(--on-surface-variant); margin: 0; line-height: 1.45; }
+  .btn-filled {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 var(--sp-5);
+    border-radius: var(--shape-full);
+    background: var(--primary); color: var(--on-primary);
+    font-size: 14px; font-weight: 600; text-decoration: none;
+  }
+  .btn-tonal {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 var(--sp-4);
+    border-radius: var(--shape-full);
+    background: var(--secondary-container); color: var(--on-secondary-container);
+    font-size: 14px; font-weight: 600;
+  }
+  .btn-tonal.incart { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+  .img-link { display: block; position: relative; border-radius: inherit; }
+  .img-link img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  /* =============== A — M3 STANDARD FEED =============== */
+  .appbar {
+    display: flex; align-items: center; gap: var(--sp-3);
+    min-height: 64px; padding: 0 var(--sp-4);
+    background: var(--surface-container);
+    position: sticky; top: 64px; z-index: 10;
+  }
+  .appbar h1 { font-size: 22px; font-weight: 500; margin: 0; flex: 1; font-family: 'Roboto Flex', Roboto, sans-serif; }
+  .appbar .icon-btn, .icon-btn {
+    min-width: 48px; min-height: 48px; border-radius: var(--shape-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--on-surface-variant); position: relative;
+  }
+  .cart-badge {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--tertiary); color: var(--on-tertiary);
+    font-size: 11px; font-weight: 700; min-width: 16px; height: 16px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; font-variant-numeric: tabular-nums;
+  }
+  .chip-row {
+    display: flex; gap: var(--sp-2); flex-wrap: wrap;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--surface-container);
+    border-bottom: 1px solid var(--outline-variant);
+  }
+  .chip-row .chip { min-height: 40px; }
+  .grid-a {
+    display: grid; gap: var(--sp-4); padding: var(--sp-4);
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @container frame (max-width: 900px) { .grid-a { grid-template-columns: repeat(2, 1fr); } }
+  @container frame (max-width: 560px) { .grid-a { grid-template-columns: 1fr; } }
+  .card-a {
+    background: var(--surface-container-low);
+    border-radius: var(--shape-m);
+    overflow: hidden;
+    box-shadow: var(--elevation-1);
+    display: flex; flex-direction: column;
+    transition: box-shadow 160ms ease, transform 160ms ease;
+  }
+  .card-a:hover { box-shadow: var(--elevation-3); }
+  .card-a .img-link { aspect-ratio: 4/3; border-radius: 0; }
+  .card-a .body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); flex: 1; }
+  .card-a .titlerow { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-2); }
+  .card-a h2 { font-size: 16px; font-weight: 600; margin: 0; }
+  .card-a .price { font-size: 18px; }
+  .card-a .chips { display: flex; gap: var(--sp-1); flex-wrap: wrap; }
+  .card-a .actions { display: flex; gap: var(--sp-2); margin-top: auto; padding-top: var(--sp-2); }
+  .rankdot {
+    position: absolute; top: var(--sp-2); left: var(--sp-2);
+    background: var(--scrim); color: #fff;
+    border-radius: var(--shape-s); padding: 2px 8px;
+    font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+  }
+  .empty {
+    grid-column: 1 / -1; text-align: center; padding: var(--sp-8) var(--sp-4);
+    color: var(--on-surface-variant);
+  }
+  .empty .ms { font-size: 48px; opacity: .6; }
+
+  /* =============== B — M3 EXPRESSIVE =============== */
+  .tpl-b { background: var(--surface); padding-bottom: var(--sp-7); }
+  .b-hero {
+    padding: var(--sp-6) var(--sp-5) var(--sp-5);
+    background: var(--primary-container); color: var(--on-primary-container);
+    border-radius: 0 0 var(--shape-xl) var(--shape-xl);
+  }
+  .b-hero .kicker { font-size: 13px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 600; opacity: .8; margin: 0 0 var(--sp-2); }
+  .b-hero h1 {
+    margin: 0; font-family: 'Roboto Flex', Roboto, sans-serif;
+    font-size: clamp(32px, 6cqw, 56px); font-weight: 800; line-height: 1.05;
+    font-variation-settings: 'wdth' 120;
+  }
+  .b-hero p { margin: var(--sp-3) 0 0; font-size: 15px; max-width: 52ch; }
+  .b-list { display: flex; flex-direction: column; gap: var(--sp-4); padding: var(--sp-5); }
+  .card-b {
+    display: grid; grid-template-columns: 220px 1fr;
+    background: var(--surface-container-low);
+    overflow: hidden;
+    box-shadow: var(--elevation-1);
+    transition: box-shadow 160ms ease;
+  }
+  .card-b:hover { box-shadow: var(--elevation-3); }
+  /* expressive shape variety: alternating asymmetric corner treatment */
+  .b-list .card-b:nth-child(odd) { border-radius: var(--shape-xl) var(--shape-m) var(--shape-xl) var(--shape-m); }
+  .b-list .card-b:nth-child(even) { border-radius: var(--shape-m) var(--shape-xl) var(--shape-m) var(--shape-xl); }
+  .b-list .card-b.hero-card {
+    grid-template-columns: 1fr;
+    background: var(--tertiary-container); color: var(--on-tertiary-container);
+    border-radius: var(--shape-xl);
+  }
+  .card-b.hero-card .img-link { aspect-ratio: 16/8; border-radius: var(--shape-xl) var(--shape-xl) var(--shape-l) var(--shape-l); overflow: hidden; }
+  .card-b .img-link { border-radius: 0; }
+  .card-b:not(.hero-card) .img-link { min-height: 180px; }
+  .card-b .body { padding: var(--sp-4) var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-2); }
+  .card-b h2 { margin: 0; font-family: 'Roboto Flex', Roboto, sans-serif; font-weight: 700; font-size: 22px; font-variation-settings: 'wdth' 115; }
+  .card-b.hero-card h2 { font-size: clamp(24px, 4cqw, 36px); }
+  .card-b .metric-row { display: flex; align-items: baseline; gap: var(--sp-3); flex-wrap: wrap; }
+  .card-b .price { font-size: 24px; }
+  .card-b.hero-card .price { font-size: 32px; }
+  .b-score {
+    display: inline-flex; align-items: center; justify-content: center;
+    min-width: 56px; min-height: 56px; border-radius: var(--shape-full);
+    background: var(--primary); color: var(--on-primary);
+    font-size: 18px; font-weight: 800; font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .card-b .toprow { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); }
+  .card-b .chips { display: flex; gap: var(--sp-1); flex-wrap: wrap; }
+  .card-b .actions { display: flex; gap: var(--sp-2); flex-wrap: wrap; margin-top: var(--sp-2); }
+  @container frame (max-width: 700px) {
+    .card-b { grid-template-columns: 1fr; }
+    .card-b:not(.hero-card) .img-link { aspect-ratio: 16/9; min-height: 0; }
+  }
+
+  /* =============== C — M3 LIST–DETAIL =============== */
+  .tpl-c .c-shell { display: grid; grid-template-columns: minmax(300px, 380px) 1fr; min-height: 78vh; }
+  .c-list {
+    border-right: 1px solid var(--outline-variant);
+    background: var(--surface-container-low);
+    padding: var(--sp-2);
+    display: flex; flex-direction: column; gap: var(--sp-1);
+  }
+  .c-item {
+    display: grid; grid-template-columns: 64px 1fr auto;
+    gap: var(--sp-3); align-items: center;
+    width: 100%; text-align: left;
+    min-height: 72px; padding: var(--sp-2) var(--sp-3);
+    border-radius: var(--shape-l);
+    color: var(--on-surface);
+  }
+  .c-item[aria-selected="true"] { background: var(--secondary-container); color: var(--on-secondary-container); }
+  .c-item img { width: 64px; height: 64px; object-fit: cover; border-radius: var(--shape-m); }
+  .c-item .t { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .c-item .t strong { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .c-item .t span { font-size: 13px; color: var(--on-surface-variant); }
+  .c-item[aria-selected="true"] .t span { color: inherit; opacity: .8; }
+  .c-detail { padding: var(--sp-5); display: flex; flex-direction: column; gap: var(--sp-4); }
+  .c-detail .hero-img {
+    border-radius: var(--shape-xl); overflow: hidden;
+    aspect-ratio: 16/8; box-shadow: var(--elevation-2);
+  }
+  .c-detail h2 { margin: 0; font-family: 'Roboto Flex', Roboto, sans-serif; font-size: 28px; font-weight: 700; }
+  .c-detail .headrow { display: flex; align-items: center; justify-content: space-between; gap: var(--sp-3); flex-wrap: wrap; }
+  .c-detail .price { font-size: 28px; }
+  .c-detail .chips { display: flex; gap: var(--sp-2); flex-wrap: wrap; }
+  .c-detail .facts li { font-size: 14px; padding: 6px 12px; }
+  .c-detail .verdict { font-size: 16px; color: var(--on-surface); }
+  .c-detail .actions { display: flex; gap: var(--sp-3); flex-wrap: wrap; }
+  .c-back { display: none; align-self: flex-start; }
+  @container frame (max-width: 700px) {
+    .tpl-c .c-shell { grid-template-columns: 1fr; }
+    .tpl-c .c-shell.show-detail .c-list { display: none; }
+    .tpl-c .c-shell:not(.show-detail) .c-detail { display: none; }
+    .c-list { border-right: none; }
+    .c-back { display: inline-flex; }
+  }
+</style>
+</head>
+<body>
+
+<!-- sketch controls -->
+<div class="sketchbar" role="toolbar" aria-label="Sketch controls">
+  <span class="label">Template</span>
+  <div class="seg" id="tplSeg">
+    <button class="ia" data-tpl="a" aria-pressed="true">A · Feed</button>
+    <button class="ia" data-tpl="b" aria-pressed="false">B · Expressive</button>
+    <button class="ia" data-tpl="c" aria-pressed="false">C · List–Detail</button>
+  </div>
+  <span class="label">Width</span>
+  <div class="seg" id="widthSeg">
+    <button class="ia" data-w="w412" aria-pressed="false">412</button>
+    <button class="ia" data-w="w840" aria-pressed="false">840</button>
+    <button class="ia" data-w="full" aria-pressed="true">Full</button>
+  </div>
+  <div class="spacer"></div>
+  <button class="ia" id="themeToggle" aria-label="Toggle light or dark theme">
+    <span class="ms" id="themeIcon">light_mode</span>
+  </button>
+</div>
+
+<div class="frame-wrap">
+  <div id="frame">
+
+    <!-- A: standard feed -->
+    <section class="template tpl-a active" id="tpl-a" aria-label="Template A — Material 3 standard feed">
+      <header class="appbar" style="border-radius:0">
+        <span class="ms" aria-hidden="true">table_restaurant</span>
+        <h1>Balcony Table Shortlist</h1>
+        <button class="ia icon-btn" aria-label="Shopping cart">
+          <span class="ms">shopping_cart</span>
+          <span class="cart-badge" data-cartcount>2</span>
+        </button>
+      </header>
+      <div class="chip-row" id="filterChips" role="group" aria-label="Filter products">
+        <button class="ia chip on" data-filter="all"><span class="ms">filter_list</span>All</button>
+        <button class="ia chip" data-filter="buy"><span class="ms">check_circle</span>Buy</button>
+        <button class="ia chip" data-filter="keep"><span class="ms">bookmark</span>Keep</button>
+        <button class="ia chip" data-filter="consider"><span class="ms">help</span>Consider</button>
+        <button class="ia chip" data-filter="skip"><span class="ms">block</span>Skip</button>
+        <button class="ia chip" data-filter="cart"><span class="ms">shopping_cart</span>In cart</button>
+      </div>
+      <div class="grid-a" id="gridA"></div>
+    </section>
+
+    <!-- B: expressive feed -->
+    <section class="template tpl-b" id="tpl-b" aria-label="Template B — Material 3 expressive feed">
+      <div class="b-hero">
+        <p class="kicker">Lazada Thailand · checked 6 Aug 2026</p>
+        <h1>Six rail tables.<br>One clear winner.</h1>
+        <p>Every hanging balcony table worth a look, scored on fit, build, and price. Tap any photo or button to open the live Lazada listing.</p>
+      </div>
+      <div class="b-list" id="listB"></div>
+    </section>
+
+    <!-- C: list-detail -->
+    <section class="template tpl-c" id="tpl-c" aria-label="Template C — Material 3 list-detail">
+      <header class="appbar">
+        <span class="ms" aria-hidden="true">table_restaurant</span>
+        <h1>Shortlist — compare</h1>
+        <button class="ia icon-btn" aria-label="Shopping cart">
+          <span class="ms">shopping_cart</span>
+          <span class="cart-badge" data-cartcount>2</span>
+        </button>
+      </header>
+      <div class="c-shell" id="cShell">
+        <nav class="c-list" id="cList" role="listbox" aria-label="Products"></nav>
+        <article class="c-detail" id="cDetail" aria-live="polite"></article>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+const PRODUCTS = [
+  { rank:1, name:"Balcony Decor 80 cm", price:2215, score:9.4,
+    facts:["30 × 80 cm","rail up to 16 cm","30 kg"],
+    verdict:"Best overall. Proven, adjustable, weather-ready.",
+    img:"https://img.lazcdn.com/g/p/903be024ed1d8efaf46a4c3431ff4a99.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i276372841.html", inCart:false, decision:"buy" },
+  { rank:2, name:"Balcony Decor 60 cm", price:1895, score:9.0,
+    facts:["30 × 60 cm","rail up to 16 cm","aluminum"],
+    verdict:"Safest compact pick.",
+    img:"https://img.lazcdn.com/g/p/5cd5d4d37cca7a75fbc234a64a27a89c.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i276360096.html", inCart:false, decision:"buy" },
+  { rank:3, name:"Living_HOME 60 cm", price:1344, score:8.5,
+    facts:["60 × 30 cm","folds flat","round or square rail"],
+    verdict:"Best value in your cart.",
+    img:"https://img.lazcdn.com/g/ff/kf/S9966f4ade4fb4c3d9c292c84377cf391M.png_720x720q80.png_.webp",
+    url:"https://www.lazada.co.th/products/i16087746865-s126727912974.html", inCart:true, decision:"keep" },
+  { rank:4, name:"TMCG BT002", price:1287, score:8.3,
+    facts:["90 cm","rail up to 11 cm","40 kg or more"],
+    verdict:"Huge specs for the money.",
+    img:"https://img.lazcdn.com/g/ff/kf/S38c7214dcc424a7ca037cfe616b5e65e5.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i16051784158.html", inCart:false, decision:"consider" },
+  { rank:5, name:"Furnism Balcony Bar", price:3134, score:7.9,
+    facts:["58 or 90 cm","fixed rail lips","preorder"],
+    verdict:"Only for an exact rail fit.",
+    img:"https://img.lazcdn.com/g/p/469e3894830ee37103aef6418ae1def9.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i3146989262.html", inCart:false, decision:"skip" },
+  { rank:6, name:"Rustproof 60 × 40 cm", price:1399, score:7.4,
+    facts:["60 × 40 cm","mesh top","fit unknown"],
+    verdict:"Skip unless depth matters most.",
+    img:"https://img.lazcdn.com/g/ff/kf/Sd6bc3361b34f4ccbb02d3db4abcec9d3r.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/i16045178851-s126212356425.html", inCart:true, decision:"skip" }
+];
+
+const DEC = {
+  buy:      { label:"Buy",      icon:"check_circle", tone:"tone-buy" },
+  keep:     { label:"Keep",     icon:"bookmark",     tone:"tone-keep" },
+  consider: { label:"Consider", icon:"help",         tone:"tone-consider" },
+  skip:     { label:"Skip",     icon:"block",        tone:"tone-skip" }
+};
+const thb = n => "฿" + n.toLocaleString("en-US");
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+/* ---------- theme: dark-first, persisted, manual wins ---------- */
+const root = document.documentElement;
+const themeIcon = document.getElementById("themeIcon");
+function applyTheme(t) {
+  root.setAttribute("data-theme", t);
+  themeIcon.textContent = t === "dark" ? "light_mode" : "dark_mode";
+  localStorage.setItem("sketch-theme", t);
+}
+applyTheme(localStorage.getItem("sketch-theme") || "dark");
+document.getElementById("themeToggle").addEventListener("click", () =>
+  applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"));
+
+/* ---------- ripple ---------- */
+document.addEventListener("pointerdown", e => {
+  const el = e.target.closest(".ia");
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  const d = Math.max(r.width, r.height);
+  const s = document.createElement("span");
+  s.className = "ripple";
+  s.style.width = s.style.height = d + "px";
+  s.style.left = (e.clientX - r.left - d/2) + "px";
+  s.style.top = (e.clientY - r.top - d/2) + "px";
+  el.appendChild(s);
+  s.addEventListener("animationend", () => s.remove());
+});
+
+/* ---------- image fallback: swap failed photos for neutral placeholder ---------- */
+const IMG_FALLBACK = "data:image/svg+xml," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720"><rect width="720" height="720" fill="#3a3a44"/><text x="360" y="380" font-family="sans-serif" font-size="48" fill="#9a9aa6" text-anchor="middle">No photo</text></svg>');
+document.addEventListener("error", e => {
+  const img = e.target;
+  if (img && img.tagName === "IMG" && img.src !== IMG_FALLBACK) img.src = IMG_FALLBACK;
+}, true);
+
+/* ---------- cart state ---------- */
+const cart = new Set(PRODUCTS.filter(p => p.inCart).map(p => p.rank));
+function updateCartBadges() {
+  document.querySelectorAll("[data-cartcount]").forEach(b => b.textContent = cart.size);
+}
+function toggleCart(rank) {
+  cart.has(rank) ? cart.delete(rank) : cart.add(rank);
+  renderAll();
+}
+
+function cartBtn(p, extra) {
+  const inCart = cart.has(p.rank);
+  return `<button class="ia btn-tonal ${inCart ? "incart" : ""} ${extra||""}" data-cart="${p.rank}"
+            aria-pressed="${inCart}" aria-label="${inCart ? "Remove from" : "Add to"} cart: ${esc(p.name)}">
+            <span class="ms ${inCart ? "fill" : ""}">${inCart ? "shopping_cart" : "add_shopping_cart"}</span>
+            ${inCart ? "In cart" : "Add"}
+          </button>`;
+}
+function decChip(p) {
+  const d = DEC[p.decision];
+  return `<span class="chip ${d.tone}"><span class="ms">${d.icon}</span>${d.label}</span>`;
+}
+function cartChip(p) {
+  return cart.has(p.rank) ? `<span class="chip cart"><span class="ms fill">shopping_cart</span>In cart</span>` : "";
+}
+function openLink(p, inner, cls, label) {
+  return `<a class="ia img-link ${cls||""}" href="${p.url}" target="_blank" rel="noopener"
+             aria-label="${label || "Open " + esc(p.name) + " on Lazada"}">${inner}</a>`;
+}
+
+/* ---------- A ---------- */
+let activeFilter = "all";
+function renderA() {
+  const grid = document.getElementById("gridA");
+  const list = PRODUCTS.filter(p =>
+    activeFilter === "all" ? true :
+    activeFilter === "cart" ? cart.has(p.rank) : p.decision === activeFilter);
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty"><span class="ms">search_off</span><p>No products match this filter.</p></div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p => `
+    <div class="card-a">
+      ${openLink(p, `<img src="${p.img}" alt="${esc(p.name)} product photo"><span class="rankdot">#${p.rank}</span>`)}
+      <div class="body">
+        <div class="titlerow">
+          <h2>${esc(p.name)}</h2>
+          <span class="score-chip"><span class="ms" style="font-size:14px">star</span>${p.score.toFixed(1)}</span>
+        </div>
+        <span class="price">${thb(p.price)}</span>
+        <ul class="facts">${p.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
+        <p class="verdict">${esc(p.verdict)}</p>
+        <div class="chips">${decChip(p)}${cartChip(p)}</div>
+        <div class="actions">
+          <a class="ia btn-filled" href="${p.url}" target="_blank" rel="noopener">
+            <span class="ms">open_in_new</span>View on Lazada</a>
+          ${cartBtn(p)}
+        </div>
+      </div>
+    </div>`).join("");
+}
+document.getElementById("filterChips").addEventListener("click", e => {
+  const b = e.target.closest("[data-filter]");
+  if (!b) return;
+  activeFilter = b.dataset.filter;
+  document.querySelectorAll("#filterChips .chip").forEach(c => c.classList.toggle("on", c === b));
+  renderA();
+});
+
+/* ---------- B ---------- */
+function renderB() {
+  document.getElementById("listB").innerHTML = PRODUCTS.map((p, i) => `
+    <div class="card-b ${i === 0 ? "hero-card" : ""}">
+      ${openLink(p, `<img src="${p.img}" alt="${esc(p.name)} product photo">`)}
+      <div class="body">
+        <div class="toprow">
+          <h2>#${p.rank} ${esc(p.name)}</h2>
+          <span class="b-score">${p.score.toFixed(1)}</span>
+        </div>
+        <div class="metric-row"><span class="price">${thb(p.price)}</span></div>
+        <ul class="facts">${p.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
+        <p class="verdict">${esc(p.verdict)}</p>
+        <div class="chips">${decChip(p)}${cartChip(p)}</div>
+        <div class="actions">
+          <a class="ia btn-filled" href="${p.url}" target="_blank" rel="noopener">
+            <span class="ms">open_in_new</span>Open listing</a>
+          ${cartBtn(p)}
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+/* ---------- C ---------- */
+let selectedRank = 1;
+function renderC() {
+  const listEl = document.getElementById("cList");
+  listEl.innerHTML = PRODUCTS.map(p => `
+    <button class="ia c-item" role="option" data-sel="${p.rank}" aria-selected="${p.rank === selectedRank}">
+      <img src="${p.img}" alt="" aria-hidden="true">
+      <span class="t"><strong>#${p.rank} ${esc(p.name)}</strong><span>${thb(p.price)} · ${DEC[p.decision].label}</span></span>
+      <span class="score-chip">${p.score.toFixed(1)}</span>
+    </button>`).join("");
+  const p = PRODUCTS.find(x => x.rank === selectedRank);
+  document.getElementById("cDetail").innerHTML = `
+    <button class="ia btn-tonal c-back" id="cBack"><span class="ms">arrow_back</span>Back to list</button>
+    ${openLink(p, `<img src="${p.img}" alt="${esc(p.name)} product photo">`, "hero-img")}
+    <div class="headrow">
+      <h2>#${p.rank} ${esc(p.name)}</h2>
+      <span class="b-score">${p.score.toFixed(1)}</span>
+    </div>
+    <span class="price">${thb(p.price)}</span>
+    <div class="chips">${decChip(p)}${cartChip(p)}</div>
+    <ul class="facts">${p.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
+    <p class="verdict">${esc(p.verdict)}</p>
+    <div class="actions">
+      <a class="ia btn-filled" href="${p.url}" target="_blank" rel="noopener">
+        <span class="ms">open_in_new</span>View on Lazada</a>
+      ${cartBtn(p)}
+    </div>`;
+}
+document.getElementById("cShell").addEventListener("click", e => {
+  const back = e.target.closest("#cBack");
+  if (back) { document.getElementById("cShell").classList.remove("show-detail"); return; }
+  const b = e.target.closest("[data-sel]");
+  if (!b) return;
+  selectedRank = +b.dataset.sel;
+  document.getElementById("cShell").classList.add("show-detail");
+  renderC();
+});
+
+/* ---------- cart clicks (all templates) ---------- */
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-cart]");
+  if (b) toggleCart(+b.dataset.cart);
+});
+
+function renderAll() { renderA(); renderB(); renderC(); updateCartBadges(); }
+renderAll();
+
+/* ---------- sketch controls ---------- */
+document.getElementById("tplSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-tpl]");
+  if (!b) return;
+  document.querySelectorAll("#tplSeg button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  document.querySelectorAll(".template").forEach(t => t.classList.toggle("active", t.id === "tpl-" + b.dataset.tpl));
+});
+const frame = document.getElementById("frame");
+document.getElementById("widthSeg").addEventListener("click", e => {
+  const b = e.target.closest("[data-w]");
+  if (!b) return;
+  document.querySelectorAll("#widthSeg button").forEach(x => x.setAttribute("aria-pressed", x === b));
+  frame.className = b.dataset.w === "full" ? "" : b.dataset.w;
+});
+</script>
+</body>
+</html>
