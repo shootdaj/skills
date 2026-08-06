@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<!--
+  VISUAL PRODUCT SHORTLIST — reusable layout template
+
+  TYPE: layout template / shopping default for Lazada and shopping shortlist reports.
+
+  REUSE (keep as-is in every report):
+    - Google Material 3 Standard Feed visual system: semantic tokens, dark-first,
+      M3 shape/elevation/spacing scales, Roboto Flex + Material Symbols.
+    - Information hierarchy: M3 top app bar with cart badge → functional filter
+      chips → responsive product-card grid (3 / 2 / 1 columns).
+    - Card structure: large uncropped product photo (whole photo links to the
+      listing) with rank dot overlay, title + score chip, price, compact fact
+      chips, one-line verdict, decision + in-cart chips, filled "View on Lazada"
+      CTA plus tonal cart toggle.
+    - Interactions: working filter chips, cart add/remove with live badge,
+      persistent app-bar theme toggle (dark default, deliberate light theme),
+      state layers + ripples, visible focus rings, 48px targets,
+      reduced-motion support, image fallback, no horizontal overflow.
+
+  ADAPT (per report):
+    - Title/date in the app bar and <title>.
+    - PRODUCTS array: names, images, URLs, prices, scores, facts, verdicts,
+      inCart flags, decision keys.
+    - Decision/cart labels and accent semantics (DEC map) if the report uses
+      different verdict categories.
+
+  INVARIANTS (do not violate):
+    - Image-led, 4–8 product cards; direct verified Lazada links; concise text;
+      exact verified data only (never invented prices/specs).
+    - Dark-first presentation with working light theme.
+    - No methodology sections, navigation rail, comparison tables, or charts
+      unless the user explicitly requests them.
+
+  SAMPLE DATA: the six PRODUCTS below are real balcony-table examples from the
+  approved sketch. They exist only to show the structure — future reports
+  replace every product with their own verified data.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Balcony Table Shortlist</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..900&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0" rel="stylesheet">
+<style>
+  /* ---------- semantic tokens: M3 baseline scheme, dark-first.
+     Components consume tokens only — no raw hex below this block.
+     Manual data-theme stamp wins over OS preference in both directions. ---------- */
+  :root {
+    --surface: #141218;
+    --surface-dim: #141218;
+    --surface-bright: #3B383E;
+    --surface-container-lowest: #0F0D13;
+    --surface-container-low: #1D1B20;
+    --surface-container: #211F26;
+    --surface-container-high: #2B2930;
+    --surface-container-highest: #36343B;
+    --on-surface: #E6E0E9;
+    --on-surface-variant: #CAC4D0;
+
+    --primary: #D0BCFF;
+    --on-primary: #381E72;
+    --primary-container: #4F378B;
+    --on-primary-container: #EADDFF;
+
+    --secondary: #CCC2DC;
+    --on-secondary: #332D41;
+    --secondary-container: #4A4458;
+    --on-secondary-container: #E8DEF8;
+
+    --tertiary: #EFB8C8;
+    --on-tertiary: #492532;
+    --tertiary-container: #633B48;
+    --on-tertiary-container: #FFD8E4;
+
+    --error: #F2B8B5;
+    --on-error: #601410;
+    --error-container: #8C1D18;
+    --on-error-container: #F9DEDC;
+
+    --success: #81C995;
+    --on-success: #0F3D22;
+    --success-container: #1E4D2F;
+    --on-success-container: #C4EED0;
+
+    --warning: #FDD663;
+    --on-warning: #3F2E00;
+    --warning-container: #5C4300;
+    --on-warning-container: #FFE08F;
+
+    --outline: #938F99;
+    --outline-variant: #49454F;
+    --scrim: rgb(0 0 0 / .55);
+
+    --elevation-1: 0 1px 2px rgb(0 0 0 / .40), 0 1px 3px 1px rgb(0 0 0 / .25);
+    --elevation-2: 0 1px 2px rgb(0 0 0 / .42), 0 2px 6px 2px rgb(0 0 0 / .28);
+    --elevation-3: 0 4px 8px 3px rgb(0 0 0 / .32), 0 1px 3px rgb(0 0 0 / .40);
+
+    --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 55%, transparent);
+
+    /* M3 shape scale */
+    --shape-xs: 4px;
+    --shape-s: 8px;
+    --shape-m: 12px;
+    --shape-l: 16px;
+    --shape-xl: 28px;
+    --shape-full: 999px;
+
+    /* 4/8dp spacing grid */
+    --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+    --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+
+    /* state layer opacities */
+    --state-hover: .08;
+    --state-focus: .10;
+    --state-press: .12;
+    --disabled-content: .38;
+
+    --font-body: 'Roboto Flex', 'Roboto', sans-serif;
+    color-scheme: dark;
+  }
+
+  /* OS preference (only applies before the manual stamp lands) */
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme]) {
+      --surface: #FEF7FF;
+      --surface-dim: #DED8E1;
+      --surface-bright: #FEF7FF;
+      --surface-container-lowest: #FFFFFF;
+      --surface-container-low: #F7F2FA;
+      --surface-container: #F3EDF7;
+      --surface-container-high: #ECE6F0;
+      --surface-container-highest: #E6E0E9;
+      --on-surface: #1D1B20;
+      --on-surface-variant: #49454F;
+      --primary: #6750A4;
+      --on-primary: #FFFFFF;
+      --primary-container: #EADDFF;
+      --on-primary-container: #21005D;
+      --secondary: #625B71;
+      --on-secondary: #FFFFFF;
+      --secondary-container: #E8DEF8;
+      --on-secondary-container: #1D192B;
+      --tertiary: #7D5260;
+      --on-tertiary: #FFFFFF;
+      --tertiary-container: #FFD8E4;
+      --on-tertiary-container: #31111D;
+      --error: #B3261E;
+      --on-error: #FFFFFF;
+      --error-container: #F9DEDC;
+      --on-error-container: #410E0B;
+      --success: #146C2E;
+      --on-success: #FFFFFF;
+      --success-container: #C4EED0;
+      --on-success-container: #072711;
+      --warning: #7A5900;
+      --on-warning: #FFFFFF;
+      --warning-container: #FFE08F;
+      --on-warning-container: #261A00;
+      --outline: #79747E;
+      --outline-variant: #CAC4D0;
+      --scrim: rgb(0 0 0 / .40);
+      --elevation-1: 0 1px 2px rgb(0 0 0 / .30), 0 1px 3px 1px rgb(0 0 0 / .15);
+      --elevation-2: 0 1px 2px rgb(0 0 0 / .30), 0 2px 6px 2px rgb(0 0 0 / .15);
+      --elevation-3: 0 4px 8px 3px rgb(0 0 0 / .15), 0 1px 3px rgb(0 0 0 / .30);
+      --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 45%, transparent);
+      color-scheme: light;
+    }
+  }
+
+  /* Manual toggle wins, both directions */
+  :root[data-theme="dark"] {
+    --surface: #141218;
+    --surface-dim: #141218;
+    --surface-bright: #3B383E;
+    --surface-container-lowest: #0F0D13;
+    --surface-container-low: #1D1B20;
+    --surface-container: #211F26;
+    --surface-container-high: #2B2930;
+    --surface-container-highest: #36343B;
+    --on-surface: #E6E0E9;
+    --on-surface-variant: #CAC4D0;
+    --primary: #D0BCFF;
+    --on-primary: #381E72;
+    --primary-container: #4F378B;
+    --on-primary-container: #EADDFF;
+    --secondary: #CCC2DC;
+    --on-secondary: #332D41;
+    --secondary-container: #4A4458;
+    --on-secondary-container: #E8DEF8;
+    --tertiary: #EFB8C8;
+    --on-tertiary: #492532;
+    --tertiary-container: #633B48;
+    --on-tertiary-container: #FFD8E4;
+    --error: #F2B8B5;
+    --on-error: #601410;
+    --error-container: #8C1D18;
+    --on-error-container: #F9DEDC;
+    --success: #81C995;
+    --on-success: #0F3D22;
+    --success-container: #1E4D2F;
+    --on-success-container: #C4EED0;
+    --warning: #FDD663;
+    --on-warning: #3F2E00;
+    --warning-container: #5C4300;
+    --on-warning-container: #FFE08F;
+    --outline: #938F99;
+    --outline-variant: #49454F;
+    --scrim: rgb(0 0 0 / .55);
+    --elevation-1: 0 1px 2px rgb(0 0 0 / .40), 0 1px 3px 1px rgb(0 0 0 / .25);
+    --elevation-2: 0 1px 2px rgb(0 0 0 / .42), 0 2px 6px 2px rgb(0 0 0 / .28);
+    --elevation-3: 0 4px 8px 3px rgb(0 0 0 / .32), 0 1px 3px rgb(0 0 0 / .40);
+    --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 55%, transparent);
+    color-scheme: dark;
+  }
+
+  :root[data-theme="light"] {
+    --surface: #FEF7FF;
+    --surface-dim: #DED8E1;
+    --surface-bright: #FEF7FF;
+    --surface-container-lowest: #FFFFFF;
+    --surface-container-low: #F7F2FA;
+    --surface-container: #F3EDF7;
+    --surface-container-high: #ECE6F0;
+    --surface-container-highest: #E6E0E9;
+    --on-surface: #1D1B20;
+    --on-surface-variant: #49454F;
+    --primary: #6750A4;
+    --on-primary: #FFFFFF;
+    --primary-container: #EADDFF;
+    --on-primary-container: #21005D;
+    --secondary: #625B71;
+    --on-secondary: #FFFFFF;
+    --secondary-container: #E8DEF8;
+    --on-secondary-container: #1D192B;
+    --tertiary: #7D5260;
+    --on-tertiary: #FFFFFF;
+    --tertiary-container: #FFD8E4;
+    --on-tertiary-container: #31111D;
+    --error: #B3261E;
+    --on-error: #FFFFFF;
+    --error-container: #F9DEDC;
+    --on-error-container: #410E0B;
+    --success: #146C2E;
+    --on-success: #FFFFFF;
+    --success-container: #C4EED0;
+    --on-success-container: #072711;
+    --warning: #7A5900;
+    --on-warning: #FFFFFF;
+    --warning-container: #FFE08F;
+    --on-warning-container: #261A00;
+    --outline: #79747E;
+    --outline-variant: #CAC4D0;
+    --scrim: rgb(0 0 0 / .40);
+    --elevation-1: 0 1px 2px rgb(0 0 0 / .30), 0 1px 3px 1px rgb(0 0 0 / .15);
+    --elevation-2: 0 1px 2px rgb(0 0 0 / .30), 0 2px 6px 2px rgb(0 0 0 / .15);
+    --elevation-3: 0 4px 8px 3px rgb(0 0 0 / .15), 0 1px 3px rgb(0 0 0 / .30);
+    --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 45%, transparent);
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: var(--font-body);
+    background: var(--surface-container-lowest);
+    color: var(--on-surface);
+    min-height: 100vh;
+  }
+  .page {
+    width: 100%; max-width: 1400px; margin: 0 auto;
+    background: var(--surface);
+    box-shadow: var(--elevation-1);
+    min-height: 100vh;
+    container-type: inline-size;
+    container-name: page;
+  }
+  .ms {
+    font-family: 'Material Symbols Rounded';
+    font-weight: normal; font-style: normal;
+    font-size: 24px; line-height: 1;
+    display: inline-block; vertical-align: middle;
+    letter-spacing: normal; text-transform: none;
+    white-space: nowrap; word-wrap: normal; direction: ltr;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    -webkit-font-smoothing: antialiased;
+  }
+  .ms.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+  /* ---------- interactive base: state layer + ripple + focus + 48px targets ---------- */
+  .ia {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    border: none;
+    background: none;
+    font: inherit;
+    color: inherit;
+    isolation: isolate;
+  }
+  .ia::after {
+    content: "";
+    position: absolute; inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 120ms ease;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+  .ia:hover::after { opacity: var(--state-hover); }
+  .ia:focus-visible::after { opacity: var(--state-focus); }
+  .ia:active::after { opacity: var(--state-press); }
+  .ia:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  .ia:disabled { cursor: default; opacity: var(--disabled-content); }
+  .ripple {
+    position: absolute; border-radius: 50%;
+    background: currentColor; opacity: .18;
+    transform: scale(0); pointer-events: none;
+    animation: ripple 480ms ease-out forwards;
+  }
+  @keyframes ripple { to { transform: scale(2.6); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) {
+    .ripple { animation: none; opacity: 0; }
+    * { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+  }
+
+  /* ---------- shared product bits ---------- */
+  .price { font-weight: 700; font-variant-numeric: tabular-nums; }
+  .score-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: var(--primary-container); color: var(--on-primary-container);
+    border-radius: var(--shape-s); padding: 2px 8px;
+    font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;
+  }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    min-height: 32px; padding: 0 var(--sp-3);
+    border-radius: var(--shape-s);
+    border: 1px solid var(--outline);
+    font-size: 14px; font-weight: 500;
+    color: var(--on-surface-variant);
+    background: transparent;
+  }
+  .chip .ms { font-size: 18px; }
+  .chip.on { background: var(--secondary-container); color: var(--on-secondary-container); border-color: transparent; }
+  .chip.tone-buy { background: var(--success-container); color: var(--on-success-container); border-color: transparent; }
+  .chip.tone-keep { background: var(--primary-container); color: var(--on-primary-container); border-color: transparent; }
+  .chip.tone-consider { background: var(--warning-container); color: var(--on-warning-container); border-color: transparent; }
+  .chip.tone-skip { background: var(--error-container); color: var(--on-error-container); border-color: transparent; }
+  .chip.cart { background: var(--tertiary-container); color: var(--on-tertiary-container); border-color: transparent; }
+  .facts { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin: 0; padding: 0; list-style: none; }
+  .facts li {
+    font-size: 12px; color: var(--on-surface-variant);
+    background: var(--surface-container-high);
+    border-radius: var(--shape-xs); padding: 3px 8px;
+    font-variant-numeric: tabular-nums;
+  }
+  .verdict { font-size: 14px; color: var(--on-surface-variant); margin: 0; line-height: 1.45; }
+  .btn-filled {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 var(--sp-5);
+    border-radius: var(--shape-full);
+    background: var(--primary); color: var(--on-primary);
+    font-size: 14px; font-weight: 600; text-decoration: none;
+  }
+  .btn-tonal {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 48px; padding: 0 var(--sp-4);
+    border-radius: var(--shape-full);
+    background: var(--secondary-container); color: var(--on-secondary-container);
+    font-size: 14px; font-weight: 600;
+  }
+  .btn-tonal.incart { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+  .img-link { display: block; position: relative; border-radius: inherit; }
+  .img-link img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+  /* ---------- M3 standard feed ---------- */
+  .appbar {
+    display: flex; align-items: center; gap: var(--sp-3);
+    min-height: 64px; padding: 0 var(--sp-4);
+    background: var(--surface-container);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .appbar h1 { font-size: 22px; font-weight: 500; margin: 0; flex: 1; font-family: 'Roboto Flex', Roboto, sans-serif; }
+  .icon-btn {
+    min-width: 48px; min-height: 48px; border-radius: var(--shape-full);
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--on-surface-variant); position: relative;
+  }
+  .cart-badge {
+    position: absolute; top: 8px; right: 8px;
+    background: var(--tertiary); color: var(--on-tertiary);
+    font-size: 11px; font-weight: 700; min-width: 16px; height: 16px;
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    padding: 0 4px; font-variant-numeric: tabular-nums;
+  }
+  .chip-row {
+    display: flex; gap: var(--sp-2); flex-wrap: wrap;
+    padding: var(--sp-3) var(--sp-4);
+    background: var(--surface-container);
+    border-bottom: 1px solid var(--outline-variant);
+  }
+  .chip-row .chip { min-height: 40px; }
+  .grid {
+    display: grid; gap: var(--sp-4); padding: var(--sp-4);
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @container page (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+  @container page (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--surface-container-low);
+    border-radius: var(--shape-m);
+    overflow: hidden;
+    box-shadow: var(--elevation-1);
+    display: flex; flex-direction: column;
+    transition: box-shadow 160ms ease, transform 160ms ease;
+  }
+  .card:hover { box-shadow: var(--elevation-3); }
+  .card .img-link { aspect-ratio: 4/3; border-radius: 0; }
+  .card .body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); flex: 1; }
+  .card .titlerow { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-2); }
+  .card h2 { font-size: 16px; font-weight: 600; margin: 0; }
+  .card .price { font-size: 18px; }
+  .card .chips { display: flex; gap: var(--sp-1); flex-wrap: wrap; }
+  .card .actions { display: flex; gap: var(--sp-2); margin-top: auto; padding-top: var(--sp-2); }
+  .rankdot {
+    position: absolute; top: var(--sp-2); left: var(--sp-2);
+    background: var(--scrim); color: #fff;
+    border-radius: var(--shape-s); padding: 2px 8px;
+    font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+  }
+  .empty {
+    grid-column: 1 / -1; text-align: center; padding: var(--sp-8) var(--sp-4);
+    color: var(--on-surface-variant);
+  }
+  .empty .ms { font-size: 48px; opacity: .6; }
+</style>
+</head>
+<body>
+
+<div class="page">
+  <main aria-label="Product shortlist">
+    <header class="appbar">
+      <span class="ms" aria-hidden="true">table_restaurant</span>
+      <h1>Balcony Table Shortlist</h1>
+      <button class="ia icon-btn" aria-label="Shopping cart">
+        <span class="ms">shopping_cart</span>
+        <span class="cart-badge" data-cartcount>2</span>
+      </button>
+      <button class="ia icon-btn" id="themeToggle" aria-label="Toggle light or dark theme">
+        <span class="ms" id="themeIcon">light_mode</span>
+      </button>
+    </header>
+    <div class="chip-row" id="filterChips" role="group" aria-label="Filter products">
+      <button class="ia chip on" data-filter="all"><span class="ms">filter_list</span>All</button>
+      <button class="ia chip" data-filter="buy"><span class="ms">check_circle</span>Buy</button>
+      <button class="ia chip" data-filter="keep"><span class="ms">bookmark</span>Keep</button>
+      <button class="ia chip" data-filter="consider"><span class="ms">help</span>Consider</button>
+      <button class="ia chip" data-filter="skip"><span class="ms">block</span>Skip</button>
+      <button class="ia chip" data-filter="cart"><span class="ms">shopping_cart</span>In cart</button>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+</div>
+
+<script>
+/* SAMPLE DATA — replace per report (see ADAPT in the header comment). */
+const PRODUCTS = [
+  { rank:1, name:"Balcony Decor 80 cm", price:2215, score:9.4,
+    facts:["30 × 80 cm","rail up to 16 cm","30 kg"],
+    verdict:"Best overall. Proven, adjustable, weather-ready.",
+    img:"https://img.lazcdn.com/g/p/903be024ed1d8efaf46a4c3431ff4a99.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i276372841.html", inCart:false, decision:"buy" },
+  { rank:2, name:"Balcony Decor 60 cm", price:1895, score:9.0,
+    facts:["30 × 60 cm","rail up to 16 cm","aluminum"],
+    verdict:"Safest compact pick.",
+    img:"https://img.lazcdn.com/g/p/5cd5d4d37cca7a75fbc234a64a27a89c.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i276360096.html", inCart:false, decision:"buy" },
+  { rank:3, name:"Living_HOME 60 cm", price:1344, score:8.5,
+    facts:["60 × 30 cm","folds flat","round or square rail"],
+    verdict:"Best value in your cart.",
+    img:"https://img.lazcdn.com/g/ff/kf/S9966f4ade4fb4c3d9c292c84377cf391M.png_720x720q80.png_.webp",
+    url:"https://www.lazada.co.th/products/i16087746865-s126727912974.html", inCart:true, decision:"keep" },
+  { rank:4, name:"TMCG BT002", price:1287, score:8.3,
+    facts:["90 cm","rail up to 11 cm","40 kg or more"],
+    verdict:"Huge specs for the money.",
+    img:"https://img.lazcdn.com/g/ff/kf/S38c7214dcc424a7ca037cfe616b5e65e5.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i16051784158.html", inCart:false, decision:"consider" },
+  { rank:5, name:"Furnism Balcony Bar", price:3134, score:7.9,
+    facts:["58 or 90 cm","fixed rail lips","preorder"],
+    verdict:"Only for an exact rail fit.",
+    img:"https://img.lazcdn.com/g/p/469e3894830ee37103aef6418ae1def9.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/pdp-i3146989262.html", inCart:false, decision:"skip" },
+  { rank:6, name:"Rustproof 60 × 40 cm", price:1399, score:7.4,
+    facts:["60 × 40 cm","mesh top","fit unknown"],
+    verdict:"Skip unless depth matters most.",
+    img:"https://img.lazcdn.com/g/ff/kf/Sd6bc3361b34f4ccbb02d3db4abcec9d3r.jpg_720x720q80.jpg_.webp",
+    url:"https://www.lazada.co.th/products/i16045178851-s126212356425.html", inCart:true, decision:"skip" }
+];
+
+const DEC = {
+  buy:      { label:"Buy",      icon:"check_circle", tone:"tone-buy" },
+  keep:     { label:"Keep",     icon:"bookmark",     tone:"tone-keep" },
+  consider: { label:"Consider", icon:"help",         tone:"tone-consider" },
+  skip:     { label:"Skip",     icon:"block",        tone:"tone-skip" }
+};
+const thb = n => "฿" + n.toLocaleString("en-US");
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;");
+
+/* ---------- theme: dark-first, persisted, manual wins ---------- */
+const root = document.documentElement;
+const themeIcon = document.getElementById("themeIcon");
+function applyTheme(t) {
+  root.setAttribute("data-theme", t);
+  themeIcon.textContent = t === "dark" ? "light_mode" : "dark_mode";
+  localStorage.setItem("shortlist-theme", t);
+}
+applyTheme(localStorage.getItem("shortlist-theme") || "dark");
+document.getElementById("themeToggle").addEventListener("click", () =>
+  applyTheme(root.getAttribute("data-theme") === "dark" ? "light" : "dark"));
+
+/* ---------- ripple ---------- */
+document.addEventListener("pointerdown", e => {
+  const el = e.target.closest(".ia");
+  if (!el) return;
+  const r = el.getBoundingClientRect();
+  const d = Math.max(r.width, r.height);
+  const s = document.createElement("span");
+  s.className = "ripple";
+  s.style.width = s.style.height = d + "px";
+  s.style.left = (e.clientX - r.left - d/2) + "px";
+  s.style.top = (e.clientY - r.top - d/2) + "px";
+  el.appendChild(s);
+  s.addEventListener("animationend", () => s.remove());
+});
+
+/* ---------- image fallback: swap failed photos for neutral placeholder ---------- */
+const IMG_FALLBACK = "data:image/svg+xml," + encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 720"><rect width="720" height="720" fill="#3a3a44"/><text x="360" y="380" font-family="sans-serif" font-size="48" fill="#9a9aa6" text-anchor="middle">No photo</text></svg>');
+document.addEventListener("error", e => {
+  const img = e.target;
+  if (img && img.tagName === "IMG" && img.src !== IMG_FALLBACK) img.src = IMG_FALLBACK;
+}, true);
+
+/* ---------- cart state ---------- */
+const cart = new Set(PRODUCTS.filter(p => p.inCart).map(p => p.rank));
+function updateCartBadges() {
+  document.querySelectorAll("[data-cartcount]").forEach(b => b.textContent = cart.size);
+}
+function toggleCart(rank) {
+  cart.has(rank) ? cart.delete(rank) : cart.add(rank);
+  render();
+}
+
+function cartBtn(p) {
+  const inCart = cart.has(p.rank);
+  return `<button class="ia btn-tonal ${inCart ? "incart" : ""}" data-cart="${p.rank}"
+            aria-pressed="${inCart}" aria-label="${inCart ? "Remove from" : "Add to"} cart: ${esc(p.name)}">
+            <span class="ms ${inCart ? "fill" : ""}">${inCart ? "shopping_cart" : "add_shopping_cart"}</span>
+            ${inCart ? "In cart" : "Add"}
+          </button>`;
+}
+function decChip(p) {
+  const d = DEC[p.decision];
+  return `<span class="chip ${d.tone}"><span class="ms">${d.icon}</span>${d.label}</span>`;
+}
+function cartChip(p) {
+  return cart.has(p.rank) ? `<span class="chip cart"><span class="ms fill">shopping_cart</span>In cart</span>` : "";
+}
+
+/* ---------- feed render + filters ---------- */
+let activeFilter = "all";
+function render() {
+  const grid = document.getElementById("grid");
+  const list = PRODUCTS.filter(p =>
+    activeFilter === "all" ? true :
+    activeFilter === "cart" ? cart.has(p.rank) : p.decision === activeFilter);
+  if (!list.length) {
+    grid.innerHTML = `<div class="empty"><span class="ms">search_off</span><p>No products match this filter.</p></div>`;
+  } else {
+    grid.innerHTML = list.map(p => `
+      <div class="card">
+        <a class="ia img-link" href="${p.url}" target="_blank" rel="noopener"
+           aria-label="Open ${esc(p.name)} on Lazada">
+          <img src="${p.img}" alt="${esc(p.name)} product photo">
+          <span class="rankdot">#${p.rank}</span>
+        </a>
+        <div class="body">
+          <div class="titlerow">
+            <h2>${esc(p.name)}</h2>
+            <span class="score-chip"><span class="ms" style="font-size:14px">star</span>${p.score.toFixed(1)}</span>
+          </div>
+          <span class="price">${thb(p.price)}</span>
+          <ul class="facts">${p.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
+          <p class="verdict">${esc(p.verdict)}</p>
+          <div class="chips">${decChip(p)}${cartChip(p)}</div>
+          <div class="actions">
+            <a class="ia btn-filled" href="${p.url}" target="_blank" rel="noopener">
+              <span class="ms">open_in_new</span>View on Lazada</a>
+            ${cartBtn(p)}
+          </div>
+        </div>
+      </div>`).join("");
+  }
+  updateCartBadges();
+}
+document.getElementById("filterChips").addEventListener("click", e => {
+  const b = e.target.closest("[data-filter]");
+  if (!b) return;
+  activeFilter = b.dataset.filter;
+  document.querySelectorAll("#filterChips .chip").forEach(c => c.classList.toggle("on", c === b));
+  render();
+});
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-cart]");
+  if (b) toggleCart(+b.dataset.cart);
+});
+render();
+</script>
+</body>
+</html>

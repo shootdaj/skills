@@ -1,0 +1,4 @@
+interface:
+  display_name: "Shopping Sketch Findings"
+  short_description: "Validated Material shopping report direction"
+  default_prompt: "Use $sketch-findings-shootdaj-skills to apply the validated Lazada shopping report design."
