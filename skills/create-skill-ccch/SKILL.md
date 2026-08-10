@@ -56,6 +56,27 @@ Locate the publishing checkout by checking Git remotes rather than assuming a
 path. Inspect the repository layout, current branch, worktree status, existing
 skills with similar scope, and all intended global destinations.
 
+### Existing-skill discovery
+
+When the user asks whether a remembered skill already exists, treat the installed
+skill registry as only the first search surface—not the source of truth for the
+whole library. Check, in order:
+
+1. installed skills in the active harness/profile;
+2. the canonical `shootdaj/skills` checkout, located by its Git remote rather
+   than by an assumed directory;
+3. the current `shootdaj/skills` repository on GitHub when the local checkout is
+   absent, stale, or inconclusive;
+4. other harness-specific skill roots only when the canonical repository does
+   not resolve the question.
+
+Search both names and `SKILL.md` contents because the remembered phrase may be a
+trigger or description rather than the folder name. Open and read the candidate
+`SKILL.md` before confirming a match. Report installation state separately from
+repository existence: “not installed here” does not mean “does not exist.” Do
+not conclude that a skill is absent until both the active installation and the
+canonical source repository have been checked.
+
 If `skills/<skill-name>` already exists, treat the task as an update. Read it
 before editing and preserve unrelated user changes.
 
