@@ -98,7 +98,9 @@ Provide working navigation, theme toggle, proof-detail toggles, expand/collapse 
 
 ## Truth audit
 
-Before publication, verify:
+Before publication, run the mandatory placeholder-leak gate: scan the final HTML for every sample/template identifier — `Sample Feature`, `Project Name`, placeholder URLs (`ORG/REPO`, `github.com/ORG`, `runs/0000000000`), zero commits (`0000000`, the 40-zero hash), sample dates (`2026-01-01`), `SAMPLE-*` test and requirement IDs, `PR #000`, `TICKET-000`, `TICKET-001`, and sample green-CI or requirement-coverage claims. Any survivor blocks publication until removed and the scan reruns clean.
+
+Then verify:
 
 - every number against raw evidence;
 - every proof card against an executed test or runtime observation;

@@ -455,6 +455,12 @@ section{scroll-margin-top:80px}
 .limit-item p{font-size:12.5px;color:var(--on-surface-variant)}
 .limits .lfoot{padding:0 24px 20px;font-size:12.5px;color:var(--on-surface-variant)}
 .limits .lfoot .pill{margin:0 3px}
+/* Inside the warning-container panel, the warn pill needs its own surface
+   to stay distinct from the panel background — semantic tokens only. */
+.limits .pill.warn{
+  background:var(--surface-container-low);
+  border-color:color-mix(in srgb, var(--warning) 45%, transparent);
+}
 
 /* ============ Evidence / links ============ */
 .evsec{border:1px solid var(--outline-variant);border-radius:16px;background:var(--surface-container-low)}
@@ -783,7 +789,7 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
 
 <!-- ============ Narrow-screen modal navigation drawer ============ -->
 <div class="scrim" id="scrim"></div>
-<nav class="drawer" id="drawer" aria-label="Report sections (drawer)">
+<nav class="drawer" id="drawer" aria-label="Report sections (drawer)" aria-hidden="true" inert>
   <div class="dhead">
     <b>Sections</b>
     <button class="iconbtn tap" id="drawerClose" type="button" aria-label="Close navigation"><span class="ms" aria-hidden="true">close</span></button>
@@ -850,8 +856,38 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
   var drawer = document.getElementById('drawer');
   var scrim = document.getElementById('scrim');
   var menuBtn = document.getElementById('menuBtn');
-  function openDrawer(){ drawer.classList.add('open'); scrim.classList.add('show'); menuBtn.setAttribute('aria-expanded','true'); }
-  function closeDrawer(){ drawer.classList.remove('open'); scrim.classList.remove('show'); menuBtn.setAttribute('aria-expanded','false'); }
+  var narrowMq = window.matchMedia('(max-width: 1023px)');
+  /* Drawer is exposed to keyboard/AT only while open on narrow widths.
+     Closed or wide → hidden from AT and its links unfocusable (inert + aria-hidden). */
+  function syncDrawerA11y(){
+    var open = drawer.classList.contains('open') && narrowMq.matches;
+    if(open){
+      drawer.removeAttribute('inert');
+      drawer.setAttribute('aria-hidden','false');
+    }else{
+      drawer.setAttribute('inert','');
+      drawer.setAttribute('aria-hidden','true');
+    }
+  }
+  function openDrawer(){
+    if(!narrowMq.matches) return;
+    drawer.classList.add('open'); scrim.classList.add('show'); menuBtn.setAttribute('aria-expanded','true');
+    syncDrawerA11y();
+  }
+  function closeDrawer(){
+    var wasOpen = drawer.classList.contains('open');
+    drawer.classList.remove('open'); scrim.classList.remove('show'); menuBtn.setAttribute('aria-expanded','false');
+    syncDrawerA11y();
+    if(wasOpen){ menuBtn.focus(); }
+  }
+  function onBreakpointChange(){
+    if(!narrowMq.matches && drawer.classList.contains('open')){
+      drawer.classList.remove('open'); scrim.classList.remove('show'); menuBtn.setAttribute('aria-expanded','false');
+    }
+    syncDrawerA11y();
+  }
+  narrowMq.addEventListener ? narrowMq.addEventListener('change', onBreakpointChange) : narrowMq.addListener(onBreakpointChange);
+  syncDrawerA11y();
   menuBtn.addEventListener('click', function(){ drawer.classList.contains('open') ? closeDrawer() : openDrawer(); });
   document.getElementById('drawerClose').addEventListener('click', closeDrawer);
   scrim.addEventListener('click', closeDrawer);

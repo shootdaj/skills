@@ -41,9 +41,11 @@ Read [references/report-contract.md](references/report-contract.md) before struc
 
 6. **Verify truth and usability.** Check every displayed number and claim against its source. In the native browser, inspect desktop and narrow widths in dark and light themes, open at least one proof detail, exercise navigation and theme controls, confirm no horizontal page overflow or console errors, and verify every link. Do not substitute standalone Playwright for the harness's native browser connector.
 
-7. **Publish when requested.** Use `report-publisher` and `here-now` to publish permanently. Confirm HTTP 200 and that the live HTML matches the verified local file. If the user asked for local-only output, do not publish.
+7. **Run the placeholder-leak gate (mandatory, blocks publication).** Scan the final HTML for every sample/template identifier before any publish or delivery step. At minimum search for: `Sample Feature`, `Project Name`, `sample feature`, placeholder URLs (`ORG/REPO`, `github.com/ORG`, `runs/0000000000`), zero commits (`0000000`, the 40-zero hash), sample dates (`2026-01-01`), `SAMPLE-` test and requirement IDs (`SAMPLE-UAT-`, `SAMPLE-RESUME-01`, `SAMPLE-REJECT-01`, `SAMPLE-SCALE-01`, `SAMPLE-SECURITY-01`), `PR #000`, `TICKET-000`, `TICKET-001`, and sample claims such as `required checks green` or the sample requirement counts that were never verified. Any surviving match blocks publication: fix the content and rerun the scan until it is clean.
 
-8. **Report briefly.** Give the live URL or local file, the fresh result summary, what remains unproven, and whether any merge or release gate remains.
+8. **Publish when requested.** Use `report-publisher` and `here-now` to publish permanently. Confirm HTTP 200 and that the live HTML matches the verified local file. If the user asked for local-only output, do not publish.
+
+9. **Report briefly.** Give the live URL or local file, the fresh result summary, what remains unproven, and whether any merge or release gate remains.
 
 ## Evidence rules
 
