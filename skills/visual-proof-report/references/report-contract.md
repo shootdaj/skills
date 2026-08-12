@@ -74,21 +74,27 @@ Provide copy buttons only for commands worth rerunning. Do not expose credential
 
 ## Visual language
 
+Material Design 3 and Google's clean, information-first design language are **binding requirements**, not optional styling.
+
 - Mostly visual; no walls of text.
-- Material 3 chassis with compact app bar, persistent rail on desktop, and drawer/FAB on narrow screens.
-- Dark-first fierce-waffle palette: near-black, cyan, green, amber; deliberate light theme too.
-- Sora for display, Schibsted Grotesk for body, JetBrains Mono for evidence/data, with sensible fallbacks.
-- Semantic CSS tokens only.
-- SVG icons, never emoji as controls.
-- All interactive targets at least 44px.
-- Visible focus, hover, press, selected, and disabled states.
-- Respect reduced motion.
+- Material 3 adaptive chassis: compact top app bar, persistent navigation rail at wide widths, modal navigation drawer opened from an app-bar menu icon button at narrow widths. Add a FAB only when it carries a real navigation or primary-action purpose — never as decoration.
+- Material 3 semantic tokens only inside components: tonal surface tiers (`surface`, `surface-container` low→highest), on-surface roles, primary/on-primary/primary-container, outline roles, and semantic status roles. No hardcoded colors in component rules.
+- Restrained Google blue as the single primary. Google-like semantic green (pass), amber (limits), red (fail) status roles. No rainbow branding, no decorative Google-logo imitation.
+- Depth mostly through tonal surface hierarchy; a low, coherent elevation scale for the few surfaces that float.
+- Dark theme is the default; the light theme is fully designed, not a mechanical inversion.
+- Roboto Flex for display and body, Roboto Mono for technical evidence and data, with system fallbacks. Never claim or embed proprietary Google Sans.
+- Material type roles (display, headline, title, body, label) with disciplined whitespace on a 4/8dp spacing rhythm.
+- Material Symbols Rounded (or equivalent inline SVG) for icons; never emoji as icons or controls.
+- Coherent Material shape scale: small radii for chips and code blocks, 12–16dp cards, up to 28dp for hero surfaces, pill-shaped buttons and navigation indicators.
+- All interactive targets at least 48px, with visible state layers: hover, focus, pressed, selected, and disabled states.
+- Meaningful, restrained motion with Material easing; respect reduced motion.
 - No page-level horizontal overflow.
 - Technical evidence collapsed by default.
+- Self-contained single file except Google Fonts / Material Symbols stylesheet requests.
 
 ## Interaction minimum
 
-Provide working navigation, theme toggle, proof-detail toggles, expand/collapse control, and exact source links. On narrow screens, the drawer must dismiss by close button, scrim, and Escape.
+Provide working navigation, theme toggle, proof-detail toggles, expand/collapse control, and exact source links. On narrow screens, the navigation drawer opens from the app-bar menu button and must dismiss by close button, scrim, and Escape.
 
 ## Truth audit
 
