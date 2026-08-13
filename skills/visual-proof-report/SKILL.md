@@ -1,0 +1,85 @@
+---
+name: visual-proof-report
+description: Turn verified test, CI, UAT, review, and runtime evidence into a mostly visual, plain-English HTML proof report. Use when the user asks to prove that work functions, explain what tests actually did, show why each test matters, create a visual test report, publish verification evidence, or replace a wall-of-text engineering report with scannable proof cards and explicit limitations.
+---
+
+# Visual Proof Report
+
+Create a scan-first proof report that lets a non-technical reader decide whether the work is trustworthy. Every visible block must answer a decision or action question. If it does not, delete it.
+
+## Required composition
+
+Use these skills when available:
+
+- `report-publisher` for the Standard Pyramid structure and permanent publishing.
+- `anshul-ui-standards` for the report visual language and browser checks.
+- `frontend-design` for the frontend build.
+- `use-claude` when the current harness must delegate frontend work to real Claude Code.
+
+Real Claude Code using the Fable model owns the HTML design and frontend implementation. The orchestrating agent gathers and checks evidence, reviews the result, tests it in the native browser, and publishes it.
+
+Read [references/report-contract.md](references/report-contract.md) before structuring the report. Use [assets/visual-proof-template.html](assets/visual-proof-template.html) as the preferred starting shell when it fits; adapt the content and mini-visuals to the evidence rather than merely replacing words.
+
+## Workflow
+
+1. **Gather authoritative evidence.** Read the actual test output, requirement mapping, source tests, CI jobs, review result, commit, PR state, runtime evidence, and known limitations. Fresh evidence beats summaries. Never invent a pass, example, metric, or failure mode.
+
+2. **Define the useful claim.** State what the change does, the exact result, the remaining gaps, and what the user must decide. Do not add marketing verdicts, definitions of `verified`, or prose about how the report itself works. Do not turn a controlled test into a universal reliability claim.
+
+3. **Build the proof-card matrix.** Create one card per meaningful behavior or scenario. Every card must contain exactly these reader-facing fields:
+   - **What I tested** — the behavior, input, or risk exercised.
+   - **Why it matters** — why the user needs this protection.
+   - **What breaks if it fails** — the concrete harm or regression.
+   - **Observed proof** — the actual input, output, state change, count, or result from the executed test.
+
+   Keep each field to one or two short sentences. An invented or merely plausible example is not proof. Put test names, commands, hashes, and raw assertions in collapsed evidence.
+
+4. **Design the scan path.** Use this order: what the change does; exact test results; what remains unproven; what the user must review or decide; exact PR, CI, and evidence links; collapsed raw evidence. A flow diagram is optional and allowed only when it explains specific tested behavior more clearly than the proof cards. Generic process diagrams are forbidden.
+
+5. **Build through Claude Fable.** Give Claude the verified evidence matrix, exact links, report contract, and template. Require a single self-contained `index.html`, plain English, real content, and no report-about-the-report prose. The visual language is **Material Design 3 plus Google's clean, information-first design language — binding, not optional**: Material 3 adaptive chassis (compact top app bar, navigation rail wide, modal drawer narrow), Material 3 semantic tokens with tonal surface hierarchy, restrained Google-blue primary with semantic green/amber/red status roles, Roboto Flex and Roboto Mono with Material Symbols Rounded, Material type roles on a 4/8dp rhythm, 48px targets with visible state layers, both themes fully designed with dark as default, and reduced-motion support. See the report contract's Visual language section for the full rules.
+
+6. **Verify truth and usability.** Check every displayed number and claim against its source. In the native browser, inspect desktop and narrow widths in dark and light themes, open at least one proof detail, exercise navigation and theme controls, confirm no horizontal page overflow or console errors, and verify every link. Do not substitute standalone Playwright for the harness's native browser connector.
+
+7. **Run the placeholder-leak gate (mandatory, blocks publication).** Scan the final HTML for every sample/template identifier before any publish or delivery step. At minimum search for: `Sample Feature`, `Project Name`, `sample feature`, placeholder URLs (`ORG/REPO`, `github.com/ORG`, `runs/0000000000`), zero commits (`0000000`, the 40-zero hash), sample dates (`2026-01-01`), `SAMPLE-` test and requirement IDs (`SAMPLE-UAT-`, `SAMPLE-RESUME-01`, `SAMPLE-REJECT-01`, `SAMPLE-SCALE-01`, `SAMPLE-SECURITY-01`), `PR #000`, `TICKET-000`, `TICKET-001`, and sample claims such as `required checks green` or the sample requirement counts that were never verified. Any surviving match blocks publication: fix the content and rerun the scan until it is clean.
+
+8. **Publish when requested.** Use `report-publisher` and `here-now` to publish permanently. Confirm HTTP 200 and that the live HTML matches the verified local file. If the user asked for local-only output, do not publish.
+
+9. **Report briefly.** Give the live URL or local file, the fresh result summary, what remains unproven, and whether any merge or release gate remains.
+
+## No-fluff gate
+
+Delete any content that does not help the user judge the change, the proof, the risk, or the next action. In particular:
+
+- Never deliver the template or demo page as an actual project report.
+- Never include generic `How the system works` diagrams, verification definitions, report-about-the-report copy, decorative verdict speeches, repeated requirement lists, or filler metrics.
+- Never show sample, demo, placeholder, or invented values in an actual report.
+- The first screen must show the actual change, actual result, remaining gaps, and required user action.
+- Keep technical logs and raw evidence collapsed by default.
+
+## Evidence rules
+
+- Separate **passed**, **failed**, **not run**, and **not applicable**. Never hide a failure inside an aggregate pass rate.
+- Distinguish current local evidence, hosted CI, runtime/UAT, and reviewer conclusions.
+- A test name is not proof by itself. Explain the action and observed result.
+- Green CI is supporting evidence, not a substitute for the real user or system workflow.
+- Show exact limitations near the verdict, not only in an appendix.
+- If evidence is stale, partial, indirect, or missing, say so and weaken the claim.
+- Keep merge, deployment, and approval state exact. A green open PR is not merged or shipped.
+
+## Target adapters
+
+<claude_skill_adapter>
+Stay on Fable for the frontend build. Use Claude's native browser connector for report inspection.
+</claude_skill_adapter>
+
+<codex_skill_adapter>
+Invoke real Claude Code explicitly with `--model fable` for the HTML build. Use Codex's native Chrome connector for report inspection.
+</codex_skill_adapter>
+
+<cursor_skill_adapter>
+Use the configured real-Claude delegation route with Fable for the HTML build and Cursor's native Chrome-capable browser connector for inspection.
+</cursor_skill_adapter>
+
+<hermes_skill_adapter>
+Use the configured real-Claude delegation route with Fable for the HTML build and a Chrome-attached Hermes browser connector for inspection.
+</hermes_skill_adapter>

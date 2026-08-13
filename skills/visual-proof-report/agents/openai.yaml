@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visual Proof Report"
+  short_description: "Turn test evidence into a visual proof report"
+  default_prompt: "Use $visual-proof-report to explain these test results visually in plain English and publish the report."
