@@ -1,11 +1,11 @@
 ---
 name: anshul-ui-standards
-description: MUST be used for ANY UI, frontend, dashboard, mock, control surface, or HTML report work — house rules for Material-grade usability, dark/light theming, interactivity minimums, data-viz/motion stack, and mandatory screenshot self-verification. Load alongside frontend-design and ui-ux-pro-max.
+description: MUST be used for ANY UI, frontend, dashboard, mock, control surface, or HTML report work — house rules for Material-grade usability, Apple-style fluid interaction, dark/light theming, interactivity minimums, data-viz/motion, and mandatory screenshot self-verification. Load alongside frontend-design, ui-ux-pro-max, and apple-design.
 ---
 
 # Anshul UI Standards — house rules
 
-Binding rules for every page, mock, dashboard, and report. The `frontend-design` skill supplies aesthetic boldness and `ui-ux-pro-max` supplies UX/a11y depth — load both with this skill. When rules conflict: **this file wins**.
+Binding rules for every page, mock, dashboard, and report. Load `frontend-design` for aesthetic boldness, `ui-ux-pro-max` for UX/a11y depth, and `apple-design` for fluid, physical interaction and motion. When rules conflict: **this file wins**.
 
 ## Claude Fable owns frontend design
 
@@ -54,21 +54,29 @@ Recipes: `references/dataviz-motion.md`
 - **Motion (motion.dev)** for entrance staggers, springs, micro-interactions.
 - `prefers-reduced-motion` respected everywhere.
 
-## 6. Inspiration protocol
+## 6. Apple-style fluid interaction
+
+- Load and apply `apple-design` to every UI design, implementation, and review task.
+- Keep Material Design 3 as the structural chassis; use Apple’s principles for interaction feel: immediate pointer-down feedback, 1:1 direct manipulation, interruptible motion, velocity handoff, momentum projection, soft boundaries, and spatially consistent enter/exit paths.
+- Use critically damped springs by default. Add bounce only when a physical gesture supplies momentum; never add decorative bounce to passive transitions.
+- Gesture-driven elements must start from their live on-screen value, remain grabbable mid-animation, and preserve velocity when redirected.
+- Apply Apple’s material, typography, and reduced-motion guidance only where it strengthens this house system; it does not replace the required MD3 hierarchy, semantic tokens, accessibility, or verification rules.
+
+## 7. Inspiration protocol
 
 - Before building, pull concrete patterns from **21st.dev, Mobbin, Dribbble** (WebSearch/WebFetch); name the patterns being used.
 - Banned AI-slop defaults: purple-gradient-on-white hero, Inter/Space Grotesk reflex, centered-everything, `rounded-lg` everywhere, grey-on-grey panels, washed gradient headlines, emoji as icons.
 
-## 7. Real content only
+## 8. Real content only
 
 - Actual project/domain data and vocabulary — never lorem ipsum.
 - Icons: Material Symbols (or Lucide/Heroicons) — **never emoji-as-icons**.
 
-## 8. Reports use the house report language
+## 9. Reports use the house report language
 
 - Any *report* page (test reports, design reports, analyses) uses the fierce-waffle design language: bg `#0B0F17`, cyan `#3DC5FF`, green `#3DDC97`, amber `#FFC24B`; Sora (display) / Schibsted Grotesk (body) / JetBrains Mono (data); left-rail nav; collapsible `<details>` sections; dark-first with a light theme still provided via tokens.
 
-## 9. Screenshot self-verification loop — mandatory
+## 10. Screenshot self-verification loop — mandatory
 
 Checklist: `references/verification.md`
 
