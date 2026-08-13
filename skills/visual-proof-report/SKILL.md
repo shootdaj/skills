@@ -5,7 +5,7 @@ description: Turn verified test, CI, UAT, review, and runtime evidence into a mo
 
 # Visual Proof Report
 
-Create a scan-first proof report that lets a non-technical reader understand what was tested, what passed, what would break if it failed, and what is still unproven.
+Create a scan-first proof report that lets a non-technical reader decide whether the work is trustworthy. Every visible block must answer a decision or action question. If it does not, delete it.
 
 ## Required composition
 
@@ -24,18 +24,17 @@ Read [references/report-contract.md](references/report-contract.md) before struc
 
 1. **Gather authoritative evidence.** Read the actual test output, requirement mapping, source tests, CI jobs, review result, commit, PR state, runtime evidence, and known limitations. Fresh evidence beats summaries. Never invent a pass, example, metric, or failure mode.
 
-2. **Define the honest claim.** Write one verdict that says what the evidence proves and immediately qualifies its limits. Do not turn a controlled test into a universal reliability claim.
+2. **Define the useful claim.** State what the change does, the exact result, the remaining gaps, and what the user must decide. Do not add marketing verdicts, definitions of `verified`, or prose about how the report itself works. Do not turn a controlled test into a universal reliability claim.
 
 3. **Build the proof-card matrix.** Create one card per meaningful behavior or scenario. Every card must contain exactly these reader-facing fields:
-   - **Tested** — the behavior or risk.
-   - **Did** — what the test actually made the system do.
-   - **Why** — why a user should care.
-   - **If it failed** — the concrete harm or regression.
-   - **Example** — a realistic, plain-English situation.
+   - **What I tested** — the behavior, input, or risk exercised.
+   - **Why it matters** — why the user needs this protection.
+   - **What breaks if it fails** — the concrete harm or regression.
+   - **Observed proof** — the actual input, output, state change, count, or result from the executed test.
 
-   Keep each field to one or two short sentences. Put test names, commands, hashes, query counts, and raw assertions in collapsed evidence.
+   Keep each field to one or two short sentences. An invented or merely plausible example is not proof. Put test names, commands, hashes, and raw assertions in collapsed evidence.
 
-4. **Design the scan path.** Lead with verdict, pass counts, failures, exact version, and merge/release state. Follow with one simple system flow, the proof-card grid, a prominent limitations panel, then collapsed technical evidence and exact source links.
+4. **Design the scan path.** Use this order: what the change does; exact test results; what remains unproven; what the user must review or decide; exact PR, CI, and evidence links; collapsed raw evidence. A flow diagram is optional and allowed only when it explains specific tested behavior more clearly than the proof cards. Generic process diagrams are forbidden.
 
 5. **Build through Claude Fable.** Give Claude the verified evidence matrix, exact links, report contract, and template. Require a single self-contained `index.html`, plain English, real content, and no report-about-the-report prose. The visual language is **Material Design 3 plus Google's clean, information-first design language — binding, not optional**: Material 3 adaptive chassis (compact top app bar, navigation rail wide, modal drawer narrow), Material 3 semantic tokens with tonal surface hierarchy, restrained Google-blue primary with semantic green/amber/red status roles, Roboto Flex and Roboto Mono with Material Symbols Rounded, Material type roles on a 4/8dp rhythm, 48px targets with visible state layers, both themes fully designed with dark as default, and reduced-motion support. See the report contract's Visual language section for the full rules.
 
@@ -46,6 +45,16 @@ Read [references/report-contract.md](references/report-contract.md) before struc
 8. **Publish when requested.** Use `report-publisher` and `here-now` to publish permanently. Confirm HTTP 200 and that the live HTML matches the verified local file. If the user asked for local-only output, do not publish.
 
 9. **Report briefly.** Give the live URL or local file, the fresh result summary, what remains unproven, and whether any merge or release gate remains.
+
+## No-fluff gate
+
+Delete any content that does not help the user judge the change, the proof, the risk, or the next action. In particular:
+
+- Never deliver the template or demo page as an actual project report.
+- Never include generic `How the system works` diagrams, verification definitions, report-about-the-report copy, decorative verdict speeches, repeated requirement lists, or filler metrics.
+- Never show sample, demo, placeholder, or invented values in an actual report.
+- The first screen must show the actual change, actual result, remaining gaps, and required user action.
+- Keep technical logs and raw evidence collapsed by default.
 
 ## Evidence rules
 

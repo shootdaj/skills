@@ -2,31 +2,41 @@
 <html lang="en">
 <!--
   ══════════════════════════════════════════════════════════════════════════
+  TEMPLATE PREVIEW — NOT PROJECT EVIDENCE
   VISUAL PROOF REPORT — REUSABLE TEMPLATE (skill: visual-proof-report)
   Design language: Material Design 3 + Google's clean, information-first
   visual language. This chassis is binding — do not restyle it away.
 
   AGENTS: EVERY piece of sample content in this file is a placeholder.
+  This file must never be delivered or published as a project report.
   Before publishing you MUST replace every sample claim, number, date,
   commit, link, test name, requirement id, command, and example with
   VERIFIED evidence from the actual work. Never ship a sample value.
 
   What to replace:
     · App-bar title, subtitle, date, and pass chip
-    · Verdict headline, plain-English summary, and the product-term definition
+    · First-screen facts: the actual change, the exact result, the
+      remaining gaps, and the user's next action — all four are mandatory
     · Every stat in the stat strip (counts, durations, PR/merge state)
-    · The flow diagram stages (4–7 stages describing THIS system)
-    · Every proof card — one card per verified behavior. Keep the five
-      fixed fields exactly: Tested / Did / Why / If it failed / Example.
+    · Every proof card — one card per verified behavior. Keep the four
+      fixed fields exactly: What I tested / Why it matters /
+      What breaks if it fails / Observed proof.
       Duplicate the <article class="card"> block for more cards.
     · The limitations panel — list what is genuinely NOT proven yet
     · Collapsed technical evidence: real commands, real run identity table
     · Source links: exact PR, CI run, and repository URLs
     · Footer identity line
     · The localStorage theme key below if two reports may share an origin
+    · DELETE the red TEMPLATE PREVIEW banner only after every sample value
+      above has been replaced with verified evidence
+
+  What NOT to add back:
+    · No generic "How the system works" process diagrams
+    · No definitions of "verified" or report-about-the-report prose
+    · No decorative verdict speeches
 
   What to keep:
-    · The five-field card anatomy, the collapsed-by-default evidence,
+    · The four-field card anatomy, the collapsed-by-default evidence,
       the high-visibility limitations panel, the exact page order
     · The Material 3 chassis: compact top app bar, navigation rail at wide
       widths, modal navigation drawer at narrow widths, tonal surface
@@ -42,7 +52,7 @@
 <meta name="color-scheme" content="dark light">
 <meta name="darkreader-lock">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23131314'/%3E%3Cpath d='M9 16l4 4 10-10' fill='none' stroke='%23a8c7fa' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<title>Sample Feature — Visual Proof Report</title>
+<title>TEMPLATE PREVIEW — Visual Proof Report (not project evidence)</title>
 <script>
 /* Pre-paint theme stamp: manual choice overrides OS preference in both directions.
    Dark is the default when no stored choice and no OS light preference. */
@@ -294,7 +304,6 @@ section{scroll-margin-top:80px}
   font-weight:700;letter-spacing:-.015em;
   font-size:clamp(28px,4vw,40px);line-height:1.15;max-width:18ch;
 }
-.hero h2 .lim{color:var(--warning)}
 .hero .kicker{font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--primary);margin-bottom:8px}
 .hero .plain{margin-top:12px;color:var(--on-surface-variant);max-width:58ch}
 .statgrid{
@@ -308,55 +317,33 @@ section{scroll-margin-top:80px}
 .stat .v.ok{color:var(--success)}
 .stat .v.warn{color:var(--warning)}
 .stat .k{font-size:11.5px;font-weight:500;color:var(--dim);letter-spacing:.05em;text-transform:uppercase;margin-top:4px}
-.safe-defn{
-  margin-top:20px;display:flex;gap:12px;align-items:flex-start;max-width:640px;
+/* First-screen decisive facts: remaining gaps + user's next action */
+.factrow{margin-top:20px;display:flex;flex-direction:column;gap:8px;max-width:640px}
+.fact{
+  display:flex;gap:12px;align-items:flex-start;
   background:var(--surface-container-high);
   border-radius:16px;padding:14px 16px;font-size:13.5px;color:var(--on-surface-variant);
 }
-.safe-defn .ms{color:var(--primary);margin-top:1px}
-.safe-defn b{color:var(--on-surface);font-weight:600}
+.fact .ms{flex:none;margin-top:1px}
+.fact.gap .ms{color:var(--warning)}
+.fact.act .ms{color:var(--primary)}
+.fact b{color:var(--on-surface);font-weight:600}
+
+/* ============ Template-preview banner — DELETE in a real report ============ */
+.template-banner{
+  display:flex;gap:12px;align-items:flex-start;
+  background:var(--error-container);color:var(--on-surface);
+  border:1px solid color-mix(in srgb, var(--error) 45%, transparent);
+  border-radius:16px;padding:14px 16px;margin-bottom:24px;font-size:13.5px;
+}
+.template-banner .ms{color:var(--error);flex:none;margin-top:1px}
+.template-banner b{font-weight:700}
 
 /* ============ Section headers ============ */
 .sec-head{display:flex;align-items:baseline;gap:12px;margin:48px 0 8px;flex-wrap:wrap}
 .sec-head h3{font-size:clamp(20px,2.4vw,24px);font-weight:600;letter-spacing:-.01em}
 .sec-head .n{font-family:var(--font-mono);font-size:12px;color:var(--primary)}
 .sec-sub{color:var(--dim);font-size:13.5px;margin-bottom:20px;max-width:70ch}
-
-/* ============ Flow diagram ============ */
-.flow{
-  border:1px solid var(--outline-variant);border-radius:24px;background:var(--surface-container-low);
-  padding:24px 16px;
-  display:grid;grid-template-columns:repeat(5, 1fr);gap:0;
-}
-.fnode{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:8px;border-radius:16px}
-.fnode .fi{
-  width:56px;height:56px;border-radius:16px;display:grid;place-items:center;
-  background:var(--surface-container-high);color:var(--primary);
-  transition:transform .2s var(--ease-standard), background-color .2s var(--ease-standard);
-}
-.fnode:hover .fi{transform:translateY(-3px);background:var(--surface-container-highest)}
-.fnode[data-tone="green"] .fi{color:var(--success)}
-.fnode[data-tone="amber"] .fi{color:var(--warning)}
-.fnode .ft{font-size:13.5px;font-weight:600}
-.fnode .fd{font-size:12px;color:var(--dim);line-height:1.45;max-width:16ch}
-.fnode:not(:last-child)::after{
-  content:"";position:absolute;top:34px;right:-9px;width:18px;height:2px;
-  background:var(--outline-variant);z-index:1;
-}
-.fnode:not(:last-child)::before{
-  content:"";position:absolute;top:30.5px;right:-11px;width:7px;height:7px;
-  border-top:2px solid var(--outline-variant);border-right:2px solid var(--outline-variant);
-  transform:rotate(45deg);z-index:2;
-}
-@media (max-width:900px){
-  .flow{grid-template-columns:repeat(3,1fr);row-gap:24px}
-  .fnode:nth-child(3)::after,.fnode:nth-child(3)::before{display:none}
-}
-@media (max-width:540px){
-  .flow{grid-template-columns:repeat(2,1fr)}
-  .fnode:nth-child(2)::after,.fnode:nth-child(2)::before,
-  .fnode:nth-child(4)::after,.fnode:nth-child(4)::before{display:none}
-}
 
 /* ============ Proof cards ============ */
 .toolsrow{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -406,13 +393,14 @@ section{scroll-margin-top:80px}
 .meter{flex:1;min-width:80px;height:8px;border-radius:99px;background:var(--surface-container-highest);overflow:hidden;position:relative}
 .meter i{position:absolute;inset:0;width:var(--w,50%);background:var(--success);border-radius:99px}
 .meter i.p{background:var(--warning);width:25%}
-/* five-label anatomy */
-.anat{padding:14px 16px 8px;display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:13px}
+/* four-field anatomy: What I tested / Why it matters / What breaks if it fails / Observed proof */
+.anat{padding:14px 16px 8px;display:grid;grid-template-columns:1fr;gap:4px;font-size:13px}
 .anat .lb{
   font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  align-self:start;margin-top:2px;padding:3px 8px;border-radius:6px;white-space:nowrap;
+  justify-self:start;margin-top:8px;padding:3px 8px;border-radius:6px;white-space:nowrap;
   background:var(--surface-container-high);color:var(--dim);
 }
+.anat .lb:first-child{margin-top:0}
 .anat .lb.t{color:var(--primary)}
 .anat .lb.f{color:var(--error)}
 .anat .lb.e{color:var(--success)}
@@ -554,8 +542,7 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
 <div class="shell">
 <nav class="rail" aria-label="Report sections">
   <div class="rail-label">Report</div>
-  <a class="navlink tap" href="#verdict"><span class="ms s20" aria-hidden="true">task_alt</span>Verdict</a>
-  <a class="navlink tap" href="#how"><span class="ms s20" aria-hidden="true">route</span>How it works</a>
+  <a class="navlink tap" href="#verdict"><span class="ms s20" aria-hidden="true">task_alt</span>Result &amp; action</a>
   <a class="navlink tap" href="#proofs"><span class="ms s20" aria-hidden="true">grid_view</span>Proof cards</a>
   <a class="navlink tap" href="#limits"><span class="ms s20" aria-hidden="true">warning</span>Not proved yet</a>
   <a class="navlink tap" href="#evidence"><span class="ms s20" aria-hidden="true">science</span>Evidence</a>
@@ -565,18 +552,32 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
 
 <main>
 
-<!-- ============ Verdict — REPLACE headline, summary, definition, every stat ============ -->
-<section id="verdict" aria-label="Verdict">
+<!-- ============ TEMPLATE PREVIEW banner — DELETE only after every sample
+     value in this file is replaced with verified evidence ============ -->
+<div class="template-banner" role="note">
+  <span class="ms" aria-hidden="true">report</span>
+  <div><b>TEMPLATE PREVIEW — NOT PROJECT EVIDENCE.</b> Every claim, number, commit, link, and result on this page is a sample placeholder. Replace all content with verified evidence from real work and delete this banner before delivering a report.</div>
+</div>
+
+<!-- ============ First screen — REPLACE all four decisive facts:
+     actual change · exact result · remaining gaps · user action ============ -->
+<section id="verdict" aria-label="What this change does and the result">
   <div class="hero">
     <div class="hero-top">
       <div class="verdict-badge"><span class="ms fill" style="font-size:40px" aria-hidden="true">check_circle</span></div>
       <div>
-        <div class="kicker">Verification · sample feature</div>
-        <h2>It passed — <span class="lim">with clear limits.</span></h2>
-        <p class="plain">Every behavior claimed below was proven by automated tests against the exact code version listed, in controlled environments. Anything not proven is named plainly in the limitations panel — nothing here claims more than the evidence shows.</p>
-        <div class="safe-defn">
-          <span class="ms s20" aria-hidden="true">verified_user</span>
-          <div>Throughout this report, <b>&ldquo;Verified&rdquo;</b> means: an executed test observed the behavior on the exact code version listed — not a code read, not an assumption.</div>
+        <div class="kicker">What this change does</div>
+        <h2>Sample feature now survives interruption, rejects bad input, and holds up at scale.</h2>
+        <p class="plain">The feature resumes an interrupted run from its checkpoint, refuses malformed input with zero side effects, and answers status queries in fixed database work at 10,000 records.</p>
+        <div class="factrow">
+          <div class="fact gap">
+            <span class="ms s20" aria-hidden="true">warning</span>
+            <div><b>Not yet proven:</b> production deployment, end-user UI workflow, and multi-machine use — details in the limitations panel below.</div>
+          </div>
+          <div class="fact act">
+            <span class="ms s20" aria-hidden="true">arrow_forward</span>
+            <div><b>Your next action:</b> review and merge PR #000, then schedule the production verification pass.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -590,41 +591,15 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
   </div>
 </section>
 
-<!-- ============ Flow — REPLACE with 4–7 stages describing THIS system ============ -->
-<section id="how" aria-label="How the system works">
-  <div class="sec-head"><h3>How the system works</h3><span class="n">5 stages</span></div>
-  <p class="sec-sub">One protective loop, end to end. Each stage below is proven by one or more of the proof cards.</p>
-  <div class="flow" role="list">
-    <div class="fnode tap" role="listitem" tabindex="0">
-      <span class="fi"><span class="ms" aria-hidden="true">description</span></span>
-      <span class="ft">Accept work</span><span class="fd">Take in the user's request or data</span>
-    </div>
-    <div class="fnode tap" role="listitem" tabindex="0">
-      <span class="fi"><span class="ms" aria-hidden="true">shield</span></span>
-      <span class="ft">Check safety</span><span class="fd">Reject anything invalid or unsafe</span>
-    </div>
-    <div class="fnode tap" role="listitem" tabindex="0">
-      <span class="fi"><span class="ms" aria-hidden="true">sync</span></span>
-      <span class="ft">Do the work</span><span class="fd">Run the core job, resumable if interrupted</span>
-    </div>
-    <div class="fnode tap" data-tone="green" role="listitem" tabindex="0">
-      <span class="fi"><span class="ms" aria-hidden="true">tag</span></span>
-      <span class="ft">Verify result</span><span class="fd">Confirm the output matches expectation</span>
-    </div>
-    <div class="fnode tap" data-tone="amber" role="listitem" tabindex="0">
-      <span class="fi"><span class="ms" aria-hidden="true">visibility</span></span>
-      <span class="ft">Report state</span><span class="fd">Show the user an accurate status</span>
-    </div>
-  </div>
-</section>
-
 <!-- ============ Proof cards — one card per VERIFIED behavior.
-     Duplicate <article class="card"> blocks as needed; keep the five
-     fixed fields (Tested / Did / Why / If it failed / Example) and the
-     collapsed evidence row on every card. ============ -->
+     Duplicate <article class="card"> blocks as needed; keep the four
+     fixed fields (What I tested / Why it matters / What breaks if it
+     fails / Observed proof) and the collapsed evidence row on every
+     card. "Observed proof" must state the actual result from the
+     executed test — never an invented scenario. ============ -->
 <section id="proofs" aria-label="Proof cards">
   <div class="sec-head"><h3>Three proofs</h3><span class="n">all passed</span></div>
-  <p class="sec-sub">Each card: what we tested, what the test did, why it matters, what breaks if it fails, and a concrete example. Technical results sit in the collapsed strip.</p>
+  <p class="sec-sub">Each card: what I tested, why it matters, what breaks if it fails, and the observed proof from the executed test. Technical results sit in the collapsed strip.</p>
   <div class="toolsrow">
     <button id="toggleAll" class="btn tap" type="button" aria-expanded="false">
       <span class="ms s18" aria-hidden="true">unfold_more</span><span>Expand all evidence</span>
@@ -648,11 +623,10 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
         <span class="pill ok">complete</span>
       </div>
       <div class="anat">
-        <span class="lb t">Tested</span><p>What happens when the operation is stopped partway through and the app restarts.</p>
-        <span class="lb">Did</span><p>Interrupted the job at 25%, restarted the app, resumed. Verified the final result is <b>byte-exact</b> and recorded exactly once.</p>
-        <span class="lb">Why</span><p>Real machines sleep, crash, and drop connections mid-task.</p>
-        <span class="lb f">If it failed</span><p>A half-finished job gets marked done, or every restart begins again from zero.</p>
-        <span class="lb e">Example</span><p>Laptop lid closes mid-run → reopen later and the job finishes from its checkpoint, nothing duplicated.</p>
+        <span class="lb t">What I tested</span><p>What happens when the operation is stopped partway through and the app restarts.</p>
+        <span class="lb">Why it matters</span><p>Real machines sleep, crash, and drop connections mid-task.</p>
+        <span class="lb f">What breaks if it fails</span><p>A half-finished job gets marked done, or every restart begins again from zero.</p>
+        <span class="lb e">Observed proof</span><p>Interrupted the job at 25%, restarted, and it resumed from its checkpoint. The final result was <b>byte-exact</b> and recorded exactly once.</p>
       </div>
       <details><summary class="tap"><span class="ms car" style="font-size:14px" aria-hidden="true">chevron_right</span>evidence · SAMPLE-UAT-RESUME</summary>
         <div class="ev">interrupted_at=25% → restarted → <b>resumed_from_checkpoint</b><br>result recorded exactly once · checksum matched expected<br>replay idempotent — no duplicate effects</div>
@@ -673,11 +647,10 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
         <span class="pill"><span class="vnum">0</span>&nbsp;side effects</span>
       </div>
       <div class="anat">
-        <span class="lb t">Tested</span><p>How the system responds to malformed and hostile input alongside valid input.</p>
-        <span class="lb">Did</span><p>Sent valid input plus four invalid variants. Checked every invalid case was rejected with a clear error and <b>nothing changed</b>.</p>
-        <span class="lb">Why</span><p>Bad input must never corrupt state or trigger hidden work.</p>
-        <span class="lb f">If it failed</span><p>One malformed request could damage stored data or slip past a safety rule.</p>
-        <span class="lb e">Example</span><p>A corrupted upload is refused with a clear message — nothing on disk changes.</p>
+        <span class="lb t">What I tested</span><p>How the system responds to malformed and hostile input alongside valid input.</p>
+        <span class="lb">Why it matters</span><p>Bad input must never corrupt state or trigger hidden work.</p>
+        <span class="lb f">What breaks if it fails</span><p>One malformed request could damage stored data or slip past a safety rule.</p>
+        <span class="lb e">Observed proof</span><p>All four invalid variants were rejected with a typed error and <b>zero state changes</b>; the valid input was accepted.</p>
       </div>
       <details><summary class="tap"><span class="ms car" style="font-size:14px" aria-hidden="true">chevron_right</span>evidence · SAMPLE-UAT-REJECT</summary>
         <div class="ev">invalid_cases=<b>4/4 rejected</b> · valid_case accepted<br>state_delta=0 work_delta=0 after each rejection<br>each rejection returned a typed, user-readable error</div>
@@ -697,11 +670,10 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
         <span class="pill ok">no full scans</span>
       </div>
       <div class="anat">
-        <span class="lb t">Tested</span><p>The same operations against a dataset the size of real production use.</p>
-        <span class="lb">Did</span><p>Loaded 10,000 records, ran the core operations, counted the database work per call and proved <b>fixed ceilings</b> with indexed lookups.</p>
-        <span class="lb">Why</span><p>Behavior that works on 10 rows must not crawl on 10,000.</p>
-        <span class="lb f">If it failed</span><p>The app slows to a grind as real data accumulates, and one heavy query can scan everything.</p>
-        <span class="lb e">Example</span><p>A full-size library → the status check answers in 4 queries instead of touching every row.</p>
+        <span class="lb t">What I tested</span><p>The same operations against a dataset the size of real production use.</p>
+        <span class="lb">Why it matters</span><p>Behavior that works on 10 rows must not crawl on 10,000.</p>
+        <span class="lb f">What breaks if it fails</span><p>The app slows to a grind as real data accumulates, and one heavy query can scan everything.</p>
+        <span class="lb e">Observed proof</span><p>With 10,000 records loaded, the status check ran exactly <b>4 indexed queries</b> — fixed ceilings per call, no full scans.</p>
       </div>
       <details><summary class="tap"><span class="ms car" style="font-size:14px" aria-hidden="true">chevron_right</span>evidence · SAMPLE-UAT-SCALE</summary>
         <div class="ev">records=10000 page_size=200<br>statements: status=<b>4</b> update=<b>7</b> · no OFFSET<br>indexed seeks confirmed via query plans · real on-disk fixture</div>
@@ -794,8 +766,7 @@ footer{margin-top:56px;color:var(--dim);font-size:12px;line-height:1.7}
     <b>Sections</b>
     <button class="iconbtn tap" id="drawerClose" type="button" aria-label="Close navigation"><span class="ms" aria-hidden="true">close</span></button>
   </div>
-  <a class="navlink tap" href="#verdict"><span class="ms s20" aria-hidden="true">task_alt</span>Verdict</a>
-  <a class="navlink tap" href="#how"><span class="ms s20" aria-hidden="true">route</span>How it works</a>
+  <a class="navlink tap" href="#verdict"><span class="ms s20" aria-hidden="true">task_alt</span>Result &amp; action</a>
   <a class="navlink tap" href="#proofs"><span class="ms s20" aria-hidden="true">grid_view</span>Proof cards</a>
   <a class="navlink tap" href="#limits"><span class="ms s20" aria-hidden="true">warning</span>Not proved yet</a>
   <a class="navlink tap" href="#evidence"><span class="ms s20" aria-hidden="true">science</span>Evidence</a>

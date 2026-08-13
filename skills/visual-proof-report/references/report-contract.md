@@ -8,38 +8,39 @@ Make verified engineering evidence understandable at a glance. The report is a p
 
 ```text
 Compact app bar · report identity · theme toggle
-Verdict with limits
-Headline metrics
-System or user-flow diagram
-Proof-card grid
+What this change does
+Exact test results and proof cards
 What remains unproven
-Collapsed technical evidence
+What the user must review or decide
 Exact PR, CI, artifact, and source links
+Collapsed technical evidence
 ```
 
 ## First screen
 
-Show the verdict and 3–6 decisive facts without scrolling past context:
+Show 3–6 decisive facts without scrolling past context:
 
+- what the change actually adds or fixes;
 - passed scenarios and total;
-- requirements covered and total;
 - failures;
-- fresh run duration or time when useful;
 - exact commit/build/PR state;
-- one short definition for any product term such as `Safe`.
+- what remains unproven;
+- the user's next decision or action.
 
-Use a compact status strip, not a decorative chart. State the limitation in the verdict itself, for example: `It passed — with clear limits.`
+Use compact facts, not a decorative chart or verdict speech. Do not define `verified`, explain the report, or repeat evidence policy.
 
-## Flow diagram
+## Optional behavior diagram
 
-Use a short left-to-right or top-to-bottom flow with 4–7 stages. Each stage has:
+Omit diagrams by default. Include one only when it explains a specific tested behavior or decision path more clearly than the proof cards. Never include a generic process such as `accept → check → work → verify → report`.
+
+When justified, use a short left-to-right or top-to-bottom flow. Each stage has:
 
 - one SVG icon;
 - a 2–4 word title;
 - one short explanation;
 - a connector showing order.
 
-The diagram must explain the system or user journey that the tests protect. It must not merely repeat the test count.
+The diagram must map directly to executed evidence. It must not explain the report, restate the test count, or consume space without changing a user decision.
 
 ## Proof cards
 
@@ -47,10 +48,10 @@ Use one consistent responsive grid. Each card contains:
 
 1. SVG icon, plain-English title, and explicit result chip.
 2. A small behavior-specific visual: before/after state, progress bar, ordered preference, fallback arrow, capacity count, or decision path.
-3. The five fixed fields: `Tested`, `Did`, `Why`, `If it failed`, `Example`.
+3. The four fixed fields: `What I tested`, `Why it matters`, `What breaks if it fails`, `Observed proof`.
 4. A collapsed evidence row containing exact technical details.
 
-Avoid generic paragraphs. No card field may exceed two short sentences. Prefer specific verbs: interrupted, corrupted, removed, replayed, rejected, restored, exceeded.
+Avoid generic paragraphs. No card field may exceed two short sentences. `Observed proof` must contain a concrete result from the executed test, not an invented scenario. Prefer specific verbs: interrupted, corrupted, removed, replayed, rejected, restored, exceeded.
 
 ## Limitations
 
@@ -97,6 +98,8 @@ Material Design 3 and Google's clean, information-first design language are **bi
 Provide working navigation, theme toggle, proof-detail toggles, expand/collapse control, and exact source links. On narrow screens, the navigation drawer opens from the app-bar menu button and must dismiss by close button, scrim, and Escape.
 
 ## Truth audit
+
+Before the placeholder scan, apply the decision-usefulness gate: every visible block must help the user judge the change, proof, risk, or next action. Delete generic diagrams, definitions of verification, report-about-the-report prose, decorative verdicts, repeated requirement lists, and filler metrics.
 
 Before publication, run the mandatory placeholder-leak gate: scan the final HTML for every sample/template identifier — `Sample Feature`, `Project Name`, placeholder URLs (`ORG/REPO`, `github.com/ORG`, `runs/0000000000`), zero commits (`0000000`, the 40-zero hash), sample dates (`2026-01-01`), `SAMPLE-*` test and requirement IDs, `PR #000`, `TICKET-000`, `TICKET-001`, and sample green-CI or requirement-coverage claims. Any survivor blocks publication until removed and the scan reruns clean.
 
