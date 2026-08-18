@@ -1,22 +1,23 @@
 ---
 name: lazada-shopping
 description: >
-  Research, compare, and shortlist products on Lazada Thailand using the user's
-  native logged-in Chrome session. Use this whenever the user asks to find or
-  compare Lazada products, inspect relevant items already in their Lazada cart,
-  check current prices or shipping, evaluate near-identical variants, or produce
-  shopping recommendations with photos and direct links. For multi-product work,
-  default to a published Visual Product Shortlist report with scored verdicts.
-  Trigger even when the user simply says "find me one on Lazada," "check my cart,"
-  "which of these should I buy," or names a product category plus Lazada.
+  Research, compare, shortlist, reorder, and prepare checkout for products on
+  Lazada Thailand using the user's real Chrome account, automatically signing in
+  with visible Bitwarden autofill when needed. Use this whenever the user asks to
+  find or compare Lazada products, inspect their cart or order history, reorder a
+  prior purchase, add an item to cart, prepare checkout, check current prices or
+  shipping, evaluate variants, or produce shopping recommendations. For
+  multi-product work, default to a published Visual Product Shortlist report.
+  Trigger even when the user says "find me one on Lazada," "check my cart," "buy
+  the one I ordered before," or names a product category plus Lazada.
 ---
 
 # Lazada Shopping
 
 Turn a Lazada request into a current, evidence-backed buying decision. Work in
-the user's real logged-in Lazada Thailand session, inspect actual product pages
-and cart state, and return a highly visual shortlist with working photos and
-direct product links.
+the user's real Lazada Thailand account, authenticate automatically with the
+saved Bitwarden login when needed, inspect actual product pages and account
+state, and carry out only the shopping mutations the user explicitly requested.
 
 ## Required companion skills
 
@@ -41,14 +42,20 @@ Before acting:
 Shopping research is read-only unless the user explicitly asks for a mutation.
 Checking the cart never implies permission to change it.
 
+Signing in to the user's Lazada account with its saved Bitwarden credential is
+standing pre-authorization whenever this skill triggers. Do not stop merely
+because Lazada is signed out.
+
 - Do not add or remove products, change quantities or variants, apply vouchers,
   alter addresses, message sellers, place orders, or complete checkout unless the
   user explicitly requests that exact action.
 - A purchase or final checkout is consequential: verify the selected product,
   variant, quantity, delivery address, delivered total, and payment state at the
   final step, then follow the harness's approval requirements.
-- Never inspect cookies, passwords, authentication tokens, local storage, or the
-  Chrome profile database. Use only the session state visibly exposed by Lazada.
+- Never inspect cookies, passwords, authentication tokens, local storage, the
+  Chrome profile database, or Bitwarden vault contents. Operate only the visible
+  Bitwarden autofill UI and Lazada session state; never read, copy, reveal, or
+  report the credential itself.
 - Preserve unrelated tabs. Close only task-created tabs when useful, and leave
   the finished report open as the deliverable.
 
@@ -74,9 +81,32 @@ normal Chrome session. Refresh relevant search, cart, and product pages when the
 user asks, when a tab is stale, or before recording volatile facts such as price,
 stock, shipping, ratings, and vouchers.
 
-If login, CAPTCHA, or a permission gate requires manual action, keep the same tab
-open and ask the user to complete it. Do not switch to a headless browser, generic
-web search, or a different profile.
+If Lazada is signed out, log in automatically before continuing:
+
+1. Confirm the login page is on `lazada.co.th` or a subdomain of it. Do not use
+   Bitwarden autofill on a lookalike or redirected non-Lazada domain.
+2. Invoke the visible Bitwarden autofill surface, select the saved Lazada login,
+   let Bitwarden fill the form, and submit it. This login submission is already
+   authorized; do not ask the user to approve it again.
+3. Verify authentication from visible Lazada account state or the requested
+   account page before reading order history, mutating the cart, or preparing
+   checkout.
+4. If the native Chrome connector cannot operate the Bitwarden extension UI,
+   follow the harness adapter below instead of stopping at the login page.
+
+Pause only when the remaining step inherently needs the user, such as CAPTCHA,
+OTP, account verification, or unlocking a locked Bitwarden vault. Keep the same
+tab open and ask for only that minimum action. Do not switch to a headless browser,
+generic web search, another profile, or a different account.
+
+<codex_skill_adapter>
+In Codex, use the native Chrome connector first. If it is unavailable or cannot
+operate Bitwarden's visible extension or autofill UI, invoke the installed
+`computer-use` skill and control the same visible Chrome session with mouse and
+keyboard. Continue the Lazada login and requested workflow there; do not stop and
+ask the user to sign in manually unless CAPTCHA, OTP, account verification, or a
+locked vault actually requires them.
+</codex_skill_adapter>
 
 ### 3. Audit the cart when it is relevant
 
@@ -204,10 +234,12 @@ of prose.
 
 ## Failure handling
 
-- **Chrome connector unavailable:** report the connector blocker; do not silently
-  substitute another browser or generic web search.
-- **Lazada blocks access or requires CAPTCHA:** keep the tab and ask for the minimum
-  manual action needed.
+- **Signed out:** attempt the saved Bitwarden login automatically; being signed out
+  is not itself a user blocker.
+- **Chrome cannot operate Bitwarden in Codex:** use `computer-use` in the same
+  visible Chrome session and continue.
+- **CAPTCHA, OTP, verification, or locked Bitwarden vault:** keep the tab and ask
+  for the minimum manual action needed.
 - **Product page removed or sold out:** mark it unavailable and exclude it from the
   winning recommendation unless the user wants historical comparison.
 - **Image hotlink fails in the report:** use another verified Lazada-hosted product
