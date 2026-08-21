@@ -1,18 +1,17 @@
 ---
 name: browse-with-chrome
-description: The user's standing default for every web-browsing or internet-research request. Always invoke this skill for web searches, flight or hotel research, shopping, opening URLs, reading dynamic pages, comparing current prices, using logged-in websites, filling forms, downloads, and multi-step website workflows, even when the user does not mention Chrome. Use the native Chrome connector and existing logged-in Chrome session. This rule supersedes older or generic defaults to Comet, generic web search, headless browsers, or research agents; use another surface only when the user's latest request explicitly names it or clearly requests a non-browser app connector, API, or CLI.
+description: Control the user's existing Chrome session only when a task requires browser UI interaction or Chrome-specific state. Invoke for explicit Chrome requests; operating an existing tab; clicking, typing, selecting, scrolling, uploading, or downloading through a site; using logged-in browser state or extensions; inspecting rendered layout; capturing browser screenshots; or testing a web UI. Do not invoke for ordinary internet research, web searches, public-page reading, documentation lookup, or data available through an app connector, API, CLI, or direct web fetch.
 ---
 
 # Browse with Chrome
 
-Use the current harness's native Chrome connector as the default surface for
-all website browsing. Preserve the user's existing tabs, profile, extensions,
-and logged-in state.
+Use the current harness's native Chrome connector only when the requested work
+needs browser control or state that direct tools cannot provide. Preserve the
+user's existing tabs, profile, extensions, and logged-in state.
 
-This is a standing user preference, not an optional optimization. It
-supersedes older instructions or inferred preferences that routed ordinary
-research to Comet, generic web search, a headless browser, or a research agent.
-Only the user's latest explicit surface choice can override it.
+Do not treat "research online," "search the web," a URL, or a request for
+current information as browser-interaction intent. Prefer direct search, fetch,
+APIs, CLIs, and purpose-built app connectors for those tasks.
 
 Read [references/routing-and-adapters.md](references/routing-and-adapters.md)
 before the first browser action in a task.
@@ -28,51 +27,49 @@ operation. Do not substitute another surface without the user's approval.
 
 ## Quick decision
 
-Use these exact defaults:
+Use these defaults:
 
 ```text
-Website interaction or web research -> native Chrome connector
-Direct app data operation           -> purpose-built app connector
-Explicitly named alternative        -> named surface
-Required connector unavailable      -> report blocker; do not substitute
+Browser UI interaction / Chrome state -> native Chrome connector
+Ordinary web research / public reading -> direct search or fetch
+Semantic app data operation            -> purpose-built app connector
+Explicitly named surface                -> named surface
 ```
 
 Examples:
 
-- "Search the web for the current Mac Studio price" means native Chrome, not a
-  generic web-search tool.
+- "Research whether this Claude plugin has known CPU bugs" means direct web
+  search and source reading, not Chrome.
+- "Open this issue in Chrome and show me the comments" means Chrome.
+- "Use my logged-in account to change this dashboard filter" means Chrome when
+  no purpose-built connector can perform the interaction.
 - "Check my Gmail for a flight confirmation" means the Gmail connector, not
   Gmail's website, unless the user says to open Gmail in Chrome.
-- "Use Comet to research Bali hotels" means Comet because the user explicitly
-  overrode the default. If Comet is unavailable, report that blocker; do not use
-  Chrome, generic web search, or a research agent instead.
 
 ## Routing contract
 
 Apply these rules in order:
 
-1. Follow an explicit surface request. If the user names Comet, an in-app
-   browser, a web-search tool, an app connector, an API, or a CLI, use that
-   surface for the requested operation.
-2. When the task requires searching, opening, reading, inspecting, or
-   interacting with websites and no other surface is specified, use the native
-   Chrome connector.
-3. Treat semantic operations on Gmail, Notion, Drive, Calendar, Linear, and
+1. Follow an explicit surface request. If the user names Chrome, Comet, an
+   in-app browser, a web-search tool, an app connector, an API, or a CLI, use
+   that surface for the requested operation.
+2. Without an explicit surface request, invoke this skill only when the task
+   requires at least one browser-only capability: visible UI interaction,
+   existing-tab state, logged-in browser state, extension state, rendered-page
+   inspection, a browser screenshot, or web-UI testing.
+3. Use direct web search or fetch for ordinary research, source gathering,
+   current public facts, public-page reading, and documentation lookup.
+4. Treat semantic operations on Gmail, Notion, Drive, Calendar, Linear, and
    similar services as app-connector work when a purpose-built connector is
    requested or clearly applicable. Opening or operating their website is
    Chrome work.
-4. If the native Chrome connector is unavailable, disconnected, or lacks the
-   required capability, report that blocker. Do not silently switch to another
-   browser or automation system.
+5. If the native Chrome connector is required but unavailable, disconnected,
+   or lacks the required capability, report that blocker. Do not silently
+   switch to another browser or automation system.
 
-Do not interpret the phrase "search the web" as permission to select a generic
-web-search tool. It is ordinary web research and therefore uses native Chrome.
-If a required purpose-built app connector is unavailable, report that connector
-blocker instead of silently converting the operation into website browsing.
-
-Earlier use of another surface does not override this default for a new
-browsing operation. Re-evaluate the user's latest instruction before each
-operation.
+A URL supplied as context does not by itself require Chrome. Open it in Chrome
+only when the user asks to open/show/navigate it or when browser-only state is
+necessary to complete the task.
 
 ## Prohibited fallbacks
 
@@ -120,27 +117,15 @@ prompt blocks the task:
 3. continue from the same Chrome session after the user confirms;
 4. do not bypass authentication with another source or browser.
 
-### 3. Browse and research
-
-For web research:
-
-- search and open sources in Chrome;
-- inspect the actual page, not only search-result snippets;
-- compare dates, prices, baggage rules, availability, and other live details
-  at the source;
-- prefer primary or official sources when exact or technical facts matter;
-- keep direct URLs for the final answer;
-- distinguish observed facts from inference.
-
-For long research tasks, save useful findings incrementally to the requested
-Notion page, document, or file. Do not wait until the end when partial results
-would otherwise be lost.
-
-### 4. Interact with websites
+### 3. Interact with websites
 
 Use visible page state for clicking, typing, selecting, scrolling, uploading,
 downloading, and form completion. Verify the result after every consequential
 step.
+
+Use Chrome for reading only when the rendered or authenticated page state is
+itself necessary. If a direct search, fetch, app connector, API, or CLI can
+answer the question without controlling the browser, leave Chrome untouched.
 
 Respect the user's latest limits, such as traveler count, baggage allowance,
 budget, dates, neighborhoods, or account choice. Do not resurrect rejected
@@ -151,7 +136,7 @@ action such as purchase, send, delete, cancel, publish, or final submission
 unless the user explicitly authorized that action and the harness's approval
 rules permit it.
 
-### 5. Keep the session usable
+### 4. Keep the session usable
 
 - Reuse tabs instead of opening duplicates.
 - Close only tabs created for the current task when cleanup is useful.

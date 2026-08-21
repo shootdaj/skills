@@ -4,8 +4,11 @@
 
 | User request | Default surface |
 |---|---|
-| "Search the web", "research this", "open this site", or any website task | Native Chrome connector |
-| "Use Chrome" or "use my logged-in account" | Native Chrome connector |
+| "Search the web", "research this", or "look up current information" | Direct web search or fetch |
+| Read a public page or documentation available without browser state | Direct web fetch |
+| "Use Chrome", "open/show this in Chrome", or operate an existing tab | Native Chrome connector |
+| Click, type, select, scroll, upload, download, or complete a site workflow | Native Chrome connector |
+| Use Chrome login/extension state, inspect rendered layout, take a browser screenshot, or test a web UI | Native Chrome connector |
 | "Use Comet" | Comet |
 | "Use the in-app browser" | In-app browser |
 | "Use web search" or names a specific search connector | Named search connector |
@@ -21,26 +24,37 @@ Never optimize away a named surface. If the user says "use Comet," select
 Comet or report that Comet is unavailable. Do not replace it with Chrome, web
 search, a research agent, or another connector.
 
-"Search the web" selects native Chrome. It does not select a generic search
-tool. "Check Gmail/Notion/Drive" selects the applicable app connector; if that
-connector is unavailable, report the blocker rather than opening the website.
+"Search the web" does not select Chrome. "Check Gmail/Notion/Drive" selects
+the applicable app connector. A URL is context unless the user asks to open it
+or the task requires browser-only state.
 
-## What counts as browsing
+## What requires browser control
 
-Treat these as browsing activities:
+Invoke this skill for:
 
-- web search and source research;
-- opening or navigating URLs;
-- reading live or dynamic websites;
-- using authenticated websites;
-- comparing current prices, schedules, availability, or policies;
+- explicit requests to use, open, show, or navigate Chrome;
+- taking over an existing Chrome tab;
+- using the user's logged-in Chrome session or browser extensions;
 - filling or submitting web forms;
 - interacting with web dashboards and SPAs;
-- downloading or uploading through a website;
+- clicking, typing, selecting, scrolling, uploading, or downloading through a
+  website;
 - inspecting rendered page state;
+- capturing a screenshot of a live browser page;
 - browser-based testing requested by the user.
 
-Calling a purpose-built app connector or API directly is not browsing.
+Do not invoke this skill for:
+
+- ordinary online research or source gathering;
+- search-engine queries;
+- reading public pages or documentation available by direct fetch;
+- comparing public facts that search, an API, or a CLI can retrieve;
+- semantic app operations served by purpose-built connectors;
+- URLs supplied only as reference material.
+
+Dynamic content alone is not enough. Chrome is required only when visible,
+interactive, authenticated, extension-backed, or rendered page state matters to
+the result.
 
 ## Shared safety rules
 
