@@ -45,6 +45,7 @@ npx skills update -g
 | **create-skill-ccch** | Create, validate, globally install, and publish one shared skill for Claude Code, Codex, Cursor, and Hermes. |
 | **anshul-ui-standards** | Apply Anshul’s Material-grade UI house rules for structure, theming, interaction, data visualization, motion, and screenshot verification. |
 | **apple-design** | Apply Apple’s fluid-interface principles to web UI: interruptible springs, direct manipulation, momentum, materials, typography, and accessibility. |
+| **browse-with-chrome** | Control the user's native Chrome session only when a task requires browser UI interaction or Chrome-specific state. |
 
 > The last several are vendored copies of third-party skills for portability across my machines; they carry their upstream authors' credit and licenses.
 

@@ -1,0 +1,6 @@
+interface:
+  display_name: "Browse with Chrome"
+  short_description: "Use Chrome only for browser UI interaction"
+  default_prompt: "Use $browse-with-chrome to operate this website in my existing Chrome session."
+policy:
+  allow_implicit_invocation: true
