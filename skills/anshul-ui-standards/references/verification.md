@@ -1,46 +1,70 @@
-# Screenshot self-verification — mandatory before presenting any page
+# Verification
 
-Never present unverified UI. If it wasn't screenshotted, it isn't done.
+## Contents
+- The two tiers
+- Full tier procedure
+- The checklist
+- Light tier procedure
+- Sign-off
 
-## Procedure
+Never present unverified UI. If it wasn't rendered and looked at, it isn't done.
 
-1. Load the page in Playwright (`file://` or served URL).
+## The two tiers
+
+| Tier | For | Cost |
+| --- | --- | --- |
+| **Full** | Anything real: shipped pages, apps, dashboards, reports | Several screenshots, console read, full checklist |
+| **Light** | Quick mocks built to make a decision and throw away | One screenshot, contrast and dead-control check |
+
+Say which tier you used. A mock that survives and becomes real gets the full pass before it ships.
+
+## Full tier procedure
+
+1. Render the page (Playwright, or headless Chrome via `--screenshot`).
 2. Screenshot at **1440×900** and one narrow width (**~800px**).
-3. Toggle the theme (click the toggle) → screenshot **both themes**.
-4. Navigate the primary flows: click each nav item, expand a card, open the palette/dialog → screenshot the money view (e.g. approval queue open).
-5. Read the console logs — CDN failures, JS errors, 404 fonts are all defects.
-6. Audit against the checklist below. Fix. Re-shoot. Repeat until clean.
+3. Screenshot **every theme the page ships**. If it ships one, one is correct and complete.
+4. Exercise the primary flows: each nav item, expand a card, open a dialog or palette. Screenshot the money view.
+5. Read the console. CDN failures, JS errors, and 404 fonts are defects.
+6. Audit against the checklist. Fix. Re-shoot. Repeat until clean.
 
-## The harsh checklist
+## The checklist
 
-**Skeleton & hierarchy**
-- [ ] MD3 chassis visible: app bar, rail/drawer, structured card zones — not elements floating on a background
-- [ ] Hierarchy obvious at arm's length: you can tell level 1 vs 2 vs 3 by size/weight/spacing alone
-- [ ] Consistent radii, elevation scale, spacing grid (no random gaps)
+**Structure and hierarchy**
+- [ ] Hierarchy readable at arm's length: levels distinguishable by size, weight, and spacing alone
+- [ ] The direction's chassis is actually present and consistent
+- [ ] Consistency locks held: one radius scale, one accent, one type pairing, one icon family, one depth system
 
-**The rejected failure modes (auto-fail)**
-- [ ] No grey soup: panels distinguishable from background and each other in BOTH themes
-- [ ] No washed gradient headlines (text stays high-contrast)
-- [ ] No overlapping/clipped elements at either width; no horizontal page scroll
-- [ ] No dead controls: everything that looks clickable does something
-- [ ] No emoji-as-icons; no lorem; no unstyled flash
+**Auto-fail**
+- [ ] No grey soup: surfaces distinguishable from the ground and from each other
+- [ ] No washed gradient headlines
+- [ ] No overlapping or clipped elements at either width; no horizontal page scroll
+- [ ] No dead controls
+- [ ] No emoji-as-icons, no lorem, no fake-perfect numbers, no unstyled flash
 
-**Theming**
-- [ ] Toggle present in app bar, works, persists on reload, no flash-of-wrong-theme
-- [ ] Both themes deliberately designed; charts recolor on toggle; contrast AA in both
+**Theme**
+- [ ] Every theme shipped is deliberately designed and contrast-verified
+- [ ] If there is a toggle: it works, persists on reload, no flash of wrong theme, charts recolour
 
-**Usability mechanics**
-- [ ] Hover/focus/press states visible on interactive elements (spot-check 5)
+**Mechanics**
+- [ ] Hover, focus, and press states visible on interactive elements (spot-check five)
 - [ ] Focus ring visible when tabbing; targets comfortably large
-- [ ] Loading/empty/error states exist where data renders
+- [ ] Loading, empty, and error states exist wherever data renders
 
 **Motion**
-- [ ] Entrance orchestration plays once, ≤400ms feel, staggered; nothing blocks input
-- [ ] Reduced-motion query respected (spot-check by emulation if possible)
+- [ ] Entrance plays once, ≤400ms feel, staggered, never blocking input
+- [ ] `prefers-reduced-motion` respected
 
 **Console**
-- [ ] Zero errors; all CDNs and fonts loaded
+- [ ] Zero errors; all fonts and CDNs loaded
 
-## Sign-off format
+## Light tier procedure
 
-Report to the user with: screenshots taken (paths), themes verified, issues found → fixed, remaining known limitations. If any checklist line failed and wasn't fixed, say so explicitly.
+1. Render and screenshot once at 1440px.
+2. Check: contrast readable, nothing overlapping, no dead controls, no lorem.
+3. Say it was built at the light tier.
+
+## Sign-off
+
+Report: screenshots taken (paths), themes verified, tier used, issues found and fixed, remaining known limitations.
+
+If a checklist line failed and was not fixed, say so explicitly. Do not present a page as verified when it isn't.

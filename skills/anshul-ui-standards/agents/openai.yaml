@@ -1,4 +1,4 @@
 interface:
   display_name: "Anshul UI Standards"
-  short_description: "Apply Anshul’s Material and Apple-style UI standards"
-  default_prompt: "Use $anshul-ui-standards with apple-design to design and verify this interface."
+  short_description: "House UI quality floor and direction router"
+  default_prompt: "Use $anshul-ui-standards to build this interface to house quality standards."
