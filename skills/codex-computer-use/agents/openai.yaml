@@ -1,0 +1,4 @@
+interface:
+  display_name: "Codex Computer Use"
+  short_description: "Headless Codex for macOS GUI-only steps, verified after"
+  default_prompt: "Use $codex-computer-use to change one GUI setting via Codex computer-use and verify it independently."

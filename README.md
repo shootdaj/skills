@@ -43,6 +43,7 @@ npx skills update -g
 | **clean-my-ai-harness-codex** | (Codex) Map the harness Codex can see and prepare a safe cleanup plan after model/instruction changes. |
 | **use-claude** | (Codex) Delegate implementation or frontend work to real Claude Code from Codex. |
 | **create-skill-ccch** | Create, validate, globally install, and publish one shared skill for Claude Code, Codex, Cursor, and Hermes. |
+| **codex-computer-use** | (Claude Code / Cursor / Hermes) Drive Codex CLI headlessly for macOS GUI-only steps via its computer-use, then verify the result through an independent source. |
 | **anshul-ui-standards** | Apply Anshul’s Material-grade UI house rules for structure, theming, interaction, data visualization, motion, and screenshot verification. |
 | **apple-design** | Apply Apple’s fluid-interface principles to web UI: interruptible springs, direct manipulation, momentum, materials, typography, and accessibility. |
 
