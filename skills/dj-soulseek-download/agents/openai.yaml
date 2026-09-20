@@ -1,0 +1,4 @@
+interface:
+  display_name: "DJ Soulseek Download"
+  short_description: "Batch Soulseek MP3s, verify with ffmpeg, key with MIK"
+  default_prompt: "Use $dj-soulseek-download to fetch and verify every track in list.csv."

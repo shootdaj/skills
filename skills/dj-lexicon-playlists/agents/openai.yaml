@@ -1,0 +1,4 @@
+interface:
+  display_name: "DJ Lexicon Playlists"
+  short_description: "Create Lexicon playlists via API and sync to rekordbox"
+  default_prompt: "Use $dj-lexicon-playlists to make a Lexicon playlist from this folder."

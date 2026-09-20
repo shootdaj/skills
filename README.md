@@ -29,6 +29,12 @@ npx skills update -g
 
 | Skill | What it does |
 |-------|--------------|
+| **dj-show-prep** | Overnight DJ gig prep, end to end: one question round (source, similar-songs engine, analysis, library, report), then source → Soulseek → verify → Mixed In Key → harmonic set → Lexicon/rekordbox → playable vibe-check page. Composes the five `dj-*` skills below. |
+| **dj-source-tracks** | Tracklist → download CSV from Spotify web, a screenshot/photo, pasted text, Lexicon/rekordbox playlists; expand with Spotify mixes, artist fan-out, or the user's own crates; skips owned tracks. |
+| **dj-soulseek-download** | sockseek batch downloads, ffmpeg full-decode verification, re-fetch of rejects, Mixed In Key headless tagging, aubio BPM fallback. |
+| **dj-set-builder** | Phased set order by Camelot walk with rising energy/BPM, blend partners, waveform peaks, `.m3u8` export. |
+| **dj-lexicon-playlists** | Lexicon Local API playlists with verified counts, NFC-safe file matching, safe Lexicon → rekordbox sync (Modified, never Full), USB export notes. |
+| **dj-vibe-report** | The "am I good for tonight" page: playable playlists with key/BPM/energy, transitions, waveforms, blend preview, checklist; published to here.now. |
 | **report-publisher** | Build and publish polished HTML reports. Includes the image-led `visual-product-shortlist` template, which is the default for shopping and product comparisons. |
 | **lazada-shopping** | Research Lazada Thailand in the user's logged-in browser, compare live listings and cart items, and publish a scored visual shortlist with photos and direct links. |
 | **recap** | Fast "catch me up / where are we" status when returning to a project after time away. |
