@@ -7,6 +7,9 @@ A file passes when ffmpeg decodes it end to end with no real errors, it is at
 least --min-sec long and at least --min-kbps. Harmless noise from DJ-pool rips
 (1-2 junk frames at the start, bad ID3 BOM, cover-art chunk errors, Xing size
 warnings) is ignored; those files still play and rekordbox analyses them fine.
+Bitrate: VBR files can report a container (format) bit_rate below their real
+average, so when it is under 320 kbps the audio stream's bit_rate is read too
+and the higher of the two is used.
 """
 import argparse, glob, json, os, shutil, subprocess
 IGNORE = ('Header missing', 'Invalid data', 'BOM', 'skipped', 'lyrics', 'comment frame',
@@ -21,7 +24,9 @@ def probe(f):
         return None
     errs = subprocess.run(['ffmpeg', '-v', 'error', '-i', f, '-f', 'null', '-'], capture_output=True, text=True).stderr.splitlines()
     real = [e for e in errs if not any(x in e for x in IGNORE)]
-    return {'dur': float(fm.get('duration', 0)), 'kbps': int(fm.get('bit_rate', 0)) // 1000,
+    kbps = int(fm.get('bit_rate', 0)) // 1000
+    if kbps < 320 and st.get('bit_rate'): kbps = max(kbps, int(st['bit_rate']) // 1000)
+    return {'dur': float(fm.get('duration', 0)), 'kbps': kbps,
             'sr': st.get('sample_rate'), 'codec': st.get('codec_name'), 'errors': real, 'glitch': bool(errs) and not real}
 
 ap = argparse.ArgumentParser()

@@ -30,6 +30,11 @@ their existing crates so the set isn't 100 % unfamiliar material.
 `out_dir/set.json` (for `dj-vibe-report`), `out_dir/audio/` (hard links of the
 tracks that made a playlist).
 
+The `.m3u8` files are the default library hand-off in `dj-show-prep`: a
+plain-text playlist of absolute paths that rekordbox opens with
+File ▸ Import ▸ Playlist, no database writes. Lexicon (`dj-lexicon-playlists`)
+runs only when the user chose it in the question round.
+
 ## Rules (keep these; they are what the user signed off on)
 
 - Phase pool = tracks in its sources + library rows; keep the top `cap` by MIK

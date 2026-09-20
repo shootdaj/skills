@@ -5,6 +5,12 @@ description: Create and fill playlists in Lexicon DJ through its Local API, map 
 
 # dj-lexicon-playlists
 
+**Opt-in.** `dj-show-prep` runs this skill only when the user picked
+LIBRARY = lexicon in the question round; the default hand-off is the flat
+folder plus the `.m3u8` files from `dj-set-builder` (rekordbox: File ▸ Import ▸
+Playlist), which needs no Lexicon writes and no backup. Outside dj-show-prep,
+use it when the user asks for Lexicon playlists or the rekordbox sync.
+
 ## Hard rules
 
 - **Remind the user to back up Lexicon** (Backups → Database Backup → Create

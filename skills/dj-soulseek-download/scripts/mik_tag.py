@@ -2,7 +2,10 @@
 """Key + energy (+ BPM where present) for a folder of MP3s via Mixed In Key 11,
 with aubio as the BPM fallback. Writes <dir>/tags.json.
 
-usage: mik_tag.py DIR [--timeout 300] [--no-mik]
+usage: mik_tag.py DIR [--timeout 300] [--no-mik] [--quit-mik]
+
+--quit-mik quits Mixed In Key 11 when tagging is done (default: leave it
+running; the next run reuses the open instance).
 
 MIK is driven headlessly: `open -a "Mixed In Key 11" <files>` makes it analyse and
 write TKEY plus a "9A - Energy 7" COMM tag within about a minute per 100 files.
@@ -52,7 +55,7 @@ tell application "System Events"
 end tell'''], capture_output=True)
 
 ap = argparse.ArgumentParser(); ap.add_argument('dir'); ap.add_argument('--timeout', type=int, default=300)
-ap.add_argument('--no-mik', action='store_true'); a = ap.parse_args()
+ap.add_argument('--no-mik', action='store_true'); ap.add_argument('--quit-mik', action='store_true'); a = ap.parse_args()
 files = sorted(f for f in glob.glob(os.path.join(a.dir, '**', '*.mp3'), recursive=True) if '_rejected' not in f)
 need = [f for f in files if not read(f).get('energy')]
 if need and not a.no_mik:
@@ -72,3 +75,4 @@ for f in files:
 json.dump(out, open(os.path.join(a.dir, 'tags.json'), 'w'), indent=1)
 k = sum(1 for r in out.values() if r.get('key')); e = sum(1 for r in out.values() if r.get('energy')); b = sum(1 for r in out.values() if r.get('bpm'))
 print(f'{len(out)} files: key {k}, energy {e}, bpm {b} -> tags.json')
+if a.quit_mik: subprocess.run(['osascript', '-e', 'tell application "Mixed In Key 11" to quit'], capture_output=True)

@@ -29,8 +29,8 @@ npx skills update -g
 
 | Skill | What it does |
 |-------|--------------|
-| **dj-show-prep** | Overnight DJ gig prep, end to end: one question round (source, similar-songs engine, analysis, library, report), then source → Soulseek → verify → Mixed In Key → harmonic set → Lexicon/rekordbox → playable vibe-check page. Composes the five `dj-*` skills below. |
-| **dj-source-tracks** | Tracklist → download CSV from Spotify web, a screenshot/photo, pasted text, Lexicon/rekordbox playlists; expand with Spotify mixes, artist fan-out, or the user's own crates; skips owned tracks. |
+| **dj-show-prep** | Overnight DJ gig prep, end to end: one question round (source, similar-songs engine, track count, analysis, library, report, run mode), a plan the user confirms, then source → Soulseek → verify → Mixed In Key → harmonic set → `.m3u8` for rekordbox (Lexicon opt-in) → playable vibe-check page. Composes the five `dj-*` skills below. |
+| **dj-source-tracks** | Tracklist → download CSV from Spotify web (scraper that checks its count against the page header), a screenshot/photo the agent transcribes itself, pasted text, Lexicon/rekordbox playlists; expand with Spotify mixes, artist fan-out, or the user's own crates; skips owned tracks, remix-aware. |
 | **dj-soulseek-download** | sockseek batch downloads, ffmpeg full-decode verification, re-fetch of rejects, Mixed In Key headless tagging, aubio BPM fallback. |
 | **dj-set-builder** | Phased set order by Camelot walk with rising energy/BPM, blend partners, waveform peaks, `.m3u8` export. |
 | **dj-lexicon-playlists** | Lexicon Local API playlists with verified counts, NFC-safe file matching, safe Lexicon → rekordbox sync (Modified, never Full), USB export notes. |

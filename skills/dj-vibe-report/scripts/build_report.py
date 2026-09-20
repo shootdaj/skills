@@ -3,9 +3,12 @@
 
 usage: build_report.py set_dir [--title "Amber Rooftop Set"] [--verdict "…"] [--checklist items.json]
 
-Reads set_dir/set.json (from dj-set-builder), writes set_dir/index.html next to
-set_dir/audio/ so the folder publishes as one site (audio is hard-linked, only
-tracks that made a playlist are included).
+Reads set_dir/set.json (from dj-set-builder) and writes set_dir/publish/, the
+folder to hand to here.now: publish/index.html plus publish/audio/ holding a
+hard link to every track that made a playlist and nothing else. set.json,
+peaks_cache.json and the .m3u8 files (absolute local paths) stay in set_dir
+and never go public. Links in publish/audio/ that no longer belong to the set
+are unlinked (the data still lives in set_dir/audio/).
 """
 import argparse, json, os, shutil
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -30,5 +33,15 @@ d['log'] = 'Built with dj-show-prep: Spotify → sockseek → ffmpeg verify → 
 tpl = open(os.path.join(HERE, 'report_template.html')).read().replace('<title>Amber Rooftop Set</title>', f'<title>{a.title}</title>').replace('<h1>Amber Rooftop Set</h1>', f'<h1>{a.title}</h1>')
 tpl = tpl.replace("$('#meta').innerHTML=`<span>Amber Rooftop Bar · 34F Wyndham QSNCC · Sat 20 Sep 2026 · 9pm–midnight</span><span>prepared overnight ${DATA.published}</span>",
                   "$('#meta').innerHTML=`<span>${esc(DATA.gig)}</span><span>prepared ${DATA.published}</span>")
-open(os.path.join(a.set_dir, 'index.html'), 'w').write(tpl.replace('/*__DATA__*/', 'const DATA=' + json.dumps(d, ensure_ascii=False) + ';'))
-print(os.path.join(a.set_dir, 'index.html'), f"{s['tracks']} tracks, {len(d['playlists'])} playlists")
+pub = os.path.join(a.set_dir, 'publish'); pub_audio = os.path.join(pub, 'audio'); os.makedirs(pub_audio, exist_ok=True)
+wanted = {os.path.basename(t['file']) for t in d['tracks']}
+for f in os.listdir(pub_audio):
+    if f not in wanted: os.unlink(os.path.join(pub_audio, f))
+linked = 0
+for base in sorted(wanted):
+    src, dst = os.path.join(a.set_dir, 'audio', base), os.path.join(pub_audio, base)
+    if os.path.exists(dst) and os.path.samefile(src, dst): continue
+    if os.path.exists(dst): os.unlink(dst)
+    os.link(src, dst); linked += 1
+open(os.path.join(pub, 'index.html'), 'w').write(tpl.replace('/*__DATA__*/', 'const DATA=' + json.dumps(d, ensure_ascii=False) + ';'))
+print(os.path.join(pub, 'index.html'), f"{s['tracks']} tracks, {len(d['playlists'])} playlists; publish/audio: {len(wanted)} files ({linked} newly linked)")

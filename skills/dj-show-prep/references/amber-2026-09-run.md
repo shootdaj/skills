@@ -59,3 +59,32 @@ Downloads ~25 min/wave of 50; verify ~2 s/track; MIK ~1 min/100 files; peaks
 - AICRATES (the user's taxonomy) is a separate documented ruleset in
   `music-lib-cleanup/.planning/phases/07-…`; half of it needs an Essentia scan
   whose per-track outputs are gone. Don't improvise crate membership.
+
+## Test Mix 2026-09-21 — 10-track end-to-end run
+
+Seed: Spotify song radio for LP Giobbi / DJ Tennis / Joseph Ashworth "All In A
+Dream" (50 rows; row 1 is the seed itself). 10 tracks requested, 12 queued over
+two sockseek waves, 11 downloaded, 0 rejects, 10 used (the 11th set aside as
+a spare), MIK keyed 10/10 (TBPM on 4, aubio on 6), one forced 9A→5A
+transition, page published at
+https://granite-vessel-wzvq.here.now/ (130 MB / 14 files, 52 s).
+
+Friction that changed the skills (22 items in the run's `SKILL_FEEDBACK.md`):
+- `spotify_scrape.js` stopped at 26/50 rows: the stall check tripped while the
+  second half was a skeleton loader, and a scripted "wobble" froze the grid;
+  only a real mouse-wheel scroll unstuck it. → header "N songs" count, resume
+  via `window.__rows`, WheelEvent + scrollIntoView nudge, `{expected, got}`.
+- javascript_tool output with `&` / `?` came back `[BLOCKED …]`. → read
+  `window.__pl` in ≤ 15-line slices.
+- Sidebar radio entries invisible to `find`; "…" → "Go to song radio" worked
+  first time. → documented as the canonical path.
+- `tsv_to_csv.py` skipped "Come Back Around - Romain Garcia Remix" as owned
+  because the library has the original. → remix-token owned check + selftest.
+- sockseek nests output in `out/<csv-stem>/`; the skill said `out/*.mp3`.
+- `mik_tag.py` left MIK running. → `--quit-mik`.
+- One VBR file read 272 kbps from the container. → stream bitrate fallback.
+- `set.json`, `peaks_cache.json` and the `.m3u8` (absolute local paths) were
+  uploaded with the page. → `publish/` folder with index.html + audio/ only.
+- Screenshot OCR script was redundant: the model sees the image. → removed.
+- The brief had no track-count or run-mode question and the Lexicon step was
+  assumed. → both questions added; m3u8 is the default, Lexicon opt-in.

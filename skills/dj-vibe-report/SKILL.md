@@ -15,10 +15,14 @@ python3 scripts/build_report.py SET_DIR --title "Amber Rooftop Set" \
   --published 2026-09-19 [--verdict "…"] [--checklist items.json]
 ```
 
-Writes `SET_DIR/index.html` next to `SET_DIR/audio/`. Audio in the page is
-served relative (`audio/<file>.mp3`) so the same folder works locally and on
-here.now. Only tracks that made a playlist are linked into `audio/`; prune
-anything else before publishing or the upload triples.
+Writes `SET_DIR/publish/` — the only folder that goes online:
+`publish/index.html` plus `publish/audio/` with a hard link to each track that
+made a playlist, nothing else. `set.json`, `peaks_cache.json` and the `.m3u8`
+files (they hold absolute local paths) stay in `SET_DIR` and are never
+published. Spare tracks that `set_builder.py` linked into `SET_DIR/audio/` but
+did not place are left out too, so the upload is exactly the set. Audio in the
+page is served relative (`audio/<file>.mp3`), so `publish/` works locally and
+on here.now alike. Re-running the build re-links only what changed.
 
 `--checklist` is a JSON list of `["done"|"todo", "text", "note"]`; "todo" rows
 are checkboxes the user can tick (stored in localStorage).
@@ -50,8 +54,10 @@ console has no errors; `body.scrollWidth <= innerWidth`.
 
 ## Publish
 
-Use the `here-now` skill: `publish.sh SET_DIR --client <harness>`; on a
-republish pass `--slug <existing>` so unchanged audio is skipped. Check
+Use the `here-now` skill on the **publish/** folder, never on `SET_DIR`
+(publish.sh uploads every file under the path it is given; it has no ignore
+list): `publish.sh SET_DIR/publish --client <harness>`; on a republish pass
+`--slug <existing>` so unchanged audio is skipped. Check
 `curl -sI <site>/audio/<file>` returns `audio/mpeg` and `accept-ranges: bytes`.
 Free tier allows 5 GB per file, 10 GB total; a 140-track page is ~1.4 GB and
 uploads at whatever the uplink gives (≈18 Mbit/s took 10 min).

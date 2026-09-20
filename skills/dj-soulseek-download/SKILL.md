@@ -21,17 +21,26 @@ description: Batch-download a CSV of tracks from Soulseek with the sockseek CLI 
 1. **Wave 1**: `scripts/sockseek_run.sh list.csv out_dir` — runs
    `--length-tol=-1 --pref-strict-artist --concurrent-jobs 6`, logs to
    `out_dir.log`, prints the completion line and top failure reasons.
+   sockseek **nests** the files one level down, `out_dir/<csv-stem>/*.mp3`
+   (`w1/wave1/…` for `wave1.csv`); every script below globs recursively, so
+   pass `out_dir` as-is, but expect `tags.json` keys and flat-copy sources to
+   carry that `<csv-stem>/` prefix.
    Chain waves with `until [ -f DONE ]` waiters rather than running two at once.
-2. **Verify**: `python3 scripts/verify_mp3s.py out_dir` — full decode, ≥256 kbps,
-   ≥120 s; rejects move to `out_dir/_rejected/` (never deleted). Read the reject
-   reasons: "75-second radio cut", "96 kbps set-rip", corrupt frames.
+2. **Verify**: `python3 scripts/verify_mp3s.py out_dir` (recursive) — full
+   decode, ≥256 kbps, ≥120 s; rejects move to `out_dir/_rejected/` (never
+   deleted). Read the reject reasons: "75-second radio cut", "96 kbps set-rip",
+   corrupt frames. VBR files can report a container bitrate below their real
+   average; the script also reads the audio stream's bitrate and takes the
+   higher of the two before judging.
 3. **Re-fetch rejects** with a stricter search into a fresh dir:
    `sockseek_run.sh redo.csv redo_dir --min-bitrate 256 --strict-title --no-skip-existing --index-path redo_index.csv`
    then verify again and swap the clean copy in. Some tracks only exist as
    bad rips; say so in the report instead of shipping them.
-4. **Tag**: `python3 scripts/mik_tag.py out_dir` — opens all files in Mixed In
-   Key 11 (`open -a`), waits until every file has a "Energy N" comment, fills BPM
-   with aubio where the tag is missing, writes `out_dir/tags.json`.
+4. **Tag**: `python3 scripts/mik_tag.py out_dir` (recursive) — opens all files
+   in Mixed In Key 11 (`open -a`), waits until every file has a "Energy N"
+   comment, fills BPM with aubio where the tag is missing, writes
+   `out_dir/tags.json`. MIK stays open afterwards (the next run reuses it);
+   add `--quit-mik` to quit it when done.
 
 ## Tuning that mattered
 
@@ -67,6 +76,6 @@ bad ID3 BOM, cover-art chunk warnings, Xing size warnings; if it bothers you,
 
 ## Output
 
-`out_dir/*.mp3` (keepers), `out_dir/_rejected/`, `out_dir/tags.json`
-(`{relpath: {key, energy, bpm, bpm_src}}`), `out_dir.log`. Report: found / failed
-per wave, rejects and why, tag coverage.
+`out_dir/<csv-stem>/*.mp3` (keepers), `out_dir/_rejected/`, `out_dir/tags.json`
+(`{relpath: {key, energy, bpm, bpm_src}}`, relpath includes `<csv-stem>/`),
+`out_dir.log`. Report: found / failed per wave, rejects and why, tag coverage.
