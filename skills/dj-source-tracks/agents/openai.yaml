@@ -1,0 +1,4 @@
+interface:
+  display_name: "DJ Source Tracks"
+  short_description: "Tracklist to CSV from Spotify, screenshots, text, Lexicon"
+  default_prompt: "Use $dj-source-tracks to turn this playlist screenshot into a download CSV."

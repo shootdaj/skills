@@ -1,0 +1,4 @@
+interface:
+  display_name: "DJ Set Builder"
+  short_description: "Harmonic set order, energy arc, blends, m3u8 export"
+  default_prompt: "Use $dj-set-builder to order these tracks into a 3-hour set."

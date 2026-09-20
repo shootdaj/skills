@@ -1,0 +1,4 @@
+interface:
+  display_name: "DJ Show Prep"
+  short_description: "Overnight gig prep: source, download, key, order, report"
+  default_prompt: "Use $dj-show-prep to prepare my set for tomorrow's gig from this playlist."

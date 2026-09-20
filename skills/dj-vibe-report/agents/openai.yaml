@@ -1,0 +1,4 @@
+interface:
+  display_name: "DJ Vibe Report"
+  short_description: "Playable set page with waveforms, blends, checklist"
+  default_prompt: "Use $dj-vibe-report to build and publish tonight's vibe check page."
