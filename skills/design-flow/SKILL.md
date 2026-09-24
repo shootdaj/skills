@@ -78,7 +78,7 @@ Detailed, two more screens:
 | Fit | Looks in the library fit · None fit, run design-bakeoff |
 | Inspiration | Pull inspiration first · Skip |
 
-If the user wants inspiration and chose it here, ask one more multi-select question for sources (Header: Sources, options grouped to fit 4 per question: Dribbble, Behance, 21st.dev, Godly · Awwwards, Land-book, Lapa Ninja, SiteInspire · Dark Mode Design, Muzli, Uiverse, SaaS Landing · Mobbin, Refero, Page Flows (these need your login)). Default without asking: every source that fits the page kind in `assets/inspire/sources.json`.
+If the user wants inspiration and chose it here, ask one more multi-select question for sources (Header: Sources, 4 options per question: Dribbble, Behance, 21st.dev, Awwwards · SaaS Landing Page, Lapa Ninja, Browse links only (Godly, Land-book, Dark Mode Design, SiteInspire), Login sites (Mobbin, Refero, Page Flows)). Only the first six return search results; the rest open in Chrome. Default without asking: every source that fits the page kind in `assets/inspire/sources.json`.
 
 ## Step 2.5: inspiration (optional)
 
@@ -141,5 +141,5 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle. `anshul-ui-standards` (v1) stays untouched for older work |
 | `directions/` | one file per look, eleven to start, plus `_template.md` |
 | `assets/swatch/` | `make-swatch.py`, `shoot-swatch.mjs`, `vote.js` |
-| `assets/inspire/` | `sources.json` (15 galleries), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
+| `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
 | `profiles/default.md` | used when no door is loaded |

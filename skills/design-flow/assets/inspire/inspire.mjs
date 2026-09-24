@@ -25,7 +25,7 @@ const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, 
 const items = []; const report = [];
 async function scrape(s) {
   const url = s.url.replace('{q}', q);
-  if (s.login) { report.push({ id: s.id, status: 'login', count: 0 }); items.push({ id: `${s.id}-open`, source: s.id, sourceName: s.name, title: `Open ${s.name} for "${query}" (needs your login)`, href: url, img: null, kind: 'link' }); return; }
+  if (s.mode === 'link') { report.push({ id: s.id, status: 'link', count: 0 }); items.push({ id: `${s.id}-open`, source: s.id, sourceName: s.name, title: s.needs === 'login' ? 'needs your login' : 'browse', href: url, img: null, kind: 'link' }); return; }
   const page = await ctx.newPage();
   try {
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -37,7 +37,8 @@ async function scrape(s) {
         const src = img.currentSrc || img.src; const w = img.naturalWidth, h = img.naturalHeight; const r = img.getBoundingClientRect();
         if (!src || src.startsWith('data:') || seen.has(src) || w < 280 || h < 160 || r.width < 160) continue;
         if (/avatar|logo|icon|profile|sprite/i.test(src + ' ' + (img.alt || '') + ' ' + img.className)) continue;
-        const aEl = img.closest('a'); seen.add(src);
+        const t0 = (img.alt || '').trim(); if (/^(webflow|framer)$|template|sponsor|advert|404|not found|no content/i.test(t0)) continue;
+        const aEl = img.closest('a'); seen.add(src); const tk = (t0 || src).toLowerCase(); if (seen.has('t:' + tk)) continue; seen.add('t:' + tk);
         res.push({ src, href: aEl ? aEl.href : location.href, title: (img.alt || aEl?.getAttribute('aria-label') || aEl?.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 90), w, h });
         if (res.length >= per) break;
       }
@@ -53,7 +54,7 @@ async function scrape(s) {
         items.push({ id, source: s.id, sourceName: s.name, title: f.title || `${s.name} shot ${n}`, href: f.href, img: `img/${id}.${ext}`, w: f.w, h: f.h, kind: 'shot' });
       } catch (e) {}
     }
-    if (n < 2) { const id = `${s.id}-page`; await page.screenshot({ path: join(out, 'img', `${id}.jpg`), type: 'jpeg', quality: 70 }); items.push({ id, source: s.id, sourceName: s.name, title: `${s.name} results for "${query}"`, href: url, img: `img/${id}.jpg`, w: 1440, h: 1000, kind: 'page' }); }
+    if (n < 2 && !/404|not found/i.test(await page.title())) { const id = `${s.id}-page`; await page.screenshot({ path: join(out, 'img', `${id}.jpg`), type: 'jpeg', quality: 70 }); items.push({ id, source: s.id, sourceName: s.name, title: `${s.name} results for "${query}"`, href: url, img: `img/${id}.jpg`, w: 1440, h: 1000, kind: 'page' }); }
     report.push({ id: s.id, status: 'ok', count: n });
   } catch (e) { report.push({ id: s.id, status: 'error', error: String(e.message).slice(0, 90), count: 0 }); items.push({ id: `${s.id}-open`, source: s.id, sourceName: s.name, title: `Open ${s.name} for "${query}"`, href: url, img: null, kind: 'link' }); }
   finally { await page.close(); }
