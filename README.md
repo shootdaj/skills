@@ -49,6 +49,9 @@ npx skills update -g
 | **clean-my-ai-harness-codex** | (Codex) Map the harness Codex can see and prepare a safe cleanup plan after model/instruction changes. |
 | **use-claude** | (Codex) Delegate implementation or frontend work to real Claude Code from Codex. |
 | **create-skill-ccch** | Create, validate, globally install, and publish one shared skill for Claude Code, Codex, Cursor, and Hermes. |
+| **design-flow** | Design engine: infers what it can, asks the rest at one of three levels (quick, medium, detailed), shows three looks on a swatch board, builds, verifies with Playwright, publishes per the calling door's profile. |
+| **anshul-design** | Personal door on top of design-flow: sets the personal profile. Copy it to make your own flavour. The Aya flavour (`helix-design-anshul`) lives in AyaHelix/skills. |
+| **anshul-ui-standards-v2** | House mechanics the engine applies. Same rules as `anshul-ui-standards` minus the fixed Material chassis and report palette. v1 stays for older work. |
 | **anshul-ui-standards** | Apply Anshul’s Material-grade UI house rules for structure, theming, interaction, data visualization, motion, and screenshot verification. |
 | **apple-design** | Apply Apple’s fluid-interface principles to web UI: interruptible springs, direct manipulation, momentum, materials, typography, and accessibility. |
 

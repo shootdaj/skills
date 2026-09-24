@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anshul UI Standards"
+  short_description: "Apply Anshul’s Material and Apple-style UI standards"
+  default_prompt: "Use $anshul-ui-standards-v2 with apple-design to design and verify this interface."
