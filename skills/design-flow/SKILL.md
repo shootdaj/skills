@@ -85,9 +85,11 @@ If the user wants inspiration and chose it here, ask one more multi-select quest
 Run it when the user asks for inspiration, references or "show me what's out there", when they pick it in the detailed path, or when medium answers point nowhere clear. Offer it in one line at quick; never force it.
 
 ```bash
-node <this skill>/assets/inspire/inspire.mjs "<page kind> <mood words>" --kind <report|dashboard|landing|app|all> --per 8 --out <scratch>/inspire [--sources dribbble,behance,21st]
+node <this skill>/assets/inspire/inspire.mjs "<page kind> <mood words>" --kind <report|dashboard|landing|app|all> --per 8 --tone dark --out <scratch>/inspire [--sources dribbble,behance,21st]
 open -a "Google Chrome" <scratch>/inspire/picker.html
 ```
+
+Tone defaults to dark: about four dark shots to one light one, with the light ones spread through the grid. Use `--tone light` for a light-first page or `--tone any` for no filter; `--dark-share 0.8` sets the mix. The picker has Dark and Light chips to filter.
 
 The picker is local only: thumbnails link back to their source and are never published. Sites that need a login show as link cards that open in Chrome.
 

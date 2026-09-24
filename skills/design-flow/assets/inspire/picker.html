@@ -135,11 +135,12 @@ $('#q').textContent=BOARD.query; $('#kind').textContent=BOARD.kind; document.tit
 function el(tag,attrs,kids){const e=document.createElement(tag);for(const k in attrs||{}){if(k==='text')e.textContent=attrs[k];else e.setAttribute(k,attrs[k])}(kids||[]).forEach(c=>e.appendChild(c));return e}
 function icon(id){const s=document.createElementNS('http://www.w3.org/2000/svg','svg');s.setAttribute('class','i');const u=document.createElementNS('http://www.w3.org/2000/svg','use');u.setAttribute('href','#'+id);s.appendChild(u);return s}
 function chips(){const c=$('#chips');c.replaceChildren();const counts={};shotItems().forEach(i=>counts[i.source]=(counts[i.source]||0)+1);
- const list=[['all','All',shotItems().length],['liked','Liked',Object.keys(st.liked).length],...BOARD.sources.filter(s=>counts[s.id]).map(s=>[s.id,s.name,counts[s.id]])];
+ const dk=shotItems().filter(i=>i.tone==='dark').length,lt=shotItems().filter(i=>i.tone==='light').length;
+ const list=[['all','All',shotItems().length],['liked','Liked',Object.keys(st.liked).length],...(dk&&lt?[['tone:dark','Dark',dk],['tone:light','Light',lt]]:[]),...BOARD.sources.filter(s=>counts[s.id]).map(s=>[s.id,s.name,counts[s.id]])];
  list.forEach(([id,name,n])=>{const b=el('button',{class:'chip',type:'button','aria-pressed':String(src===id)},[el('span',{text:name}),el('span',{class:'c',text:String(n)})]);b.onclick=()=>{src=id;render()};c.appendChild(b)})}
 function shotItems(){return items.filter(i=>i.kind!=='link')}
 function browse(){const b=$('#browse');const L=items.filter(i=>i.kind==='link');b.hidden=!L.length;b.replaceChildren(el('span',{text:'Also browse'}),...L.map(i=>{const a=el('a',{href:i.href,target:'_blank',rel:'noopener'},[el('span',{text:i.sourceName}),el('small',{text:i.title})]);a.appendChild(icon('i-ext'));return a}))}
-function visible(){const w=words.toLowerCase();return shotItems().filter(i=>(src==='all'||(src==='liked'?st.liked[i.id]:i.source===src))&&(!w||(i.title+' '+i.sourceName+' '+(st.notes[i.id]||'')).toLowerCase().includes(w)))}
+function visible(){const w=words.toLowerCase();return shotItems().filter(i=>(src==='all'||(src==='liked'?st.liked[i.id]:src.startsWith('tone:')?i.tone===src.slice(5):i.source===src))&&(!w||(i.title+' '+i.sourceName+' '+(st.notes[i.id]||'')).toLowerCase().includes(w)))}
 function card(i,n){const liked=!!st.liked[i.id],sk=!!st.skipped[i.id];
  const c=el('div',{class:'card'+(i.kind==='link'?' link':'')+(liked?' liked':'')+(sk?' skipped':'')+(st.notes[i.id]?' has-note':''),tabindex:'0','data-id':i.id,style:'--n:'+Math.min(n,24),role:'group','aria-label':i.title+', '+i.sourceName+(liked?', liked':'')});
  if(i.kind==='link'){c.appendChild(el('div',{},[el('b',{text:i.sourceName}),el('small',{text:i.title})]));c.onclick=()=>window.open(i.href,'_blank','noopener');return c}
