@@ -1,6 +1,6 @@
 ---
 name: design-flow
-description: The engine behind the anshul-design and helix-design-anshul doors. Use for any page, dashboard, report, tech design, mock or control surface. Infers what it can, asks the rest with checkbox questions at one of three levels (quick, medium, detailed), shows three looks on a swatch board, then builds, verifies with Playwright and publishes the way the door's profile says. Load it through a door when one exists; on its own it uses profiles/default.md.
+description: The engine behind the anshul-design and helix-design-anshul doors. Use for any page, dashboard, report, tech design, mock or control surface. Infers what it can, asks the rest with checkbox questions at one of three levels (quick, medium, detailed), shows the looks you asked for on a swatch board, then builds, verifies with Playwright and publishes the way the door's profile says. Load it through a door when one exists; on its own it uses profiles/default.md.
 ---
 
 # design-flow
@@ -36,6 +36,7 @@ Never ask what you can read.
 | Dark or light | tokens or theme files already in the repo; else the look's `first` |
 | Palette in use | an existing tokens.css or theme file; reuse it unless asked to change |
 | Last look used | `~/.design-flow/state.json`, key `last.<profile>.<pageKind>`; never offer it first |
+| Looks to compare | a number in the request ("show me 5 looks"); else ask |
 | Level | "quick", "just make it", "same as last time" mean quick; "options", "let me pick", "walk me through" mean detailed; else `level_default` |
 | Publish | the profile |
 
@@ -48,9 +49,11 @@ Quick, one screen:
 | Header | Options |
 | --- | --- |
 | Page kind | Report or tech design · Dashboard or control surface · Landing or marketing · App screen or mock |
-| Theme | Dark first · Light first · Both, dark default |
 | Mood | Calm and bold · Playful · Editorial · Technical |
+| Looks | 3 (Recommended) · 4 · 6 · All |
 | Depth | Quick is fine (Recommended) · Go deeper |
+
+Dark or light is not a question: the board flips between them, and the build ships both.
 
 Medium, one more screen:
 
@@ -76,7 +79,7 @@ Detailed, two more screens:
 
 ## Step 3: swatch board
 
-1. Pick three looks from `directions/` (and `extra_directions`) that match the answers: `best`, `mood`, `first`, then palette and type when known. Drop the last look used. No two with the same display font.
+1. Pick as many looks as asked (default 3) from `directions/` (and `extra_directions`) that match the answers: `best`, `mood`, then palette and type when known. Drop the last look used. No two with the same display font. "All" means every look in the library.
 2. Build and show it:
 
 ```bash
@@ -84,7 +87,7 @@ python3 <this skill>/assets/swatch/make-swatch.py plum-report,swiss-broadsheet,t
 open -a "Google Chrome" <scratch>/swatch.html
 ```
 
-3. Say in one line what differs between the three. The user picks on the board (Pick button or keys 1 to 3) or by name. "Show 3 more" repeats with the next three. Medium and detailed also flip each card to its other theme.
+3. Say in one line what differs between them. The user picks on the board (Pick button or number keys) or by name. "Show more" repeats with the next set. Medium and detailed also flip each card to its other theme.
 4. Read the pick from the page title (`PICKED <id>`) via Playwright, or from the reply. Save it to `~/.design-flow/state.json` under `last.<profile>.<pageKind>`.
 
 ## Step 4: build

@@ -1,6 +1,6 @@
 ---
 name: anshul-design
-description: Anshul's personal design door. Use for UI, dashboards, reports, mocks and pages in his personal projects (any repo not under AyaHelix). Sets the personal profile and runs the design-flow engine with quick, medium or detailed questions, a swatch board of three looks, then build, verify and publish.
+description: Anshul's personal design door. Use for UI, dashboards, reports, mocks and pages in his personal projects (any repo not under AyaHelix). Sets the personal profile and runs the design-flow engine with quick, medium or detailed questions, a swatch board of as many looks as you ask for, then build, verify and publish.
 ---
 
 # anshul-design
