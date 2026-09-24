@@ -76,6 +76,28 @@ Detailed, two more screens:
 | 3D | Isometric SVG · WebGL with fallback · None |
 | Forms (multi, one question per block that matters: navigation, headline numbers, takeaways, main diagram, status view, sections) | options from `design-bakeoff/templates/BRIEF-2.md` |
 | Fit | Looks in the library fit · None fit, run design-bakeoff |
+| Inspiration | Pull inspiration first · Skip |
+
+If the user wants inspiration and chose it here, ask one more multi-select question for sources (Header: Sources, options grouped to fit 4 per question: Dribbble, Behance, 21st.dev, Godly · Awwwards, Land-book, Lapa Ninja, SiteInspire · Dark Mode Design, Muzli, Uiverse, SaaS Landing · Mobbin, Refero, Page Flows (these need your login)). Default without asking: every source that fits the page kind in `assets/inspire/sources.json`.
+
+## Step 2.5: inspiration (optional)
+
+Run it when the user asks for inspiration, references or "show me what's out there", when they pick it in the detailed path, or when medium answers point nowhere clear. Offer it in one line at quick; never force it.
+
+```bash
+node <this skill>/assets/inspire/inspire.mjs "<page kind> <mood words>" --kind <report|dashboard|landing|app|all> --per 8 --out <scratch>/inspire [--sources dribbble,behance,21st]
+open -a "Google Chrome" <scratch>/inspire/picker.html
+```
+
+The picker is local only: thumbnails link back to their source and are never published. Sites that need a login show as link cards that open in Chrome.
+
+The user likes, skips, tags (layout, colour, type, motion, data viz, density, navigation, illustration) and notes shots, then clicks Done. Keys: arrows or J/K move, L or Space likes, X skips, Enter opens large, O opens the site, U undoes, C compares likes, / filters.
+
+Read the picks from the vote server (`GET http://127.0.0.1:7331/votes`, component `inspire`, the `design` field is JSON), or from the page title (`INSPIRE DONE <n>`) plus the copied JSON the user pastes. Look at the liked images yourself. Then:
+
+1. Say in three bullets what the picks share: layout, colour and type, and the tags and notes.
+2. Rank the library looks against that and offer the closest ones on the swatch board.
+3. If nothing in the library is close, draft a new look file from the picks (copy `directions/_template.md`), add it to the board, and save it to `extra_directions` if the user keeps it.
 
 ## Step 3: swatch board
 
@@ -119,4 +141,5 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle. `anshul-ui-standards` (v1) stays untouched for older work |
 | `directions/` | one file per look, eleven to start, plus `_template.md` |
 | `assets/swatch/` | `make-swatch.py`, `shoot-swatch.mjs`, `vote.js` |
+| `assets/inspire/` | `sources.json` (15 galleries), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
 | `profiles/default.md` | used when no door is loaded |

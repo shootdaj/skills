@@ -1,0 +1,20 @@
+{
+  "note": "Search URL templates. {q} is the URL-encoded query. login: true means the site needs a signed-in browser; the picker shows it as a link card to open in Chrome instead of scraping.",
+  "sources": [
+    {"id": "dribbble",   "name": "Dribbble",       "url": "https://dribbble.com/search/{q}",                         "kinds": ["all"]},
+    {"id": "behance",    "name": "Behance",        "url": "https://www.behance.net/search/projects/{q}",             "kinds": ["all"]},
+    {"id": "21st",       "name": "21st.dev",       "url": "https://21st.dev/s/{q}",                                  "kinds": ["app", "dashboard", "landing"]},
+    {"id": "godly",      "name": "Godly",          "url": "https://godly.website/?search={q}",                       "kinds": ["landing", "report"]},
+    {"id": "awwwards",   "name": "Awwwards",       "url": "https://www.awwwards.com/websites/?text={q}",             "kinds": ["landing", "report"]},
+    {"id": "landbook",   "name": "Land-book",      "url": "https://land-book.com/search?q={q}",                      "kinds": ["landing"]},
+    {"id": "lapa",       "name": "Lapa Ninja",     "url": "https://www.lapa.ninja/search/?q={q}",                    "kinds": ["landing"]},
+    {"id": "saaslp",     "name": "SaaS Landing",   "url": "https://saaslandingpage.com/?s={q}",                      "kinds": ["landing"]},
+    {"id": "darkmode",   "name": "Dark Mode Design","url": "https://www.darkmodedesign.com/?s={q}",                  "kinds": ["all"]},
+    {"id": "siteinspire","name": "SiteInspire",    "url": "https://www.siteinspire.com/websites?search={q}",         "kinds": ["landing", "report"]},
+    {"id": "muzli",      "name": "Muzli",          "url": "https://search.muz.li/search?q={q}",                      "kinds": ["all"]},
+    {"id": "uiverse",    "name": "Uiverse",        "url": "https://uiverse.io/search?q={q}",                         "kinds": ["app", "dashboard"]},
+    {"id": "mobbin",     "name": "Mobbin",         "url": "https://mobbin.com/search/apps/web?content_type=screens&q={q}", "kinds": ["app", "dashboard"], "login": true},
+    {"id": "refero",     "name": "Refero",         "url": "https://refero.design/search?q={q}",                      "kinds": ["app", "dashboard"], "login": true},
+    {"id": "pageflows",  "name": "Page Flows",     "url": "https://pageflows.com/search/?q={q}",                     "kinds": ["app"], "login": true}
+  ]
+}
