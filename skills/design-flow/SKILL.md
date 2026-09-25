@@ -39,8 +39,8 @@ Start the Monitor tool (30 minute timeout, re-arm on expiry while the user is wo
 It opens the room in a Chrome window with its own profile (`~/.design-flow/browser`, so a hosted room's SSO sign-in is remembered), mirrors each new request to `<room>/_requests/<id>.json` and prints `NEW_REQUEST <file>`, copies `status`, `name`, `stage`, `percent`, `progress` and `result` back into the page every 2 seconds, and reloads it when a design is done. Tell the user to use that window. `WATCH_ENDED` means they closed it; offer to reopen. Only one watcher per room at a time.
 
 ### Progress protocol (the room shows it live)
-The rail shows each request's stage, a progress bar and the latest line; clicking it opens a timeline. Whoever builds writes these fields into the request file (read it, keep every field, write it back):
-- `stage` (short label), `percent` (0 to 100), and append `{ "t": "<ISO time>", "msg": "<one plain-English line>" }` to `progress`.
+The rail shows each request's stage, a progress bar, an ETA (from `eta`, else estimated from percent and elapsed time) and the latest line; clicking it opens a timeline. Whoever builds writes these fields into the request file (read it, keep every field, write it back):
+- `started` (ISO time when building begins), optional `eta` (ISO time you expect to finish; a full design is about 35 minutes) or `estimateMin`, `stage` (short label), `percent` (0 to 100), and append `{ "t": "<ISO time>", "msg": "<one plain-English line>" }` to `progress`.
 - Milestones: picked up (5), reading brief (10), direction locked (20, name the look), frame and first screens built (40), all screens built (60), verifying (75), fixing (85, say what), shots done (95), registered and done (100).
 - A builder subagent gets the request file path and this protocol in its prompt. The main agent sets `status` to `done` only after registering the design.
 

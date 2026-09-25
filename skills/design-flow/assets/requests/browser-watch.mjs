@@ -37,7 +37,7 @@ while (!closed) {
       if (existsSync(p)) {
         try {
           const f = JSON.parse(readFileSync(p, 'utf8'));
-          for (const k of ['status', 'name', 'result', 'updated', 'stage', 'percent', 'progress']) if (JSON.stringify(f[k]) !== JSON.stringify(r[k]) && f[k] !== undefined) { r[k] = f[k]; changed = true; }
+          for (const k of ['status', 'name', 'result', 'updated', 'stage', 'percent', 'progress', 'eta', 'started', 'estimateMin']) if (JSON.stringify(f[k]) !== JSON.stringify(r[k]) && f[k] !== undefined) { r[k] = f[k]; changed = true; }
         } catch (e) {}
       }
     }

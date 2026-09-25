@@ -158,6 +158,21 @@
   addEventListener('keydown', e => { if (e.key === 'Escape' && ov.classList.contains('show')) close(); });
 
   // status list
+  function etaText(r) {
+    if (r.status === 'done' || r.status === 'failed') return '';
+    const now = Date.now(), start = Date.parse(r.started || r.created) || now, base = (r.estimateMin || 35) * 60000;
+    let end;
+    if (r.eta) end = Date.parse(r.eta);
+    else {
+      const p = Math.max(0, Math.min(99, r.percent || 0)), el = now - start;
+      const byRate = p >= 15 ? el * (100 - p) / p : Infinity;
+      const byBase = Math.max(base - el, base * (100 - p) / 100 * 0.5);
+      end = now + (isFinite(byRate) ? (byRate + byBase) / 2 : byBase);
+    }
+    const min = Math.max(1, Math.round((end - now) / 60000));
+    const at = new Date(end).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    return r.status === 'pending' ? 'about ' + (r.estimateMin || 35) + ' min once started' : 'about ' + min + ' min left, around ' + at;
+  }
   function renderList() {
     const recent = list.slice(-6).reverse();
     listBox.replaceChildren(...recent.map(r => {
@@ -169,7 +184,7 @@
         el('b', { text: r.name || 'New design', title: r.name || 'New design' }),
         r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open', onclick: e => e.stopPropagation() }) : null,
         el('div', { class: 'dr-bar' }, [el('i', { style: 'width:' + pct + '%' })]),
-        el('span', { class: 'dr-pl', text: line }),
+        el('span', { class: 'dr-pl', text: (etaText(r) ? etaText(r) + ' · ' : '') + line }),
       ].filter(Boolean));
       const show = () => showLog(r.id); item.addEventListener('click', show); item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); } });
       return item;
@@ -185,7 +200,7 @@
     if (!items.length) items.push(el('li', {}, [el('time', { text: (r.created || '').slice(11, 16) }), el('span', { text: r.status === 'pending' ? 'Waiting for Claude Code to pick this up.' : 'Claude Code has started.' })]));
     dlg.replaceChildren(...[
       el('div', { class: 'dr-hd' }, [el('h2', { text: r.name || 'New design' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: () => { logId = null; close(); } })]),
-      el('p', { class: 'dr-sub', text: (r.mode === 'auto' ? 'Auto' : 'Guided') + ' · ' + r.status + (r.stage ? ' · ' + r.stage : '') + ' · ' + pct + '%' }),
+      el('p', { class: 'dr-sub', text: (r.mode === 'auto' ? 'Auto' : 'Guided') + ' · ' + r.status + (r.stage ? ' · ' + r.stage : '') + ' · ' + pct + '%' + (etaText(r) ? ' · ' + etaText(r) : '') }),
       el('div', { style: 'padding:10px 20px 14px' }, [el('div', { class: 'dr-bar' }, [el('i', { style: 'width:' + pct + '%' })])]),
       el('ol', { class: 'dr-log', 'aria-live': 'polite' }, items),
       r.status === 'done' && r.result && r.result.dir ? el('div', { class: 'dr-ft' }, [el('span', { class: 'sp' }), el('a', { class: 'dr-go', href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open design', style: 'display:inline-flex;align-items:center;text-decoration:none' })]) : null,
