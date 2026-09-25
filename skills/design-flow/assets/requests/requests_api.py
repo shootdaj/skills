@@ -2,7 +2,7 @@
 Status flow: pending -> building -> done | failed. The design-flow skill picks up pending files and builds them."""
 import json, os, re, time, threading
 LOCK = threading.Lock()
-FIELDS = ('name', 'base', 'mood', 'theme', 'palette', 'keep', 'avoid', 'screens', 'notes', 'inspiration', 'count')
+FIELDS = ('mode', 'name', 'base', 'mood', 'theme', 'palette', 'keep', 'avoid', 'screens', 'notes', 'inspiration', 'count')
 
 def qdir(root):
     d = os.path.join(root, '_requests'); os.makedirs(d, exist_ok=True); return d
