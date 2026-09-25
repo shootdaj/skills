@@ -8,7 +8,7 @@ ROOT = os.path.abspath(next((a for a in args if not a.startswith('--') and not a
 class H(http.server.BaseHTTPRequestHandler):
     def _json(self, code, obj):
         b = json.dumps(obj).encode(); self.send_response(code)
-        self.send_header('Access-Control-Allow-Origin', '*'); self.send_header('Access-Control-Allow-Headers', 'content-type'); self.send_header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+        self.send_header('Access-Control-Allow-Origin', '*'); self.send_header('Access-Control-Allow-Headers', 'content-type'); self.send_header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS'); self.send_header('Access-Control-Allow-Private-Network', 'true')
         self.send_header('content-type', 'application/json'); self.send_header('content-length', str(len(b))); self.end_headers(); self.wfile.write(b)
     def do_OPTIONS(self): self._json(204, {})
     def do_GET(self):

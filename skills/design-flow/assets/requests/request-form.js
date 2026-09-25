@@ -137,13 +137,13 @@
     if (!body.mode) body.mode = 'guided';
     go.disabled = true; go.textContent = 'Sending…';
     let saved = null;
-    try { const r = await fetch(API + '/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); if (r.ok) saved = await r.json(); } catch (e) {}
-    dlg.replaceChildren(el('div', { class: 'dr-hd' }, [el('h2', { text: saved ? 'Sent' : 'Request file saved' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close })]));
+    try { const r = await fetch(API + '/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), targetAddressSpace: 'loopback' }); if (r.ok) saved = await r.json(); } catch (e) {}
+    dlg.replaceChildren(el('div', { class: 'dr-hd' }, [el('h2', { text: saved ? 'Sent' : 'Not sent' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close })]));
     if (saved) {
       dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: 'Queued. Claude Code picks it up within a few seconds, names it, and it shows up in the room when it is ready.' })]));
       draft = {}; saveDraft(); refresh();
     } else {
-      dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: 'The room\'s local server is not running, so the request was not sent. Ask Claude Code to start the room and watch for requests, then send again.' })]));
+      dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: 'Could not reach Claude Code on this computer. On the hosted room, Chrome asks once to allow access to your local network: click Allow, then send again. Requests only work on the machine where Claude Code runs the room server.' })]));
       go.disabled = false;
     }
   }
@@ -159,7 +159,7 @@
     listBox.replaceChildren(...recent.map(r => el('div', { class: 'dr-item' }, [el('span', { class: 'dr-st ' + r.status, text: r.status }), el('b', { text: r.name || 'New design', title: r.name || 'New design' }), r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open' }) : null].filter(Boolean))));
   }
   async function refresh() {
-    try { const r = await fetch(API + '/requests', { cache: 'no-store' }); if (!r.ok) throw 0; online = true; list = (await r.json()).requests || []; } catch (e) { online = false; }
+    try { const r = await fetch(API + '/requests', { cache: 'no-store', targetAddressSpace: 'loopback' }); if (!r.ok) throw 0; online = true; list = (await r.json()).requests || []; } catch (e) { online = false; }
     if (mount) renderList();
     if (list.some(r => r.status === 'done' && !r._seen)) document.dispatchEvent(new CustomEvent('design-requests', { detail: list }));
   }

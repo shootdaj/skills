@@ -31,7 +31,7 @@ For a design room open in the browser while you work with Claude Code. The user 
 
 Set up a room once:
 1. Copy `assets/requests/request-form.js` and `requests_api.py` next to the room's server (or run `python3 assets/requests/requests_server.py <room> --port 7333` if it has none).
-2. In the room server, route `/requests` through `requests_api.handle(...)`; add `features: ['requests']` to `/ping`.
+2. In the room server, route `/requests` through `requests_api.handle(...)`; add `features: ['requests']` to `/ping`; send `Access-Control-Allow-Private-Network: true` with the CORS headers so a hosted copy (https) of the room can reach the local server on the same machine.
 3. Add `<div data-new-design></div>` where the button should sit, and `<script src="request-form.js" data-api="http://127.0.0.1:<port>" data-room="<name>" data-bases="d1:Name,..." data-screens="id:Label,..."></script>`.
 4. Load finished designs from `_requests/designs.js` (`window.EXTRA_DESIGNS`, same shape as the room's design list).
 
