@@ -3,7 +3,7 @@
 # usage: publish.sh <dir> --project <name> [--access sso|invite|public] [--sub <subscription>] [--suffix <owner>]
 #                   [--location eastus2] [--sku Standard|Free] [--owner <email>] [--exclude <glob>]...
 set -euo pipefail
-DIR=""; PROJECT=""; ACCESS="sso"; SUB="${AZ_STATIC_SUB:-AIX-SANDBOX-SUB-1}"; SUFFIX="${AZ_STATIC_SUFFIX:-anshul}"
+DIR=""; PROJECT=""; ACCESS="sso"; SUB="${AZ_STATIC_SUB:-AIX-SANDBOX-SUB-1}"; SUFFIX="${AZ_STATIC_SUFFIX:-}"
 LOC="eastus2"; SKU="Standard"; OWNER="${AZ_STATIC_OWNER:-}"; EXCL=()
 while [ $# -gt 0 ]; do case "$1" in
   --project) PROJECT="$2"; shift 2;; --access) ACCESS="$2"; shift 2;; --sub) SUB="$2"; shift 2;; --suffix) SUFFIX="$2"; shift 2;;
@@ -15,6 +15,9 @@ command -v az >/dev/null || { echo "ERROR: Azure CLI (az) not installed" >&2; ex
 if ! az account show -o none 2>/dev/null; then echo "LOGIN_NEEDED: run  az login" >&2; exit 3; fi
 az account set --subscription "$SUB"
 [ -n "$OWNER" ] || OWNER=$(az account show --query user.name -o tsv)
+# suffix = first name of the signed-in user (jane.doe@company.com -> jane), unless set
+[ -n "$SUFFIX" ] || SUFFIX=$(printf "%s" "$OWNER" | sed -E "s/@.*//; s/[._-].*//" | tr "[:upper:]" "[:lower:]" | tr -cd "a-z0-9")
+[ -n "$SUFFIX" ] || { echo "ERROR: could not derive a name suffix; pass --suffix" >&2; exit 2; }
 if ! az group list --query "[0].name" -o tsv >/dev/null 2>&1; then echo "LOGIN_NEEDED: MFA expired, run  az login --tenant $(az account show --query tenantId -o tsv)" >&2; exit 3; fi
 RG="rg-${PROJECT}-${SUFFIX}"; APP="${PROJECT}-${SUFFIX}"
 az group create -n "$RG" -l "$LOC" --tags owner="$OWNER" purpose="$PROJECT" -o none

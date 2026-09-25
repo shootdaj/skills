@@ -1,6 +1,6 @@
 ---
 name: azure-static-publish
-description: Publish a static site (an HTML report, a design room, a prototype folder) to Azure Static Web Apps behind company SSO, in a sandbox subscription, with owner-suffixed names and tags. Use when the user says host it on Azure, put it behind SSO, share it with the team on Azure, or redeploy the Azure copy. Idempotent, so it also updates an existing site.
+description: Publish a static site (an HTML report, a design room, a prototype folder) to Azure Static Web Apps behind company SSO, in a sandbox subscription, with names suffixed by the person running it and owner tags. Use when the user says host it on Azure, put it behind SSO, share it with the team on Azure, or redeploy the Azure copy. Idempotent, so it also updates an existing site.
 ---
 
 # Azure static publish
@@ -18,7 +18,7 @@ It creates `rg-<project>-<suffix>` and a Static Web App `<project>-<suffix>` if 
 | Setting | Default | Flag / env |
 | --- | --- | --- |
 | Subscription | `AIX-SANDBOX-SUB-1` | `--sub`, `AZ_STATIC_SUB` |
-| Name suffix | `anshul`, so every resource ends in `-anshul` | `--suffix`, `AZ_STATIC_SUFFIX` |
+| Name suffix | the signed-in user's first name (jane.doe@company.com gives `-jane`), so every resource ends in `-<name>` | `--suffix`, `AZ_STATIC_SUFFIX` |
 | Owner tag | the signed-in user (sandbox policy requires an `owner` tag on resource groups) | `--owner`, `AZ_STATIC_OWNER` |
 | Region | `eastus2` | `--location` |
 | Plan | `Standard` (work subscription; enables custom auth later) | `--sku` |
