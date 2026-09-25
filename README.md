@@ -52,6 +52,7 @@ npx skills update -g
 | **design-flow** | Design engine: infers what it can, asks the rest at one of three levels (quick, medium, detailed), shows three looks on a swatch board, builds, verifies with Playwright, publishes per the calling door's profile. |
 | **anshul-design** | Personal door on top of design-flow: sets the personal profile. Copy it to make your own flavour. The Aya flavour (`helix-design-anshul`) lives in AyaHelix/skills. |
 | **anshul-ui-standards-v2** | House mechanics the engine applies. Same rules as `anshul-ui-standards` minus the fixed Material chassis and report palette. v1 stays for older work. |
+| **azure-static-publish** | Publish or redeploy a static folder to Azure Static Web Apps behind SSO, with owner-suffixed names, owner tags and a sandbox subscription. Ships with a one-command script; pairs with the `azure-publisher` Claude Code subagent. |
 | **anshul-ui-standards** | Apply Anshul’s Material-grade UI house rules for structure, theming, interaction, data visualization, motion, and screenshot verification. |
 | **apple-design** | Apply Apple’s fluid-interface principles to web UI: interruptible springs, direct manipulation, momentum, materials, typography, and accessibility. |
 
