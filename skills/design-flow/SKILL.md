@@ -25,7 +25,27 @@ One engine, two doors. A door hands over a profile block; this skill does the re
 
 Missing fields fall back to `profiles/default.md`. Skip any skill named in the profile that is not installed, and say so once.
 
-## Step 1: infer before asking
+## Live design requests (Claude Code only)
+
+For a design room open in the browser while you work with Claude Code. The user fills the room's New design form; this session builds it.
+
+Set up a room once:
+1. Copy `assets/requests/request-form.js` and `requests_api.py` next to the room's server (or run `python3 assets/requests/requests_server.py <room> --port 7333` if it has none).
+2. In the room server, route `/requests` through `requests_api.handle(...)`; add `features: ['requests']` to `/ping`.
+3. Add `<div data-new-design></div>` where the button should sit, and `<script src="request-form.js" data-api="http://127.0.0.1:<port>" data-room="<name>" data-bases="d1:Name,..." data-screens="id:Label,..."></script>`.
+4. Load finished designs from `_requests/designs.js` (`window.EXTRA_DESIGNS`, same shape as the room's design list).
+
+Watch while you work: start the Monitor tool on `sh assets/requests/watch-requests.sh <room>`. Each `NEW_REQUEST <file>` line is one request. Also check `_requests/` for `pending` files whenever you open a room.
+
+Build a request:
+1. Set `status` to `building` and `updated` in its JSON file.
+2. Read the room's `BRIEF.md`, `CONTENT.md` and `DIRECTIONS.md`, the base design if `base` is set, and the request fields: name, theme (dark means dark first with light accents), mood, palette, keep, avoid, screens, notes, inspiration.
+3. Write a direction message from them and build `<room>/<next id>-<slug>/index.html` with a Fable subagent (`design-bakeoff/references/builder-prompt.md`), or yourself for small changes. Verify and shoot exactly as the room's brief says, with the same shot names as the other designs.
+4. Append an entry to `_requests/designs.js` (id, name, fam, dir, line, fonts, dark and light swatches, status `verified`).
+5. Set `status` to `done`, `result` to `{ "dir": "<folder>", "verified": true, "message": "<one line>" }`. On failure set `failed` with the reason in `result.message`.
+6. Tell the user in one line and open the room in Chrome.
+
+
 
 Never ask what you can read.
 
@@ -143,5 +163,6 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle. `anshul-ui-standards` (v1) stays untouched for older work |
 | `directions/` | one file per look, eleven to start, plus `_template.md` |
 | `assets/swatch/` | `make-swatch.py`, `shoot-swatch.mjs`, `vote.js` |
+| `assets/requests/` | `request-form.js` (New design form), `requests_api.py` and `requests_server.py` (queue), `watch-requests.sh` (Monitor watcher) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
 | `profiles/default.md` | used when no door is loaded |
