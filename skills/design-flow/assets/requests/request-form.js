@@ -139,7 +139,7 @@
   function submit() {
     const body = draft.mode === 'guided' ? { ...draft, inspiration: inspirationPicks() } : { mode: 'auto', theme: draft.theme, inspiration: inspirationPicks() };
     if (!body.mode) body.mode = 'guided';
-    const now = new Date(); const id = now.toISOString().replace(/[-:T]/g, '').slice(0, 15).replace(/(\d{8})(\d{6})/, '$1-$2') + '-' + Math.random().toString(36).slice(2, 6);
+    const now = new Date(); const id = now.toISOString().replace(/[-:T]/g, '').slice(0, 14).replace(/(\d{8})(\d{6})/, '$1-$2') + '-' + Math.random().toString(36).slice(2, 6);
     const req = { ...body, id, name: 'New design', status: 'pending', room: ROOM, created: now.toISOString(), updated: now.toISOString() };
     const q = readQ(); q.push(req); writeQ(q);
     const watched = !!window.__designFlowWatcher;
