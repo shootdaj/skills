@@ -27,15 +27,15 @@ Missing fields fall back to `profiles/default.md`. Skip any skill named in the p
 
 ## Live design requests (Claude Code only)
 
-For a design room open in the browser while you work with Claude Code. The user fills the room's New design form; this session builds it.
+For a design room you work on with Claude Code. Claude drives a Chrome window; the user picks in it. No server and no network calls: the form saves requests in the page's localStorage, and the watcher reads them out of the window Claude opened.
 
 Set up a room once:
-1. Copy `assets/requests/request-form.js` and `requests_api.py` next to the room's server (or run `python3 assets/requests/requests_server.py <room> --port 7333` if it has none).
-2. In the room server, route `/requests` through `requests_api.handle(...)`; add `features: ['requests']` to `/ping`; send `Access-Control-Allow-Private-Network: true` with the CORS headers so a hosted copy (https) of the room can reach the local server on the same machine.
-3. Add `<div data-new-design></div>` where the button should sit, and `<script src="request-form.js" data-api="http://127.0.0.1:<port>" data-room="<name>" data-bases="d1:Name,..." data-screens="id:Label,..."></script>`.
-4. Load finished designs from `_requests/designs.js` (`window.EXTRA_DESIGNS`, same shape as the room's design list).
+1. Copy `assets/requests/request-form.js` next to the room and add `<div data-new-design></div>` where the button should sit, plus `<script src="request-form.js" data-room="<name>" data-bases="d1:Name,..." data-screens="id:Label,..."></script>`.
+2. Load finished designs from `_requests/designs.js` (`window.EXTRA_DESIGNS`, same shape as the room's design list).
 
-Watch while you work: start the Monitor tool on `sh assets/requests/watch-requests.sh <room>`. Each `NEW_REQUEST <file>` line is one request. Also check `_requests/` for `pending` files whenever you open a room.
+Watch while you work: start the Monitor tool on
+`node assets/requests/browser-watch.mjs <room url or index.html> --room <room dir>`.
+It opens the room in a Chrome window with its own profile (`~/.design-flow/browser`, so a hosted room's SSO sign-in is remembered), mirrors each new request to `<room>/_requests/<id>.json` and prints `NEW_REQUEST <file>`, copies status back into the page, and reloads it when a design is done. Tell the user to use that window. `WATCH_ENDED` means they closed it; reopen when needed.
 
 Build a request:
 1. Set `status` to `building` and `updated` in its JSON file.
@@ -163,6 +163,6 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle. `anshul-ui-standards` (v1) stays untouched for older work |
 | `directions/` | one file per look, eleven to start, plus `_template.md` |
 | `assets/swatch/` | `make-swatch.py`, `shoot-swatch.mjs`, `vote.js` |
-| `assets/requests/` | `request-form.js` (New design form), `requests_api.py` and `requests_server.py` (queue), `watch-requests.sh` (Monitor watcher) |
+| `assets/requests/` | `request-form.js` (New design form, localStorage only), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` / `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
 | `profiles/default.md` | used when no door is loaded |

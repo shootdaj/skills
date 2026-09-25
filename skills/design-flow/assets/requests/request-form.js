@@ -2,7 +2,8 @@
    <script src="request-form.js" data-api="http://127.0.0.1:7333" data-room="My room"
            data-bases="d1:Hearth,d2:Tidewater" data-screens="welcome:Welcome,path:Path"></script>
    Mounts into an element with [data-new-design] if the page has one, else shows a floating button.
-   Claude Code only: sends the request to the room's local queue (POST /requests); the Claude Code session watching the room builds it.
+   Claude Code only: saves the request in this page's localStorage (key design-requests). The Claude Code session that opened this
+   window with browser-watch.mjs reads it from the page and writes status back. No server, no network calls.
    Picks up room colours from CSS variables --bg --s1 --s2 --line --txt --txt2 --acc --on-acc when present. */
 (function () {
   const me = document.currentScript || { dataset: {} };
@@ -114,7 +115,7 @@
       go.textContent = 'Surprise me';
       dlg.append(...header,
         el('div', { class: 'dr-auto' }, [el('p', { text: 'Claude looks at every design already in this room and builds one that shares nothing with them: new palette, type, layout and motion.' }), field('Theme (optional)', theme), picks.length ? el('p', { text: `${picks.length} inspiration pick${picks.length > 1 ? 's' : ''} from this browser will be used as a nudge.` }) : null].filter(Boolean)),
-        el('div', { class: 'dr-ft' }, [el('small', { text: online ? 'Claude Code queue connected' : 'Room server not running. Ask Claude Code to start the room.' }), el('span', { class: 'sp' }), go]));
+        el('div', { class: 'dr-ft' }, [el('small', { text: online ? 'Claude Code is watching this window' : 'Not watched. Ask Claude Code to open the room and watch.' }), el('span', { class: 'sp' }), go]));
       setTimeout(() => go.focus(), 40); return;
     }
     dlg.append(...header,
@@ -128,24 +129,23 @@
         field('Anything else', input('notes', 'Copy, motion, one thing that must feel right', true)),
         picks.length ? el('p', { class: 'dr-sub', text: `${picks.length} inspiration pick${picks.length > 1 ? 's' : ''} from this browser will be attached.` }) : null,
       ].filter(Boolean)),
-      el('div', { class: 'dr-ft' }, [el('small', { text: online ? 'Claude Code queue connected' : 'Room server not running. Ask Claude Code to start the room.' }), el('span', { class: 'sp' }), el('button', { class: 'dr-ghost', type: 'button', text: 'Clear', onclick: () => { draft = {}; saveDraft(); form(); } }), go]),
+      el('div', { class: 'dr-ft' }, [el('small', { text: online ? 'Claude Code is watching this window' : 'Not watched. Ask Claude Code to open the room and watch.' }), el('span', { class: 'sp' }), el('button', { class: 'dr-ghost', type: 'button', text: 'Clear', onclick: () => { draft = {}; saveDraft(); form(); } }), go]),
     );
     setTimeout(() => { const f = dlg.querySelector('select,input,textarea'); f && f.focus(); }, 40);
   }
-  async function submit() {
-    const body = draft.mode === 'guided' ? { ...draft, inspiration: inspirationPicks(), room: ROOM } : { mode: 'auto', theme: draft.theme, inspiration: inspirationPicks(), room: ROOM };
+  const QKEY = 'design-requests';
+  const readQ = () => { try { return JSON.parse(localStorage.getItem(QKEY) || '[]'); } catch (e) { return []; } };
+  const writeQ = q => { try { localStorage.setItem(QKEY, JSON.stringify(q)); } catch (e) {} };
+  function submit() {
+    const body = draft.mode === 'guided' ? { ...draft, inspiration: inspirationPicks() } : { mode: 'auto', theme: draft.theme, inspiration: inspirationPicks() };
     if (!body.mode) body.mode = 'guided';
-    go.disabled = true; go.textContent = 'Sending…';
-    let saved = null;
-    try { const r = await fetch(API + '/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body), targetAddressSpace: 'loopback' }); if (r.ok) saved = await r.json(); } catch (e) {}
-    dlg.replaceChildren(el('div', { class: 'dr-hd' }, [el('h2', { text: saved ? 'Sent' : 'Not sent' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close })]));
-    if (saved) {
-      dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: 'Queued. Claude Code picks it up within a few seconds, names it, and it shows up in the room when it is ready.' })]));
-      draft = {}; saveDraft(); refresh();
-    } else {
-      dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: 'Could not reach Claude Code on this computer. On the hosted room, Chrome asks once to allow access to your local network: click Allow, then send again. Requests only work on the machine where Claude Code runs the room server.' })]));
-      go.disabled = false;
-    }
+    const now = new Date(); const id = now.toISOString().replace(/[-:T]/g, '').slice(0, 15).replace(/(\d{8})(\d{6})/, '$1-$2') + '-' + Math.random().toString(36).slice(2, 6);
+    const req = { ...body, id, name: 'New design', status: 'pending', room: ROOM, created: now.toISOString(), updated: now.toISOString() };
+    const q = readQ(); q.push(req); writeQ(q);
+    const watched = !!window.__designFlowWatcher;
+    dlg.replaceChildren(el('div', { class: 'dr-hd' }, [el('h2', { text: watched ? 'Sent' : 'Saved' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close })]),
+      el('div', { class: 'dr-done' }, [el('p', { text: watched ? 'Claude Code is watching this window and picks it up within a few seconds. It shows up in the rail when it is ready.' : 'Saved in this browser. Claude Code only sees it in the window it opened for the room, so ask Claude Code to open the room and watch.' })]));
+    draft = { mode: draft.mode, theme: draft.theme }; saveDraft(); refresh();
   }
   function open() { form(); ov.classList.add('show'); }
   function close() { ov.classList.remove('show'); btn.focus(); }
@@ -158,10 +158,12 @@
     const recent = list.slice(-6).reverse();
     listBox.replaceChildren(...recent.map(r => el('div', { class: 'dr-item' }, [el('span', { class: 'dr-st ' + r.status, text: r.status }), el('b', { text: r.name || 'New design', title: r.name || 'New design' }), r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open' }) : null].filter(Boolean))));
   }
-  async function refresh() {
-    try { const r = await fetch(API + '/requests', { cache: 'no-store', targetAddressSpace: 'loopback' }); if (!r.ok) throw 0; online = true; list = (await r.json()).requests || []; } catch (e) { online = false; }
+  function refresh() {
+    online = !!window.__designFlowWatcher; list = readQ();
     if (mount) renderList();
-    if (list.some(r => r.status === 'done' && !r._seen)) document.dispatchEvent(new CustomEvent('design-requests', { detail: list }));
+    const done = list.filter(r => r.status === 'done' && !r.announced);
+    if (done.length) { done.forEach(r => r.announced = true); writeQ(list); document.dispatchEvent(new CustomEvent('design-requests', { detail: list })); }
   }
-  refresh(); setInterval(refresh, 5000);
+  addEventListener('storage', e => { if (e.key === QKEY) refresh(); });
+  refresh(); setInterval(refresh, 2000);
 })();
