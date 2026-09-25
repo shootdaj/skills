@@ -17,7 +17,7 @@ const url = /^https?:|^file:/.test(target) ? target : 'file://' + resolve(target
 const pwArg = opt('--playwright', process.env.PLAYWRIGHT_PACKAGE_JSON);
 function loadPlaywright() { for (const t of [pwArg, process.cwd() + '/package.json', import.meta.url, '/Users/Anshul.Vishwakarma/Code/sypris/package.json'].filter(Boolean)) { try { return createRequire(t)('@playwright/test'); } catch (e) {} } throw new Error('Playwright not found; pass --playwright /path/to/package.json'); }
 const { chromium } = loadPlaywright();
-const launch = o => chromium.launchPersistentContext(profile, { headless: false, viewport: null, args: ['--start-maximized'], ...o });
+const launch = o => chromium.launchPersistentContext(profile, { headless: false, viewport: null, args: ['--start-maximized'], ignoreDefaultArgs: ['--no-sandbox', '--enable-automation'], ...o });
 const ctx = await launch({ channel: 'chrome' }).catch(() => launch({}));
 await ctx.addInitScript(() => { window.__designFlowWatcher = true; });
 const page = ctx.pages()[0] || await ctx.newPage();

@@ -183,13 +183,13 @@
     const pct = r.status === 'done' ? 100 : (r.percent || 0);
     const items = (r.progress || []).map(p => el('li', {}, [el('time', { text: (p.t || '').slice(11, 16) }), el('span', { text: p.msg })]));
     if (!items.length) items.push(el('li', {}, [el('time', { text: (r.created || '').slice(11, 16) }), el('span', { text: r.status === 'pending' ? 'Waiting for Claude Code to pick this up.' : 'Claude Code has started.' })]));
-    dlg.replaceChildren(
+    dlg.replaceChildren(...[
       el('div', { class: 'dr-hd' }, [el('h2', { text: r.name || 'New design' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: () => { logId = null; close(); } })]),
       el('p', { class: 'dr-sub', text: (r.mode === 'auto' ? 'Auto' : 'Guided') + ' · ' + r.status + (r.stage ? ' · ' + r.stage : '') + ' · ' + pct + '%' }),
       el('div', { style: 'padding:10px 20px 14px' }, [el('div', { class: 'dr-bar' }, [el('i', { style: 'width:' + pct + '%' })])]),
       el('ol', { class: 'dr-log', 'aria-live': 'polite' }, items),
       r.status === 'done' && r.result && r.result.dir ? el('div', { class: 'dr-ft' }, [el('span', { class: 'sp' }), el('a', { class: 'dr-go', href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open design', style: 'display:inline-flex;align-items:center;text-decoration:none' })]) : null,
-    );
+    ].filter(Boolean));
   }
 
   function refresh() {
