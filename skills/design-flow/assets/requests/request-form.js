@@ -26,6 +26,10 @@
   .dr-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:var(--s2,#1d2025);border:1px solid var(--line,rgba(255,255,255,.1));font-weight:500;font-size:13px;line-height:1.3;color:var(--txt,#eee)}
   .dr-item b{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
   .dr-item a{color:var(--acc,#FFD400);font-weight:600;text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
+  .dr-item{flex-wrap:wrap;cursor:pointer;transition:border-color .15s}.dr-item:hover{border-color:var(--line2,rgba(255,255,255,.25))}
+  .dr-item .dr-pl{flex-basis:100%;font-size:12.5px;color:var(--txt2,#aaa);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dr-bar{flex-basis:100%;height:4px;border-radius:9px;background:var(--s3,rgba(255,255,255,.08));overflow:hidden}.dr-bar i{display:block;height:100%;background:var(--acc,#FFD400);border-radius:9px;transition:width .6s cubic-bezier(.2,.7,.1,1)}
+  .dr-log{list-style:none;margin:0;padding:0 20px 18px;display:grid;gap:10px}.dr-log li{display:grid;grid-template-columns:64px 1fr;gap:10px;font-size:14px}.dr-log time{font:500 12px/1.6 ui-monospace,monospace;color:var(--txt2,#aaa)}
   .dr-st{font:600 11.5px/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor}
   .dr-st.pending{color:var(--txt2,#aaa)} .dr-st.building{color:#FFB347;animation:dr-pulse 1.6s ease-in-out infinite} .dr-st.done{color:#5CD68A} .dr-st.failed{color:#FF6B6B}
   @keyframes dr-pulse{50%{opacity:.45}}
@@ -147,7 +151,7 @@
       el('div', { class: 'dr-done' }, [el('p', { text: watched ? 'Claude Code is watching this window and picks it up within a few seconds. It shows up in the rail when it is ready.' : 'Saved in this browser. Claude Code only sees it in the window it opened for the room, so ask Claude Code to open the room and watch.' })]));
     draft = { mode: draft.mode, theme: draft.theme }; saveDraft(); refresh();
   }
-  function open() { form(); ov.classList.add('show'); }
+  function open() { logId = null; form(); ov.classList.add('show'); }
   function close() { ov.classList.remove('show'); btn.focus(); }
   btn.addEventListener('click', open);
   ov.addEventListener('click', e => { if (e.target === ov) close(); });
@@ -156,8 +160,38 @@
   // status list
   function renderList() {
     const recent = list.slice(-6).reverse();
-    listBox.replaceChildren(...recent.map(r => el('div', { class: 'dr-item' }, [el('span', { class: 'dr-st ' + r.status, text: r.status }), el('b', { text: r.name || 'New design', title: r.name || 'New design' }), r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open' }) : null].filter(Boolean))));
+    listBox.replaceChildren(...recent.map(r => {
+      const pct = r.status === 'done' ? 100 : (r.percent || (r.status === 'building' ? 5 : 0));
+      const last = (r.progress || []).slice(-1)[0];
+      const line = r.status === 'done' ? ((r.result && r.result.message) || 'Ready in the room') : r.status === 'failed' ? ((r.result && r.result.message) || 'Failed') : (last ? last.msg : (r.status === 'pending' ? 'Waiting for Claude Code' : 'Starting'));
+      const item = el('div', { class: 'dr-item', role: 'button', tabindex: '0', 'aria-label': (r.name || 'New design') + ', ' + r.status + ', ' + pct + ' percent' }, [
+        el('span', { class: 'dr-st ' + r.status, text: r.stage && r.status === 'building' ? r.stage : r.status }),
+        el('b', { text: r.name || 'New design', title: r.name || 'New design' }),
+        r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open', onclick: e => e.stopPropagation() }) : null,
+        el('div', { class: 'dr-bar' }, [el('i', { style: 'width:' + pct + '%' })]),
+        el('span', { class: 'dr-pl', text: line }),
+      ].filter(Boolean));
+      const show = () => showLog(r.id); item.addEventListener('click', show); item.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(); } });
+      return item;
+    }));
+    if (logId && ov.classList.contains('show')) renderLog();
   }
+  let logId = null;
+  function showLog(id) { logId = id; renderLog(); ov.classList.add('show'); }
+  function renderLog() {
+    const r = list.find(x => x.id === logId); if (!r) return;
+    const pct = r.status === 'done' ? 100 : (r.percent || 0);
+    const items = (r.progress || []).map(p => el('li', {}, [el('time', { text: (p.t || '').slice(11, 16) }), el('span', { text: p.msg })]));
+    if (!items.length) items.push(el('li', {}, [el('time', { text: (r.created || '').slice(11, 16) }), el('span', { text: r.status === 'pending' ? 'Waiting for Claude Code to pick this up.' : 'Claude Code has started.' })]));
+    dlg.replaceChildren(
+      el('div', { class: 'dr-hd' }, [el('h2', { text: r.name || 'New design' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: () => { logId = null; close(); } })]),
+      el('p', { class: 'dr-sub', text: (r.mode === 'auto' ? 'Auto' : 'Guided') + ' · ' + r.status + (r.stage ? ' · ' + r.stage : '') + ' · ' + pct + '%' }),
+      el('div', { style: 'padding:10px 20px 14px' }, [el('div', { class: 'dr-bar' }, [el('i', { style: 'width:' + pct + '%' })])]),
+      el('ol', { class: 'dr-log', 'aria-live': 'polite' }, items),
+      r.status === 'done' && r.result && r.result.dir ? el('div', { class: 'dr-ft' }, [el('span', { class: 'sp' }), el('a', { class: 'dr-go', href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open design', style: 'display:inline-flex;align-items:center;text-decoration:none' })]) : null,
+    );
+  }
+
   function refresh() {
     online = !!window.__designFlowWatcher; list = readQ();
     if (mount) renderList();
