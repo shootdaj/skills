@@ -1,6 +1,6 @@
 ---
 name: design-flow
-description: The engine behind the anshul-design and helix-design-anshul doors. Use for any page, dashboard, report, tech design, mock or control surface. Infers what it can, asks the rest with checkbox questions at one of three levels (quick, medium, detailed), shows the looks you asked for on a swatch board, then builds, verifies with Playwright and publishes the way the door's profile says. Load it through a door when one exists; on its own it uses profiles/default.md.
+description: The engine behind the anshul-design and helix-design-anshul doors. Use for any page, dashboard, report, tech design, mock or control surface, and to watch a design room for New design requests ("watch the room", "start the design room"). Infers what it can, asks the rest with checkbox questions at one of three levels (quick, medium, detailed), shows the looks you asked for on a swatch board, then builds, verifies with Playwright and publishes the way the door's profile says. Load it through a door when one exists; on its own it uses profiles/default.md.
 ---
 
 # design-flow
@@ -27,25 +27,32 @@ Missing fields fall back to `profiles/default.md`. Skip any skill named in the p
 
 ## Live design requests (Claude Code only)
 
-For a design room you work on with Claude Code. Claude drives a Chrome window; the user picks in it. No server and no network calls: the form saves requests in the page's localStorage, and the watcher reads them out of the window Claude opened.
+For a design room you work on with Claude Code. Invoke from the project's own build agent with `/design-flow watch the room` (or "start the design room"). Claude drives a Chrome window; the user picks in it. No server and no network calls: the form saves requests in the page's localStorage, and the watcher reads them out of that window.
 
-Set up a room once:
-1. Copy `assets/requests/request-form.js` next to the room and add `<div data-new-design></div>` where the button should sit, plus `<script src="request-form.js" data-room="<name>" data-bases="d1:Name,..." data-screens="id:Label,..."></script>`.
+### Set up a room once
+1. Copy `assets/requests/request-form.js` next to the room. Add `<div data-new-design></div>` where the button should sit, plus `<script src="request-form.js" data-room="<name>" data-bases="d1:Name,..." data-screens="id:Label,..."></script>`.
 2. Load finished designs from `_requests/designs.js` (`window.EXTRA_DESIGNS`, same shape as the room's design list).
 
-Watch while you work: start the Monitor tool on
-`node assets/requests/browser-watch.mjs <room url or index.html> --room <room dir>`.
-It opens the room in a Chrome window with its own profile (`~/.design-flow/browser`, so a hosted room's SSO sign-in is remembered), mirrors each new request to `<room>/_requests/<id>.json` and prints `NEW_REQUEST <file>`, copies status back into the page, and reloads it when a design is done. Tell the user to use that window. `WATCH_ENDED` means they closed it; reopen when needed.
+### Watch
+Start the Monitor tool (30 minute timeout, re-arm on expiry while the user is working) on:
+`node <this skill>/assets/requests/browser-watch.mjs <room url or index.html> --room <room dir> 2>&1 | grep --line-buffered -E "WATCHING|NEW_REQUEST|DONE|WATCH_ENDED|rror"`
+It opens the room in a Chrome window with its own profile (`~/.design-flow/browser`, so a hosted room's SSO sign-in is remembered), mirrors each new request to `<room>/_requests/<id>.json` and prints `NEW_REQUEST <file>`, copies `status`, `name`, `stage`, `percent`, `progress` and `result` back into the page every 2 seconds, and reloads it when a design is done. Tell the user to use that window. `WATCH_ENDED` means they closed it; offer to reopen. Only one watcher per room at a time.
 
-Build a request:
-1. Set `status` to `building` and `updated` in its JSON file.
+### Progress protocol (the room shows it live)
+The rail shows each request's stage, a progress bar and the latest line; clicking it opens a timeline. Whoever builds writes these fields into the request file (read it, keep every field, write it back):
+- `stage` (short label), `percent` (0 to 100), and append `{ "t": "<ISO time>", "msg": "<one plain-English line>" }` to `progress`.
+- Milestones: picked up (5), reading brief (10), direction locked (20, name the look), frame and first screens built (40), all screens built (60), verifying (75), fixing (85, say what), shots done (95), registered and done (100).
+- A builder subagent gets the request file path and this protocol in its prompt. The main agent sets `status` to `done` only after registering the design.
+
+### Build a request
+1. Set `status` to `building`, `stage` to `picked up`, `percent` to 5, and add a progress line.
 2. If `mode` is `auto`: list every design already in the room (its design list, `DIRECTIONS.md`, `_requests/designs.js`) and every look in `directions/`, then pick or invent a direction that shares none of their palettes, display fonts, layout forms or motion signatures. Respect `theme` if set; treat inspiration picks as a nudge. Otherwise (`guided`), read the room's `BRIEF.md`, `CONTENT.md` and `DIRECTIONS.md`, the base design if `base` is set, and the request fields: theme (dark means dark first with light accents), mood, palette, keep, avoid, screens, notes, inspiration.
 3. Give it a short name that says what makes it different (the form does not ask for one) and write it to `name`. Write a direction message from the fields and build `<room>/<next id>-<slug>/index.html` with a Fable subagent (`design-bakeoff/references/builder-prompt.md`), or yourself for small changes. Verify and shoot exactly as the room's brief says, with the same shot names as the other designs.
 4. Append an entry to `_requests/designs.js` (id, name, fam, dir, line, fonts, dark and light swatches, status `verified`).
 5. Set `status` to `done`, `result` to `{ "dir": "<folder>", "verified": true, "message": "<one line>" }`. On failure set `failed` with the reason in `result.message`.
-6. Tell the user in one line and open the room in Chrome.
+6. Add a final progress line, tell the user in one line, and leave the room window open (the watcher reloads it).
 
-
+## Step 1: infer before asking
 
 Never ask what you can read.
 
