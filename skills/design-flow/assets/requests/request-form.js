@@ -28,6 +28,7 @@
   .dr-item a{color:var(--acc,#FFD400);font-weight:600;text-decoration:none;min-height:32px;display:inline-flex;align-items:center}
   .dr-item{flex-wrap:wrap;cursor:pointer;transition:border-color .15s}.dr-item:hover{border-color:var(--line2,rgba(255,255,255,.25))}
   .dr-item .dr-pl{flex-basis:100%;font-size:12.5px;color:var(--txt2,#aaa);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dr-rm{margin-left:auto;width:32px;height:32px;border-radius:50%;border:0;background:transparent;color:var(--txt2,#aaa);cursor:pointer;font:600 16px/1 system-ui;flex:none}.dr-rm:hover{background:var(--s3,rgba(255,255,255,.08));color:var(--txt,#eee)}
   .dr-bar{flex-basis:100%;height:4px;border-radius:9px;background:var(--s3,rgba(255,255,255,.08));overflow:hidden}.dr-bar i{display:block;height:100%;background:var(--acc,#FFD400);border-radius:9px;transition:width .6s cubic-bezier(.2,.7,.1,1)}
   .dr-log{list-style:none;margin:0;padding:0 20px 18px;display:grid;gap:10px}.dr-log li{display:grid;grid-template-columns:64px 1fr;gap:10px;font-size:14px}.dr-log time{font:500 12px/1.6 ui-monospace,monospace;color:var(--txt2,#aaa)}
   .dr-st{font:600 11.5px/1 ui-monospace,monospace;letter-spacing:.04em;text-transform:uppercase;padding:4px 7px;border-radius:999px;border:1px solid currentColor}
@@ -183,6 +184,7 @@
         el('span', { class: 'dr-st ' + r.status, text: r.stage && r.status === 'building' ? r.stage : r.status }),
         el('b', { text: r.name || 'New design', title: r.name || 'New design' }),
         r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open', onclick: e => e.stopPropagation() }) : null,
+        r.status === 'building' ? null : el('button', { class: 'dr-rm', type: 'button', 'aria-label': 'Remove ' + (r.name || 'request'), title: 'Remove', text: '×', onclick: e => { e.stopPropagation(); writeQ(readQ().filter(x => x.id !== r.id)); refresh(); } }),
         el('div', { class: 'dr-bar' }, [el('i', { style: 'width:' + pct + '%' })]),
         el('span', { class: 'dr-pl', text: (etaText(r) ? etaText(r) + ' · ' : '') + line }),
       ].filter(Boolean));
