@@ -22,7 +22,7 @@ def list_requests(root):
 
 def create_request(root, body, room=''):
     req = {k: body.get(k) for k in FIELDS if body.get(k) not in (None, '', [])}
-    if not req.get('name'): raise ValueError('name is required')
+    if not req.get('name'): req['name'] = 'New design'  # Claude names it when it builds
     now = time.strftime('%Y-%m-%dT%H:%M:%S')
     rid = time.strftime('%Y%m%d-%H%M%S') + '-' + slug(req['name'])
     req.update({'id': rid, 'slug': slug(req['name']), 'status': 'pending', 'room': room or os.path.basename(os.path.abspath(root)), 'created': now, 'updated': now})

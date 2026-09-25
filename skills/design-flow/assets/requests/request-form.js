@@ -84,7 +84,7 @@
   function field(label, node) { return el('div', { class: 'dr-f' }, [el('label', { text: label }), node]); }
   function input(key, ph, area) {
     const n = el(area ? 'textarea' : 'input', area ? { placeholder: ph } : { type: 'text', placeholder: ph });
-    n.value = draft[key] || ''; n.addEventListener('input', () => { draft[key] = n.value; saveDraft(); go.disabled = !(draft.name || '').trim(); }); return n;
+    n.value = draft[key] || ''; n.addEventListener('input', () => { draft[key] = n.value; saveDraft(); }); return n;
   }
   function inspirationPicks() {
     const picks = [];
@@ -94,16 +94,14 @@
   let go;
   function form() {
     dlg.replaceChildren();
-    const nameI = input('name', 'Say what makes it different, e.g. Night shift');
     const base = el('select'); base.appendChild(el('option', { value: '', text: 'Start fresh' })); BASES.forEach(([id, l]) => { const o = el('option', { value: id, text: `Start from ${id.toUpperCase()} ${l}` }); if (draft.base === id) o.selected = true; base.appendChild(o); });
     base.addEventListener('change', () => { draft.base = base.value; saveDraft(); });
     const picks = inspirationPicks();
-    go = el('button', { class: 'dr-go', type: 'button', text: 'Send to Claude' }); go.disabled = !(draft.name || '').trim(); go.addEventListener('click', submit);
+    go = el('button', { class: 'dr-go', type: 'button', text: 'Send to Claude' }); go.addEventListener('click', submit);
     dlg.append(
       el('div', { class: 'dr-hd' }, [el('h2', { text: 'New design' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close })]),
       el('p', { class: 'dr-sub', text: 'Give your input, then send it. Claude builds it into this room and it appears here when ready.' }),
       el('div', { class: 'dr-bd' }, [
-        field('Name', nameI),
         el('div', { class: 'dr-row' }, [field('Starting point', base), field('Theme', chipGroup('theme', [['dark', 'Dark, light accents'], ['light', 'Light first'], ['both', 'Both']], false))]),
         field('Mood (pick any)', chipGroup('mood', MOODS.map(m => [m, m]), true)),
         field('Colours or references', input('palette', 'e.g. near black with one hot yellow; like Linear; hex codes welcome')),
@@ -114,17 +112,16 @@
       ].filter(Boolean)),
       el('div', { class: 'dr-ft' }, [el('small', { text: online ? 'Claude Code queue connected' : 'Room server not running. Ask Claude Code to start the room.' }), el('span', { class: 'sp' }), el('button', { class: 'dr-ghost', type: 'button', text: 'Clear', onclick: () => { draft = {}; saveDraft(); form(); } }), go]),
     );
-    setTimeout(() => nameI.focus(), 40);
+    setTimeout(() => { const f = dlg.querySelector('select,input,textarea'); f && f.focus(); }, 40);
   }
   async function submit() {
     const body = { ...draft, inspiration: inspirationPicks(), room: ROOM };
-    if (!(body.name || '').trim()) return;
     go.disabled = true; go.textContent = 'Sending…';
     let saved = null;
     try { const r = await fetch(API + '/requests', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }); if (r.ok) saved = await r.json(); } catch (e) {}
     dlg.replaceChildren(el('div', { class: 'dr-hd' }, [el('h2', { text: saved ? 'Sent' : 'Request file saved' }), el('button', { class: 'dr-x', type: 'button', 'aria-label': 'Close', text: '×', onclick: close })]));
     if (saved) {
-      dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: `"${saved.name}" is queued. Claude Code picks it up within a few seconds and it shows up in the room when it is ready.` })]));
+      dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: 'Queued. Claude Code picks it up within a few seconds, names it, and it shows up in the room when it is ready.' })]));
       draft = {}; saveDraft(); refresh();
     } else {
       dlg.appendChild(el('div', { class: 'dr-done' }, [el('p', { text: 'The room\'s local server is not running, so the request was not sent. Ask Claude Code to start the room and watch for requests, then send again.' })]));
@@ -140,7 +137,7 @@
   // status list
   function renderList() {
     const recent = list.slice(-6).reverse();
-    listBox.replaceChildren(...recent.map(r => el('div', { class: 'dr-item' }, [el('span', { class: 'dr-st ' + r.status, text: r.status }), el('b', { text: r.name, title: r.name }), r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open' }) : null].filter(Boolean))));
+    listBox.replaceChildren(...recent.map(r => el('div', { class: 'dr-item' }, [el('span', { class: 'dr-st ' + r.status, text: r.status }), el('b', { text: r.name || 'New design', title: r.name || 'New design' }), r.status === 'done' && r.result && r.result.dir ? el('a', { href: r.result.dir + '/index.html', target: '_blank', rel: 'noopener', text: 'Open' }) : null].filter(Boolean))));
   }
   async function refresh() {
     try { const r = await fetch(API + '/requests', { cache: 'no-store' }); if (!r.ok) throw 0; online = true; list = (await r.json()).requests || []; } catch (e) { online = false; }

@@ -39,8 +39,8 @@ Watch while you work: start the Monitor tool on `sh assets/requests/watch-reques
 
 Build a request:
 1. Set `status` to `building` and `updated` in its JSON file.
-2. Read the room's `BRIEF.md`, `CONTENT.md` and `DIRECTIONS.md`, the base design if `base` is set, and the request fields: name, theme (dark means dark first with light accents), mood, palette, keep, avoid, screens, notes, inspiration.
-3. Write a direction message from them and build `<room>/<next id>-<slug>/index.html` with a Fable subagent (`design-bakeoff/references/builder-prompt.md`), or yourself for small changes. Verify and shoot exactly as the room's brief says, with the same shot names as the other designs.
+2. Read the room's `BRIEF.md`, `CONTENT.md` and `DIRECTIONS.md`, the base design if `base` is set, and the request fields: theme (dark means dark first with light accents), mood, palette, keep, avoid, screens, notes, inspiration.
+3. Give it a short name that says what makes it different (the form does not ask for one) and write it to `name`. Write a direction message from the fields and build `<room>/<next id>-<slug>/index.html` with a Fable subagent (`design-bakeoff/references/builder-prompt.md`), or yourself for small changes. Verify and shoot exactly as the room's brief says, with the same shot names as the other designs.
 4. Append an entry to `_requests/designs.js` (id, name, fam, dir, line, fonts, dark and light swatches, status `verified`).
 5. Set `status` to `done`, `result` to `{ "dir": "<folder>", "verified": true, "message": "<one line>" }`. On failure set `failed` with the reason in `result.message`.
 6. Tell the user in one line and open the room in Chrome.
