@@ -1,6 +1,6 @@
 ---
 name: anshul-design
-description: Anshul's personal design door. Use for UI, dashboards, reports, mocks and pages in his personal projects (any repo not under AyaHelix). Sets the personal profile and runs the design-flow engine with quick, medium or detailed questions, a swatch board of as many looks as you ask for, then build, verify and publish.
+description: Anshul's personal design door. Use for UI, dashboards, reports, mocks and pages in his personal projects (any repo not under AyaHelix). Sets the personal profile and runs the design-flow engine with quick, medium or detailed questions, an inspiration picker you can skip, then builds as many designs as you ask for (two or more open the design room), verifies and publishes.
 ---
 
 # anshul-design
@@ -13,6 +13,7 @@ publish:
   target: here.now by default; ask once per project if another host is wanted
   access: public
   post_to: none
+  room: personal host when the user wants a link, else local only (open index.html in Chrome)
 ui_kit: none                      # a personal design system comes later; until then the look plus core mechanics
 vocabulary: none
 mechanics: anshul-ui-standards-v2

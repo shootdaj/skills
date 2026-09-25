@@ -95,6 +95,7 @@ main{max-width:1480px;margin:0 auto;padding:18px 20px 140px}
   <div class="meter" aria-live="polite"><span id="count">0 liked</span><span class="bar"><i id="barfill"></i></span></div>
   <button class="btn icon" id="helpBtn" type="button" aria-label="Keyboard shortcuts"><svg class="i"><use href="#i-kbd"/></svg></button>
   <button class="btn icon" id="themeBtn" type="button" aria-label="Switch theme"><svg class="i"><use href="#i-sun"/></svg></button>
+  <button class="btn" id="skipBtn" type="button" title="Go on without inspiration">Skip</button>
   <button class="btn pri" id="doneBtn" type="button"><svg class="i"><use href="#i-check"/></svg>Done</button>
  </div>
  <div class="row chips" id="chips" role="toolbar" aria-label="Filter by source"></div>
@@ -176,6 +177,7 @@ $$('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)closeAll()})
 function compare(){const p=picks().filter(x=>x.img);if(!p.length){toast('Like a few shots first');return}$('#cmpBody').replaceChildren(...p.map(x=>el('figure',{},[el('img',{src:x.img,alt:x.title}),el('figcaption',{},[el('b',{text:x.source+' '}),document.createTextNode(x.note||x.title)])])));show('#cmp')}
 $('#cmpBtn').onclick=compare;
 $('#copyBtn').onclick=async()=>{const t=JSON.stringify({query:BOARD.query,picks:picks()},null,1);try{await navigator.clipboard.writeText(t);toast('Picks copied')}catch(e){toast('Copy blocked; picks are saved in this browser')}};
+$('#skipBtn').onclick=()=>{document.title='INSPIRE SKIPPED · '+BOARD.query;toast('Skipped. Tell the agent to go on without inspiration.')};
 $('#doneBtn').onclick=()=>{sync();document.title='INSPIRE DONE '+picks().length+' · '+BOARD.query;toast(picks().length+' picks sent. Tell the agent you are done.')};
 $('#helpBtn').onclick=()=>show('#help');
 $('#themeBtn').onclick=()=>{const r=document.documentElement;r.dataset.theme=r.dataset.theme==='light'?'dark':'light';try{localStorage.setItem('inspire-theme',r.dataset.theme)}catch(e){}};
