@@ -1,0 +1,18 @@
+{
+  "name": "HyperCube",
+  "kind": "led",
+  "transport": "sacn",
+  "address": "192.168.1.102",
+  "port": 5568,
+  "layout": { "pixels": 224, "order": "rgb", "universes": [1, 2],
+              "geometry": "tesseract frame, 32 edges x 7 px (unconfirmed)" },
+  "health": {
+    "method": "http",
+    "url": "http://192.168.1.102/json/info",
+    "alive": "$.leds.count > 0",
+    "active": "$.live == true",
+    "load": "$.leds.pwr"
+  },
+  "fed_by": { "app": "touchdesigner", "op": "/project1/cube" },
+  "notes": "WLED fork hs-1.7 on ESP32, HyperCube15-SE. Manual's pixel table is wrong for this unit - /json/info is authoritative. udpn sync disabled deliberately; recv:true lets any broadcaster take it over. Sender owns gamma. Set bri to 255 and scale in float upstream."
+}
