@@ -15,7 +15,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REQUESTS = os.path.join(os.path.dirname(HERE), 'requests')
 ENGINE = ['hub-bridge.js', 'vote.js', 'server.py', 'README.md']
 FROM_REQUESTS = ['request-form.js', 'requests_api.py']
-DEFAULT_PW = '/Users/Anshul.Vishwakarma/Code/sypris/package.json'
+DEFAULT_PW = os.environ.get('PLAYWRIGHT_PACKAGE_JSON', '<package.json of a project with @playwright/test installed>')
 
 
 def slug(s):

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Design ballot</title>
+<style>
+:root{--bg:#0F1012;--card:#17181B;--line:#2A2C31;--txt:#F2F2F2;--mut:#9A9DA5;--y:#FFD400}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.5 system-ui,sans-serif;padding:28px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--mut);margin-bottom:22px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.d{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.d img{width:100%;aspect-ratio:16/10;object-fit:cover;object-position:top;display:block;background:#000}
+.d .ph{width:100%;aspect-ratio:16/10;display:grid;place-items:center;color:var(--mut);background:#0b0b0d}
+.d .b{padding:12px 14px 14px}.d h2{font-size:16px;margin:0 0 2px}.d p{margin:0 0 10px;color:var(--mut);font-size:13px}
+.d a.open{display:inline-block;background:var(--y);color:#111;font-weight:800;border-radius:999px;padding:9px 14px;text-decoration:none;min-height:36px}
+.d .picks{margin-top:10px;font-size:12.5px;color:var(--mut)}.d .picks b{color:var(--y)}
+.d.win{border-color:var(--y);box-shadow:0 0 0 1px var(--y)}
+.tally{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:18px;font-size:14px}
+.tally table{width:100%;border-collapse:collapse}.tally td{padding:6px 4px;border-top:1px solid var(--line)}.tally td:first-child{color:var(--mut);width:40%}
+.tally .st{color:var(--mut);font-size:12.5px;margin-top:8px}
+</style><script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script></head><body>
+<h1>Design ballot</h1>
+<div class="sub">Open a design, hit the yellow <b>VOTE</b> tab on its right edge, pick it overall or per element. This page shows the live tally.</div>
+<div class="tally" id="tally">Loading picks...</div>
+<div class="grid" id="grid"></div>
+<script>
+// Fill this in: [id, label, page path, hero shot path, one-line description]. Paths are relative to this file.
+const DESIGNS=[
+ ['v1','v1 Baseline','../report-v1/index.html','','The page the variants rebuild'],
+ ['d1','D1 Name','d1-slug/index.html','d1-slug/shots/01-dark-top-1440.png','One line on the direction'],
+];
+// Must match COMPONENTS in vote.js.
+const COMPONENTS=[['overall','Overall design'],['hero','Hero + verdict'],['stats','Headline numbers'],['takeaways','Takeaways'],['arch','Architecture view'],['matrix','Readiness view'],['build','Build plan'],['nav','Navigation'],['motion','Motion + feel'],['theme','Theme + type']];
+function setHTML(el,html){if(window.DOMPurify){el.replaceChildren(DOMPurify.sanitize(String(html),{RETURN_DOM_FRAGMENT:true}));}else{el.textContent=String(html).replace(/<[^>]*>/g,' ');}}
+const PROJECT='default'; // match data-project on the vote.js tags
+async function votes(){try{const r=await fetch('http://127.0.0.1:7331/votes',{cache:'no-store'});if(r.ok)return await r.json()}catch(e){}try{return JSON.parse(localStorage.getItem('design-votes-'+PROJECT)||'{}')}catch(e){return {}}}
+async function render(){const v=await votes();
+ setHTML(document.getElementById('tally'),'<b>Picks</b><table>'+COMPONENTS.map(([c,n])=>`<tr><td>${n}</td><td>${v[c]?(v[c].label||v[c].design):'none yet'}</td></tr>`).join('')+'</table><div class="st">Refreshes every 3 s. Served from the local vote server when it runs, else from this browser\'s storage.</div>');
+ setHTML(document.getElementById('grid'),DESIGNS.map(([id,label,href,img,desc])=>{const mine=Object.entries(v).filter(([c,x])=>x.design===id).map(([c])=>(COMPONENTS.find(k=>k[0]===c)||[c,c])[1]);const win=v.overall&&v.overall.design===id;
+  return `<div class="d ${win?'win':''}">${img?`<img src="${img}" alt="${label}">`:`<div class="ph">no screenshot yet</div>`}<div class="b"><h2>${label}</h2><p>${desc}</p><a class="open" href="${href}" target="_blank" rel="noopener">Open</a><div class="picks">${mine.length?'Picked for: <b>'+mine.join(', ')+'</b>':'No picks yet'}</div></div></div>`}).join(''))}
+render();setInterval(render,3000);
+</script></body></html>

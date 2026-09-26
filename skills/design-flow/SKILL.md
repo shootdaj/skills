@@ -18,15 +18,17 @@ The flow is: infer, ask, inspiration picker, build. One design is a straight bui
 | `publish.access` | public, restricted:<domain>, private |
 | `publish.post_to` | where to post the link: Linear, Confluence, none |
 | `publish.room` | where a design room goes: azure-sso (the azure-static-publish skill), personal host, local |
-| `ui_kit` | skill for product UI (kira) or none; `ui_kit_required: all` means every build uses it, room designs included |
+| `ui_kit` | skill for product UI (for example a company kit) or none; `ui_kit_required: all` means every build uses it, room designs included |
 | `vocabulary.terms` | domain words to keep as they are |
 | `vocabulary.hues` | category to hue slot, c1 to c5 |
 | `extra_directions` | folder with more look files |
 | `mechanics` | the house-rules skill: anshul-ui-standards-v2 |
-| `report_recipe`, `bakeoff`, `copy` | skills to call: helix-report, design-bakeoff, humanizer |
+| `report_recipe` | how to build a report: the bundled `recipes/report/RECIPE.md`, unless the door names an installed skill |
+| `bakeoff` | how to run a bake-off: the bundled `recipes/bakeoff/RECIPE.md`, unless the door names an installed skill |
+| `copy` | the plain-English skill (humanizer) when installed; the recipes carry the rules themselves |
 | `level_default` | quick, medium or detailed when the wording does not say |
 
-Missing fields fall back to `profiles/default.md`. Skip any skill named in the profile that is not installed, and say so once.
+Missing fields fall back to `profiles/default.md`. When `report_recipe` or `bakeoff` names a skill that is not installed, use the bundled recipe. Skip any other named skill that is not installed. Do both silently: never tell the user a skill is missing.
 
 ## Step 1: infer before asking
 
@@ -79,7 +81,7 @@ Detailed, two more screens:
 | Density | Airy · Regular · Dense |
 | Lights | Tiles only · Every status · None |
 | 3D | Isometric SVG · WebGL with fallback · None |
-| Forms (multi, one question per block that matters: navigation, headline numbers, takeaways, main diagram, status view, sections) | options from `design-bakeoff/templates/BRIEF-2.md` |
+| Forms (multi, one question per block that matters: navigation, headline numbers, takeaways, main diagram, status view, sections) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
 | Sources (multi) | Dribbble, Behance, 21st.dev, Awwwards · SaaS Landing Page, Lapa Ninja · Browse links only (Godly, Land-book, Dark Mode Design, SiteInspire) · Login sites (Mobbin, Refero, Page Flows) |
 
 Only the first six sources return search results; the rest open in Chrome. Default without asking: every source that fits the page kind in `assets/inspire/sources.json`.
@@ -103,13 +105,13 @@ Read the picks from the vote server (`GET http://127.0.0.1:7331/votes`, componen
 
 ## Step 4: pick directions and build
 
-Pick as many directions as the Designs answer from `directions/` (and `extra_directions`) that match the answers and the inspiration bullets: `best`, `mood`, then palette and type when known. Drop the last look used. No two with the same display font, palette or layout form. When nothing in the library fits, write a new direction from the picks (copy `directions/_template.md`) and save it to `extra_directions` if the user keeps it.
+Pick as many directions as the Designs answer from `directions/` (and `extra_directions`) that match the answers and the inspiration bullets: `best`, `mood`, then palette and type when known. Drop the last look used. No two with the same display font, palette or layout form. When nothing in the library fits, write a new direction from the picks (copy `directions/_template.md`) and save it to `extra_directions` if the user keeps it. When the user wants to pick elements across variants instead, run the bake-off recipe, `recipes/bakeoff/RECIPE.md` (or the profile's `bakeoff` skill when it is installed), and add the winner as a direction.
 
 Recipe by page kind, for every design:
 
 | Page kind | Recipe |
 | --- | --- |
-| Report or tech design | the `report_recipe` skill with the chosen look's tokens in place of its default |
+| Report or tech design | the report recipe, `recipes/report/RECIPE.md` (or the profile's `report_recipe` skill when it is installed), with the chosen look's tokens in place of its default |
 | App screen or mock | the `ui_kit` skill when the profile has one; otherwise core mechanics plus the look |
 | Dashboard, landing, other | core mechanics plus the look; `frontend-design` for boldness when installed |
 
@@ -129,14 +131,14 @@ Build it yourself, open it in Chrome as sections land, and save the look to `~/.
 python3 <this skill>/assets/room/make-room.py <dir> --project "<Name>" --steps "id:Label,..." --designs "d1:Name,d2:Name,..." [--components "id:Label:hint,..."] [--shots "file:Label:component,..."] [--langs "en:EN,es:ES"] [--ui-kit kira]
 ```
 
-   It writes `index.html` (the room), `room.js` (its config), `_vote/` (bridge, vote widget, server, request form), `_requests/designs.js` and a `BRIEF.md` skeleton. It opens nothing. `--designs` lists the designs as building stubs so the rail shows them from the start. Pass `--ui-kit kira` when the profile requires the kit. Fill in the brief's TODO lines (product, steps, content pack, direction slots) before builders start. Steps are the screens the room drives from its Step buttons; for a page with no flow, one step is fine.
+   It writes `index.html` (the room), `room.js` (its config), `_vote/` (bridge, vote widget, server, request form), `_requests/designs.js` and a `BRIEF.md` skeleton. It opens nothing. `--designs` lists the designs as building stubs so the rail shows them from the start. Pass `--ui-kit <kit>` when the profile requires a kit. Fill in the brief's TODO lines (product, steps, content pack, direction slots) before builders start. Steps are the screens the room drives from its Step buttons; for a page with no flow, one step is fine.
 2. Start the vote server (`python3 <dir>/_vote/server.py &`) and open `<dir>/index.html` in Chrome. Start the watcher (below) so the New design button works.
-3. Build the designs in parallel with Fable subagents, one per design. Each prompt carries: the room's `BRIEF.md` path, its direction message, its id and name (`d1`, `d2`, ...), the request-file progress protocol below with a request file you created in `_requests/` for it, and `design-bakeoff/references/builder-prompt.md`. Builders follow `BRIEF.md`: hooks for the bridge, `../_vote/hub-bridge.js` before `../_vote/vote.js`, the room's exact shot names, then register in `_requests/designs.js` (that entry completes the stub). They never create a picker, index or ballot page of their own; the room is the only place designs are compared.
+3. Build the designs in parallel with Fable subagents, one per design. Each prompt carries: the room's `BRIEF.md` path, its direction message, its id and name (`d1`, `d2`, ...), the request-file progress protocol below with a request file you created in `_requests/` for it, and `recipes/bakeoff/references/builder-prompt.md`. Builders follow `BRIEF.md`: hooks for the bridge, `../_vote/hub-bridge.js` before `../_vote/vote.js`, the room's exact shot names, then register in `_requests/designs.js` (that entry completes the stub). They never create a picker, index or ballot page of their own; the room is the only place designs are compared.
 4. As each design lands the watcher reloads the room. Look at the shots yourself. The room stays open for New design (Auto or Guided) and for votes, pins and notes.
 
 ## Step 5: verify
 
-`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. Reports use `helix-report/assets/shoot.mjs`. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
+`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. Reports use `recipes/report/assets/shoot.mjs`. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
 
 ## Step 6: publish
 
@@ -165,7 +167,7 @@ The rail shows each request's stage, a progress bar, an ETA (from `eta`, else es
 ### Build a request
 1. Set `status` to `building`, `stage` to `picked up`, `percent` to 5, and add a progress line.
 2. If `mode` is `auto`: list every design already in the room (`room.js`, `DIRECTIONS.md`, `_requests/designs.js`) and every look in `directions/`, then pick or invent a direction that shares none of their palettes, display fonts, layout forms or motion signatures. Respect `theme` if set; treat inspiration picks as a nudge. Otherwise (`guided`), read the room's `BRIEF.md`, `CONTENT.md` and `DIRECTIONS.md`, the base design if `base` is set, and the request fields: theme (dark means dark first with light accents), mood, palette, keep, avoid, screens, notes, inspiration.
-3. Give it a short name that says what makes it different (the form does not ask for one) and write it to `name`. Write a direction message from the fields and build `<room>/<next id>-<slug>/index.html` with a Fable subagent (`design-bakeoff/references/builder-prompt.md`), or yourself for small changes. Verify and shoot exactly as the room's brief says, with the same shot names as the other designs.
+3. Give it a short name that says what makes it different (the form does not ask for one) and write it to `name`. Write a direction message from the fields and build `<room>/<next id>-<slug>/index.html` with a Fable subagent (`recipes/bakeoff/references/builder-prompt.md`), or yourself for small changes. Verify and shoot exactly as the room's brief says, with the same shot names as the other designs.
 4. Append an entry to `_requests/designs.js` (id, name, fam, dir, line, fonts, dark and light swatches, status `verified`).
 5. Set `status` to `done`, `result` to `{ "dir": "<folder>", "verified": true, "message": "<one line>" }`. On failure set `failed` with the reason in `result.message`.
 6. Add a final progress line, tell the user in one line, and leave the room window open (the watcher reloads it).
@@ -183,4 +185,6 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `assets/room/` | the design room template: `index.html` (preview in device frames, compare as grid, pair or duel, blind mode, per-element votes, pins, notes, export, Expand and Full screen, New design with progress and ETA), `_vote/` (`hub-bridge.js`, `vote.js`, `server.py`, README), `make-room.py` (scaffolds a room, `room.js`, `_requests/designs.js` and a `BRIEF.md` skeleton) |
 | `assets/requests/` | `request-form.js` (New design form, localStorage only; `make-room.py` copies it into a room's `_vote/`), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` (the request queue the room's `server.py` imports), `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
+| `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts and `assets/shoot.mjs`; bundled so no other skill is needed |
+| `recipes/bakeoff/` | the bake-off recipe (`RECIPE.md`), brief templates, directions, builder prompt, vote widget and ballot |
 | `profiles/default.md` | used when no door is loaded |

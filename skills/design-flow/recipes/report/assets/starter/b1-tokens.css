@@ -1,0 +1,106 @@
+/* report recipe tokens. Five palettes, each dark and light. Components read tokens only. See references/tokens.md. */
+/* ── tokens: dark first ── */
+:root,:root[data-theme="dark"]{
+  --bg:#1B1530; --s1:#241F3B; --s2:#2C2748; --s3:#36305A; --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+  --txt:#ECE8E2; --txt2:#B7B1C4; --txt3:#8E88A0;
+  --red:#E5463A; --red-txt:#FF8A7E; --red-tint:rgba(229,70,58,.16); --red-glow:rgba(229,70,58,.55); --fill:#C33A2F; --on-fill:#FFFFFF; --on-red:#FFFFFF;
+  --ok:#5CD68A; --part:#F2B24A; --miss:#F26B6B; --off:#8E88A0; --on-led:#1B1530;
+  --tip-bg:#ECE8E2; --tip-fg:#1B1530; --pt:#36305A; --ps:#15102A; --pline:rgba(255,255,255,.24);
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+:root[data-theme="light"]{
+  --bg:#FFF6E5; --s1:#FFFBF2; --s2:#F6EEDD; --s3:#EEE3CC; --line:rgba(0,0,0,.11); --line2:rgba(0,0,0,.22);
+  --txt:#2B2240; --txt2:#5E5875; --txt3:#77708A;
+  --red:#E5463A; --red-txt:#B8322A; --red-tint:rgba(229,70,58,.10); --red-glow:rgba(229,70,58,.35); --fill:#C33A2F; --on-fill:#FFFFFF; --on-red:#FFFFFF;
+  --ok:#1F8A4C; --part:#A86A0C; --miss:#C23B3B; --off:#77708A; --on-led:#FFFFFF;
+  --tip-bg:#2B2240; --tip-fg:#FFF6E5; --pt:#FFFBF2; --ps:#E8DCC3; --pline:rgba(0,0,0,.28);
+  --shadow:0 1px 0 rgba(0,0,0,.05),0 12px 26px -14px rgba(0,0,0,.25);
+  color-scheme:light;
+}
+:root[data-palette="ink"][data-theme="dark"]{
+  --bg:#0A0A0B; --s1:#111214; --s2:#17181B; --s3:#1E1F23; --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+  --txt:#F2F2F2; --txt2:#A8A8AD; --txt3:#83838A;
+  --red:#E3120B; --red-txt:#FF5247; --red-tint:rgba(227,18,11,.16); --red-glow:rgba(227,18,11,.55); --fill:#E3120B; --on-fill:#FFFFFF; --on-red:#FFFFFF;
+  --ok:#4ADE80; --part:#FFB347; --miss:#FF5C5C; --off:#83838A; --on-led:#0A0A0B;
+  --tip-bg:#F2F2F2; --tip-fg:#0A0A0B; --pt:#1E1F23; --ps:#060607; --pline:rgba(255,255,255,.24);
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+:root[data-palette="ink"][data-theme="light"]{
+  --bg:#F7F7F5; --s1:#FFFFFF; --s2:#F0F0EC; --s3:#E7E7E2; --line:rgba(0,0,0,.11); --line2:rgba(0,0,0,.22);
+  --txt:#0B0B0B; --txt2:#45454A; --txt3:#6A6A70;
+  --red:#E3120B; --red-txt:#C2100A; --red-tint:rgba(227,18,11,.10); --red-glow:rgba(227,18,11,.35); --fill:#E3120B; --on-fill:#FFFFFF; --on-red:#FFFFFF;
+  --ok:#15803D; --part:#B45309; --miss:#C81E1E; --off:#6A6A70; --on-led:#FFFFFF;
+  --tip-bg:#0B0B0B; --tip-fg:#F7F7F5; --pt:#FFFFFF; --ps:#D9D9D2; --pline:rgba(0,0,0,.28);
+  --shadow:0 1px 0 rgba(0,0,0,.05),0 12px 26px -14px rgba(0,0,0,.25);
+  color-scheme:light;
+}
+:root[data-palette="slate"][data-theme="dark"]{
+  --bg:#1E2430; --s1:#262D3B; --s2:#2F3747; --s3:#394254; --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+  --txt:#E6EAF0; --txt2:#AEB6C4; --txt3:#8993A3;
+  --red:#2FB8B0; --red-txt:#5AD6CE; --red-tint:rgba(47,184,176,.16); --red-glow:rgba(47,184,176,.55); --fill:#2FB8B0; --on-fill:#0F1A1A; --on-red:#0F1A1A;
+  --ok:#4ADE80; --part:#FFB347; --miss:#FF5C5C; --off:#8993A3; --on-led:#1E2430;
+  --tip-bg:#E6EAF0; --tip-fg:#1E2430; --pt:#394254; --ps:#171C26; --pline:rgba(255,255,255,.24);
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+:root[data-palette="slate"][data-theme="light"]{
+  --bg:#F1F4F8; --s1:#FFFFFF; --s2:#E8EDF3; --s3:#DDE4EC; --line:rgba(0,0,0,.11); --line2:rgba(0,0,0,.22);
+  --txt:#1E2430; --txt2:#4A5566; --txt3:#667082;
+  --red:#1A9E97; --red-txt:#0B6E69; --red-tint:rgba(26,158,151,.10); --red-glow:rgba(26,158,151,.35); --fill:#0E7F79; --on-fill:#FFFFFF; --on-red:#FFFFFF;
+  --ok:#1F8A4C; --part:#A86A0C; --miss:#C23B3B; --off:#667082; --on-led:#FFFFFF;
+  --tip-bg:#1E2430; --tip-fg:#F1F4F8; --pt:#FFFFFF; --ps:#D3DBE5; --pline:rgba(0,0,0,.28);
+  --shadow:0 1px 0 rgba(0,0,0,.05),0 12px 26px -14px rgba(0,0,0,.25);
+  color-scheme:light;
+}
+:root[data-palette="forest"][data-theme="dark"]{
+  --bg:#141F1B; --s1:#1B2924; --s2:#22332D; --s3:#2B3F38; --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+  --txt:#E8EFE9; --txt2:#AFC0B5; --txt3:#88998E;
+  --red:#9BE15D; --red-txt:#A9E86F; --red-tint:rgba(155,225,93,.16); --red-glow:rgba(155,225,93,.55); --fill:#9BE15D; --on-fill:#14201B; --on-red:#14201B;
+  --ok:#4FD1A0; --part:#F2B24A; --miss:#F26B6B; --off:#88998E; --on-led:#141F1B;
+  --tip-bg:#E8EFE9; --tip-fg:#141F1B; --pt:#2B3F38; --ps:#0E1714; --pline:rgba(255,255,255,.24);
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+:root[data-palette="forest"][data-theme="light"]{
+  --bg:#F2F6EF; --s1:#FFFFFF; --s2:#E7EFE3; --s3:#DAE6D4; --line:rgba(0,0,0,.11); --line2:rgba(0,0,0,.22);
+  --txt:#16241E; --txt2:#4A5A50; --txt3:#65756A;
+  --red:#5E9E2A; --red-txt:#3F7A1A; --red-tint:rgba(94,158,42,.10); --red-glow:rgba(94,158,42,.35); --fill:#9BE15D; --on-fill:#14201B; --on-red:#14201B;
+  --ok:#1F8A4C; --part:#A86A0C; --miss:#C23B3B; --off:#65756A; --on-led:#FFFFFF;
+  --tip-bg:#16241E; --tip-fg:#F2F6EF; --pt:#FFFFFF; --ps:#D0DDC9; --pline:rgba(0,0,0,.28);
+  --shadow:0 1px 0 rgba(0,0,0,.05),0 12px 26px -14px rgba(0,0,0,.25);
+  color-scheme:light;
+}
+:root[data-palette="sand"][data-theme="dark"]{
+  --bg:#221C17; --s1:#2B241E; --s2:#342C25; --s3:#3F362D; --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.18);
+  --txt:#EFE6D8; --txt2:#BFB3A2; --txt3:#9A8E7D;
+  --red:#D9541E; --red-txt:#F08A5A; --red-tint:rgba(217,84,30,.16); --red-glow:rgba(217,84,30,.55); --fill:#B8461A; --on-fill:#FFFFFF; --on-red:#FFFFFF;
+  --ok:#5CD68A; --part:#F2B24A; --miss:#F26B6B; --off:#9A8E7D; --on-led:#221C17;
+  --tip-bg:#EFE6D8; --tip-fg:#221C17; --pt:#3F362D; --ps:#1A1511; --pline:rgba(255,255,255,.24);
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+:root[data-palette="sand"][data-theme="light"]{
+  --bg:#F3EBDD; --s1:#FBF6EC; --s2:#EDE3D0; --s3:#E3D7C0; --line:rgba(0,0,0,.11); --line2:rgba(0,0,0,.22);
+  --txt:#2A2521; --txt2:#5C534A; --txt3:#766C61;
+  --red:#D9541E; --red-txt:#A8401A; --red-tint:rgba(217,84,30,.10); --red-glow:rgba(217,84,30,.35); --fill:#B8461A; --on-fill:#FFFFFF; --on-red:#FFFFFF;
+  --ok:#1F8A4C; --part:#A86A0C; --miss:#C23B3B; --off:#766C61; --on-led:#FFFFFF;
+  --tip-bg:#2A2521; --tip-fg:#F3EBDD; --pt:#FBF6EC; --ps:#DCCDB2; --pline:rgba(0,0,0,.28);
+  --shadow:0 1px 0 rgba(0,0,0,.05),0 12px 26px -14px rgba(0,0,0,.25);
+  color-scheme:light;
+}
+:root{
+  --f:'Familjen Grotesk','Helvetica Neue',Arial,sans-serif;
+  --mono:'Martian Mono',ui-monospace,Menlo,monospace;
+  --r:12px; --pill:999px; --gut:24px; --maxw:1240px; --top:112px;
+  --spring:cubic-bezier(.34,1.56,.64,1); --ease:cubic-bezier(.2,.7,.1,1);
+}
+
+/* ── category hues: five slots for layers, domains or teams. Text on a full-strength hue uses --ink. ── */
+:root,:root[data-theme="dark"],:root[data-theme="light"]{--c1:#5DD3FF;--c2:#9BE15D;--c3:#A597FF;--c4:#FFD93D;--c5:#FF6B6B;--newf:#FF7F72;--ink:#2B2240;--on-cat:#2B2240;--okf:#5EE08F;--partf:#FFC24B;--missf:#FF6B6B}
+:root[data-palette="ink"][data-theme="dark"],:root[data-palette="ink"][data-theme="light"]{--newf:#FF6A5C}
+:root[data-palette="slate"][data-theme="dark"],:root[data-palette="slate"][data-theme="light"]{--c1:#8FB0FF;--c3:#B59CFF;--c5:#FF8A80}
+:root[data-palette="forest"][data-theme="dark"],:root[data-palette="forest"][data-theme="light"]{--c2:#6EE7B7;--c3:#A99BFF;--c5:#FF8A80}
+:root[data-palette="sand"][data-theme="dark"],:root[data-palette="sand"][data-theme="light"]{--c5:#FF8FB8;--newf:#FF8A5C}
+/* The reference report aliases these per domain: --c-fds:var(--c1) --c-tal:var(--c2) --c-mod:var(--c3) --c-shell:var(--c4) --c-prod:var(--c5). */

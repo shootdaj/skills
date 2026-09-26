@@ -17,7 +17,7 @@ const tone = opt('--tone', 'dark'); const share = +opt('--dark-share', 0.8);
  const out = resolve(opt('--out', './inspire-board'));
 const only = (opt('--sources', '') || '').split(',').filter(Boolean);
 const pwArg = opt('--playwright', process.env.PLAYWRIGHT_PACKAGE_JSON);
-function loadPlaywright() { for (const t of [pwArg, process.cwd() + '/package.json', import.meta.url, '/Users/Anshul.Vishwakarma/Code/sypris/package.json'].filter(Boolean)) { try { return createRequire(t)('@playwright/test'); } catch (e) {} } throw new Error('Playwright not found: npm i -D @playwright/test && npx playwright install chromium, or pass --playwright'); }
+function loadPlaywright() { for (const t of [pwArg, process.cwd() + '/package.json', import.meta.url].filter(Boolean)) { try { return createRequire(t)('@playwright/test'); } catch (e) {} } throw new Error('Playwright not found: npm i -D @playwright/test && npx playwright install chromium, or pass --playwright'); }
 const { chromium } = loadPlaywright();
 const { sources } = JSON.parse(readFileSync(join(here, 'sources.json'), 'utf8'));
 const pick = sources.filter(s => (only.length ? only.includes(s.id) : (kind === 'all' || s.kinds.includes('all') || s.kinds.includes(kind))));

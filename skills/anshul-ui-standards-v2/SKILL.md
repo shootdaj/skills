@@ -74,7 +74,7 @@ Recipes: `references/dataviz-motion.md`
 
 ## 9. Reports use the look design-flow chose
 
-- Report pages (test reports, design reports, analyses) take their look from `design-flow` and their structure from the `helix-report` recipe.
+- Report pages (test reports, design reports, analyses) take their look from `design-flow` and their structure from the report recipe in `design-flow/recipes/report/`.
 - The old fierce-waffle report language (bg `#0B0F17`, cyan `#3DC5FF`, green `#3DDC97`, amber `#FFC24B`; Sora / Schibsted Grotesk / JetBrains Mono; left-rail nav; collapsible `<details>`) survives as the `fierce-waffle` look in `design-flow/directions/` and as the `[data-report]` block in `assets/tokens.css`. Use it when picked, not by default.
 
 ## 10. Screenshot self-verification loop — mandatory

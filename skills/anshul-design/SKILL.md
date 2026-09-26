@@ -17,9 +17,8 @@ publish:
 ui_kit: none                      # a personal design system comes later; until then the look plus core mechanics
 vocabulary: none
 mechanics: anshul-ui-standards-v2
-report_recipe: helix-report
-bakeoff: design-bakeoff
-copy: humanizer
+# report_recipe and bakeoff: the bundled recipes in design-flow/recipes (the default)
+copy: humanizer                   # when installed
 extra_directions: ~/.design-flow/directions
 level_default: quick
 ```
