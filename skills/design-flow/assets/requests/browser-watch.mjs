@@ -4,21 +4,19 @@
 //   NEW_REQUEST <path>   (one stdout line per request, for Claude Code's Monitor tool)
 // Files -> page: status, name and result from those files are copied back into the page's queue every 2 s, and the page reloads
 //   once when a request turns done so the new design appears. Closing the window ends the watch (prints WATCH_ENDED).
-import { createRequire } from 'node:module';
+// No setup needed: Playwright is found or installed by ../lib/playwright.mjs; --playwright is an optional override.
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { homedir } from 'node:os';
+import { launchPersistent } from '../lib/playwright.mjs';
 const a = process.argv.slice(2); const opt = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
 const target = a.find((x, i) => !x.startsWith('--') && !(a[i - 1] || '').startsWith('--'));
 if (!target) { console.error('usage: node browser-watch.mjs <url-or-file> --room <room_dir>'); process.exit(2); }
 const room = resolve(opt('--room', '.')); const qdir = join(room, '_requests'); mkdirSync(qdir, { recursive: true });
 const profile = resolve(opt('--profile', join(homedir(), '.design-flow', 'browser')).replace(/^~/, homedir()));
 const url = /^https?:|^file:/.test(target) ? target : 'file://' + resolve(target);
-const pwArg = opt('--playwright', process.env.PLAYWRIGHT_PACKAGE_JSON);
-function loadPlaywright() { for (const t of [pwArg, process.cwd() + '/package.json', import.meta.url].filter(Boolean)) { try { return createRequire(t)('@playwright/test'); } catch (e) {} } throw new Error('Playwright not found; pass --playwright /path/to/package.json'); }
-const { chromium } = loadPlaywright();
-const launch = o => chromium.launchPersistentContext(profile, { headless: false, viewport: null, args: ['--start-maximized'], ignoreDefaultArgs: ['--no-sandbox', '--enable-automation'], ...o });
-const ctx = await launch({ channel: 'chrome' }).catch(() => launch({}));
+// installed Google Chrome when there is one, else Playwright's Chromium; the helper handles the fallback
+const ctx = await launchPersistent(profile, { headless: false, viewport: null, args: ['--start-maximized'], ignoreDefaultArgs: ['--no-sandbox', '--enable-automation'] });
 await ctx.addInitScript(() => { window.__designFlowWatcher = true; });
 const page = ctx.pages()[0] || await ctx.newPage();
 await page.goto(url);

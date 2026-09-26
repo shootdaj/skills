@@ -1,5 +1,5 @@
 """Standalone request queue for rooms without their own server.
-usage: python3 requests_server.py [room_dir] [--port 7333]"""
+usage: python3 requests_server.py [room_dir] [--port 7333]   (moves to a free port when 7333 is busy and prints it)"""
 import json, os, sys, http.server
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import requests_api
@@ -21,5 +21,9 @@ class H(http.server.BaseHTTPRequestHandler):
         if not requests_api.handle(self, 'POST', self.path, body, ROOT): self._json(404, {'error': 'not found'})
     def log_message(self, *a): pass
 if __name__ == '__main__':
-    print(f'requests queue for {ROOT} on http://127.0.0.1:{PORT}', flush=True)
-    http.server.ThreadingHTTPServer(('127.0.0.1', PORT), H).serve_forever()
+    try: srv = http.server.ThreadingHTTPServer(('127.0.0.1', PORT), H)
+    except OSError:
+        srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), H); PORT = srv.server_address[1]
+        print(f'port busy, moved to {PORT}: give the form data-api="http://127.0.0.1:{PORT}"', flush=True)
+    print(f'REQUESTS_SERVER http://127.0.0.1:{PORT} {ROOT}', flush=True)
+    srv.serve_forever()

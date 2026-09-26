@@ -20,12 +20,12 @@ Usually run by `design-flow` through a door (`anshul-design`, or a work door) wi
 1. Facts first. Collect every number, name and quote with its source. Put them in `d-data.js` as named blocks (format in `references/viz-pack.md`). Invent nothing. Label estimates and emphasis weights as such on the figure.
 2. Outline the pyramid. One-sentence verdict, six stat tiles, six takeaways, then chapters 01 to 0N. Each chapter is figures plus captions plus at most one short list. Details in `references/structure.md`.
 3. Turn text into figures. For each block of prose, pick a figure from `references/components.md` using the map in `references/viz-pack.md`. The verdict and the captions stay as text. Use 3D only when it encodes structure and has a 2D fallback.
-4. Build from parts. Copy `assets/starter/` next to your work. Fill `c-body.html`, `d-data.js` and the figure functions in `f-figures.js`, then run `build.sh` to write `index.html`. One file, inline CSS and JS, libraries and fonts from CDN only (list in `references/structure.md`).
+4. Build from parts. Copy `assets/starter/` next to your work. Fill `c-body.html`, `d-data.js` and the figure functions in `f-figures.js`, then run `sh build.sh` (Node only) to write `index.html` one folder up. One file, inline CSS and JS, libraries and fonts from CDN only (list in `references/structure.md`).
 5. Style with tokens. `assets/starter/b1-tokens.css` holds five palettes, each with a dark and a light theme. Components use tokens only. Category hues go on `--lc`. Large fills blend the hue at 30 to 35 percent into the surface. Details in `references/tokens.md`.
 6. Keep motion on a budget. Page-load choreography, scroll reveals, draw-in strokes, spring press. Lights blink only on stat tiles, the active tab count and missing readiness cells. Details in `references/motion-budget.md`.
 7. Write the captions last. One takeaway per caption. In the lean edition, 12 words or fewer plus a "Details" link to the appendix entry.
-8. Verify with Playwright. Run `assets/shoot.mjs`, read the JSON summary, look at the PNGs yourself, fix, re-shoot. Details in `references/verification.md`. Open the page in Chrome as sections land so the user sees progress.
-9. Publish. Follow `references/publish.md`: publish to here.now with the access mode the door's profile says, post the link where the work is tracked.
+8. Verify with Playwright. Run `node assets/shoot.mjs <index.html> --key <slug>` (no setup: it finds or installs Playwright itself), read the JSON summary, look at the PNGs yourself, fix, re-shoot. Details in `references/verification.md`. Open the page in Chrome as sections land so the user sees progress.
+9. Publish. Follow `references/publish.md`: publish to here.now with the access mode the door's profile says, post the link where the work is tracked. Without here.now credentials the page stays in its folder and you say so.
 
 ## Rules that do not bend
 

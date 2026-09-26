@@ -1,7 +1,8 @@
 # Tiny CORS vote server for a design room. State: votes.json (latest pick per component), notes.json, kv-*.json
 # (pins, duels), log: votes.jsonl. Also serves the design request queue (/requests) through requests_api.py.
-# Run from the room: python3 _vote/server.py &   (port 7332 unless the room's room.js sets "api")
-import json, os, re, sys, time, http.server
+# Run from the room: python3 _vote/server.py &   (port from room.js "api", else 7332). No setup: if that port is busy with
+# another room, it moves to a free port and writes the new address back into room.js before the page reads it.
+import json, os, re, sys, time, http.server, socket, urllib.request
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import requests_api
 ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -68,5 +69,28 @@ class H(http.server.BaseHTTPRequestHandler):
             with open(LOG,'a') as f: f.write(json.dumps({**p,'t':time.strftime('%Y-%m-%dT%H:%M:%S')})+'\n')
         return self._json(200,d)
     def log_message(self,*a): pass
+def already_running(port):
+    """True when the thing on the port is this room's own server (a second start is a no-op)."""
+    try:
+        with urllib.request.urlopen('http://127.0.0.1:%d/ping'%port,timeout=1) as r: d=json.load(r)
+        return d.get('ok') and d.get('room')==ROOM_NAME
+    except Exception: return False
+def bind(port):
+    try: return http.server.ThreadingHTTPServer(('127.0.0.1',port),H)
+    except OSError: return None
+def write_port(port):
+    p=os.path.join(ROOT,'room.js')
+    try:
+        with open(p) as f: src=f.read()
+        new=re.sub(r'("api"\s*:\s*"http://127\.0\.0\.1:)\d+',r'\g<1>%d'%port,src)
+        if new==src and '"api"' not in src: new=src.replace('window.ROOM = {','window.ROOM = {\n  "api": "http://127.0.0.1:%d",'%port,1)
+        with open(p,'w') as f: f.write(new)
+    except Exception as e: print('could not write the port into room.js: %s'%e,file=sys.stderr)
 if __name__=='__main__':
-    http.server.ThreadingHTTPServer(('127.0.0.1',PORT),H).serve_forever()
+    if already_running(PORT): print('vote server already running on http://127.0.0.1:%d'%PORT,flush=True); sys.exit(0)
+    srv=bind(PORT)
+    if srv is None:
+        srv=bind(0); PORT=srv.server_address[1]; write_port(PORT)
+        print('port busy, moved to http://127.0.0.1:%d (written into room.js; reload the room if it is open)'%PORT,flush=True)
+    print('VOTE_SERVER http://127.0.0.1:%d %s'%(PORT,ROOM_NAME),flush=True)
+    srv.serve_forever()

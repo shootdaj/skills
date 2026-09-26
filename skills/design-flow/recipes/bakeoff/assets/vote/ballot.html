@@ -31,7 +31,7 @@ const DESIGNS=[
 const COMPONENTS=[['overall','Overall design'],['hero','Hero + verdict'],['stats','Headline numbers'],['takeaways','Takeaways'],['arch','Architecture view'],['matrix','Readiness view'],['build','Build plan'],['nav','Navigation'],['motion','Motion + feel'],['theme','Theme + type']];
 function setHTML(el,html){if(window.DOMPurify){el.replaceChildren(DOMPurify.sanitize(String(html),{RETURN_DOM_FRAGMENT:true}));}else{el.textContent=String(html).replace(/<[^>]*>/g,' ');}}
 const PROJECT='default'; // match data-project on the vote.js tags
-async function votes(){try{const r=await fetch('http://127.0.0.1:7331/votes',{cache:'no-store'});if(r.ok)return await r.json()}catch(e){}try{return JSON.parse(localStorage.getItem('design-votes-'+PROJECT)||'{}')}catch(e){return {}}}
+async function votes(){try{const r=await fetch((new URLSearchParams(location.search).get('api')||'http://127.0.0.1:7331')+'/votes',{cache:'no-store'});if(r.ok)return await r.json()}catch(e){}try{return JSON.parse(localStorage.getItem('design-votes-'+PROJECT)||'{}')}catch(e){return {}}}
 async function render(){const v=await votes();
  setHTML(document.getElementById('tally'),'<b>Picks</b><table>'+COMPONENTS.map(([c,n])=>`<tr><td>${n}</td><td>${v[c]?(v[c].label||v[c].design):'none yet'}</td></tr>`).join('')+'</table><div class="st">Refreshes every 3 s. Served from the local vote server when it runs, else from this browser\'s storage.</div>');
  setHTML(document.getElementById('grid'),DESIGNS.map(([id,label,href,img,desc])=>{const mine=Object.entries(v).filter(([c,x])=>x.design===id).map(([c])=>(COMPONENTS.find(k=>k[0]===c)||[c,c])[1]);const win=v.overall&&v.overall.design===id;

@@ -3,7 +3,7 @@
 (function(){
   const me=document.currentScript||{dataset:{}}; const design=me.dataset.design||'unknown'; const label=me.dataset.label||design;
   const COMPONENTS=[['overall','Overall design'],['hero','Hero + verdict'],['stats','Headline numbers'],['takeaways','Takeaways'],['arch','Architecture view'],['matrix','Readiness view'],['build','Build plan'],['nav','Navigation'],['motion','Motion + feel'],['theme','Theme + type']];
-  const KEY='design-votes-'+(me.dataset.project||'default'), API='http://127.0.0.1:7331'; let votes=load(), online=false, open=false;
+  const KEY='design-votes-'+(me.dataset.project||'default'), API=me.dataset.api||'http://127.0.0.1:7331'; let votes=load(), online=false, open=false;
   function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){return {}}}
   function save(){try{localStorage.setItem(KEY,JSON.stringify(votes))}catch(e){}}
   const css=`

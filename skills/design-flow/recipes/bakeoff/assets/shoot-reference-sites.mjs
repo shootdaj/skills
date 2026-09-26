@@ -1,13 +1,12 @@
 // Screenshot a set of template/component sites for a design-direction gallery.
-import { createRequire } from 'node:module';
-const pwArg = (() => { const a = process.argv, i = a.indexOf('--playwright'); return i >= 0 ? a[i + 1] : process.env.PLAYWRIGHT_PACKAGE_JSON; })();
-function loadPlaywright() {
-  const tries = [pwArg, process.cwd() + '/package.json', import.meta.url].filter(Boolean);
-  for (const t of tries) { try { return createRequire(t)('@playwright/test'); } catch (e) {} }
-  throw new Error('Playwright not found. Run `npm i -D @playwright/test && npx playwright install chromium` in this folder, or pass --playwright /path/to/package.json (or set PLAYWRIGHT_PACKAGE_JSON).');
-}
-const { chromium } = loadPlaywright();
-const out = process.argv[2];
+// usage: node shoot-reference-sites.mjs [out_dir] [--playwright /path/package.json]   (out_dir defaults to ./reference-shots)
+// No setup needed: Playwright is found or installed by design-flow/assets/lib/playwright.mjs; --playwright is an optional override.
+import { mkdirSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { launch } from '../../../assets/lib/playwright.mjs';
+const argv = process.argv.slice(2);
+const out = resolve(argv.find((x, i) => !x.startsWith('--') && !(argv[i - 1] || '').startsWith('--')) || './reference-shots');
+mkdirSync(out, { recursive: true });
 const SITES = [
   ['aceternity-bento','https://ui.aceternity.com/components/bento-grid'],
   ['aceternity-spotlight','https://ui.aceternity.com/components/spotlight-new'],
@@ -22,7 +21,7 @@ const SITES = [
   ['untitledui','https://www.untitledui.com/'],
   ['reactbits','https://reactbits.dev/'],
 ];
-const browser = await chromium.launch({ headless: true });
+const browser = await launch({ headless: true });
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, colorScheme: 'dark', deviceScaleFactor: 1 });
 const results = [];
 await Promise.all(SITES.map(async ([name, url]) => {

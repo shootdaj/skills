@@ -28,5 +28,5 @@ What the user said, what it meant, and the fix that stuck. Read this before ever
 - `file://` pages share `localStorage`. Namespace theme keys per page or a variant inherits another's theme.
 - A rail hidden by a later `max-width` rule needs its desktop rule in a `min-width` query.
 - `scrollIntoView` inside a horizontal strip scrolled the page to section 04 on load. Use `container.scrollTo({left})`.
-- Playwright import from a scratch folder fails under ESM. Use `createRequire` against a repo that has `@playwright/test` installed.
+- Playwright import from a scratch folder fails under ESM. Import `launch` from design-flow's `assets/lib/playwright.mjs`; it finds or installs the package and picks Chrome or Chromium.
 - macOS `screencapture` is denied in this environment. Drive Chrome with `open` or AppleScript, and take screenshots with Playwright.

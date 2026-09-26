@@ -8,7 +8,7 @@ Never present an unverified page. If it was not screenshotted, it is not done. T
 node assets/shoot.mjs /path/to/index.html --key <slug> [--sections id,id,...] [--only dark|800|fallback]
 ```
 
-The script finds `@playwright/test` from `--playwright <package.json>`, the `PLAYWRIGHT_PACKAGE_JSON` env var, or the current folder. If none has it, run `npm i -D @playwright/test && npx playwright install chromium` first. It writes PNGs to a `shots/` folder next to the page and prints a JSON summary.
+No setup needed. The script loads Playwright through `design-flow/assets/lib/playwright.mjs`: it looks for an installed `@playwright/test` (current folder, global npm root, `~/.design-flow/playwright`) and, the first time none is found, installs it there itself with Chromium (one line on stderr, a minute or two). It drives installed Google Chrome when there is one and Playwright's Chromium otherwise. Optional overrides: `--playwright <package.json>` or `PLAYWRIGHT_PACKAGE_JSON` to use a project's own copy. It creates `shots/` next to the page and prints a JSON summary on stdout.
 
 ## What it checks
 

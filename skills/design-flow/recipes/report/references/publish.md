@@ -9,7 +9,9 @@ Publish the folder that holds `index.html` at its root.
 ~/.agents/skills/here-now/scripts/publish.sh <dir> --client claude-code --slug <slug>   # update in place
 ```
 
-The access mode comes from the door's profile (`publish.access`). When restricted is asked for, set it right after publishing and verify. The Bearer key is in `~/.herenow/credentials`; never print it.
+The path above is where the `skills` CLI installs here-now; use the installed copy wherever it is. The access mode comes from the door's profile (`publish.access`). When restricted is asked for, set it right after publishing and verify. The Bearer key is in `~/.herenow/credentials`; never print it.
+
+No credentials, no problem: when `~/.herenow/credentials` is missing or the here-now skill is not installed, skip publishing, leave the page in its folder, open it in Chrome (`open -a "Google Chrome" <dir>/index.html`, or plain `open` when Chrome is absent) and say in one line that it stayed local because here.now is not set up. Do not sign up or ask for a key unless the user asks for a link.
 
 ```bash
 KEY=$(grep -Eo '[A-Za-z0-9_-]{20,}' ~/.herenow/credentials | head -1)

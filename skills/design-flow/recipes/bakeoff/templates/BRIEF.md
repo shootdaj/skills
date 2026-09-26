@@ -39,11 +39,10 @@ localStorage key, default dark unless your direction is light-first). {{ABOVE_TH
 - Plain English: no em or en dashes, straight quotes, sentence case, active voice, no stock AI words.
 
 ## Verify before you report (mandatory)
-Write a small Node script that loads Playwright from a repo that has it installed:
+Write a small Node script that loads Playwright through design-flow's shared helper (it finds an installed copy or installs one; nothing to set up):
 ```js
-import { createRequire } from 'node:module';
-const require = createRequire('{{PLAYWRIGHT_PACKAGE_JSON}}');
-const { chromium } = require('@playwright/test');
+import { launch } from '{{DESIGN_FLOW}}/assets/lib/playwright.mjs';
+const browser = await launch({ headless: true });
 ```
 Load your file via `file://`, wait about 2 s, screenshot 1440×900 top and the lead figure, toggle theme and screenshot again,
 resize to 800 and screenshot, collect console errors (must be zero), assert `scrollWidth <= clientWidth`, and scan for text under 12 px.

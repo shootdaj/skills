@@ -9,6 +9,21 @@ One engine, two doors. A door hands over a profile block; this skill does the re
 
 The flow is: infer, ask, inspiration picker, build. One design is a straight build. Two or more designs mean the design room, always: builders never write their own picker or index page.
 
+## No setup needed
+
+Everything here runs on a fresh Mac with Node (with npm) and Python 3, both standard on a dev machine (`brew install node` if Node is missing; macOS offers Python 3 itself). Nothing else to install, pass or export:
+
+| Need | How it is met |
+| --- | --- |
+| Playwright | `assets/lib/playwright.mjs` finds `@playwright/test` (current folder, this skill, global npm root, `~/.design-flow/playwright`) or installs it there once with Chromium, printing one line on stderr. Every script here imports it |
+| Browser | installed Google Chrome first, Playwright's Chromium as the silent fallback |
+| Ports | room and vote servers reuse a copy already running, or move to a free port and write it where the page reads it (`room.js` `api`) |
+| Folders | `shots/`, `_requests/`, inspire boards, reference-shot folders and `~/.design-flow/` are created on first use; a missing `state.json` or `extra_directions` folder means no last look and no extra looks |
+| Chrome for viewing | `open -a "Google Chrome" <file>`; plain `open <file>` when Chrome is absent |
+| Publishing | here.now needs `~/.herenow/credentials`; without it the page stays local and you say so. Azure needs the CLI; the script prints the one install or login command and stops |
+
+Optional overrides only: `--playwright <package.json>` or `PLAYWRIGHT_PACKAGE_JSON` to use a project's own Playwright, `--port` on `make-room.py`, `--profile` on the watcher.
+
 ## Profile contract
 
 | Field | Meaning |
@@ -92,8 +107,10 @@ Run it every time unless the user said "just build it" or step 1 already found r
 
 ```bash
 node <this skill>/assets/inspire/inspire.mjs "<page kind> <mood words>" --kind <report|dashboard|landing|app|all> --per 8 --tone dark --out <scratch>/inspire [--sources dribbble,behance,21st]
-open -a "Google Chrome" <scratch>/inspire/picker.html
+open -a "Google Chrome" <scratch>/inspire/picker.html   # plain `open` when Chrome is absent
 ```
+
+The first run on a machine may print one `design-flow: one-time setup` line while Playwright installs; nothing to do. The picker saves picks to the bake-off vote server on 127.0.0.1:7331 when one is running and to the page otherwise.
 
 Tone defaults to dark: about four dark shots to one light one, with the light ones spread through the grid. Use `--tone light` for a light-first page or `--tone any` for no filter; `--dark-share 0.8` sets the mix. The picker has Dark and Light chips to filter.
 
@@ -121,7 +138,7 @@ Always: `anshul-ui-standards-v2` (its SKILL.md plus `references/material-usabili
 
 ### One design
 
-Build it yourself, open it in Chrome as sections land, and save the look to `~/.design-flow/state.json` under `last.<profile>.<pageKind>`.
+Build it yourself, open it in Chrome as sections land, and save the look to `~/.design-flow/state.json` under `last.<profile>.<pageKind>` (create the folder and file when missing).
 
 ### Two or more designs: the room
 
@@ -132,7 +149,7 @@ python3 <this skill>/assets/room/make-room.py <dir> --project "<Name>" --steps "
 ```
 
    It writes `index.html` (the room), `room.js` (its config), `_vote/` (bridge, vote widget, server, request form), `_requests/designs.js` and a `BRIEF.md` skeleton. It opens nothing. `--designs` lists the designs as building stubs so the rail shows them from the start. Pass `--ui-kit <kit>` when the profile requires a kit. Fill in the brief's TODO lines (product, steps, content pack, direction slots) before builders start. Steps are the screens the room drives from its Step buttons; for a page with no flow, one step is fine.
-2. Start the vote server (`python3 <dir>/_vote/server.py &`) and open `<dir>/index.html` in Chrome. Start the watcher (below) so the New design button works.
+2. Start the vote server (`python3 <dir>/_vote/server.py &`; it prints `VOTE_SERVER <url>`, reuses a copy already running, and moves to a free port, written into `room.js`, when the default is taken) and open `<dir>/index.html` in Chrome. Start the watcher (below) so the New design button works.
 3. Build the designs in parallel with Fable subagents, one per design. Each prompt carries: the room's `BRIEF.md` path, its direction message, its id and name (`d1`, `d2`, ...), the request-file progress protocol below with a request file you created in `_requests/` for it, and `recipes/bakeoff/references/builder-prompt.md`. Builders follow `BRIEF.md`: hooks for the bridge, `../_vote/hub-bridge.js` before `../_vote/vote.js`, the room's exact shot names, then register in `_requests/designs.js` (that entry completes the stub). They never create a picker, index or ballot page of their own; the room is the only place designs are compared.
 4. As each design lands the watcher reloads the room. Look at the shots yourself. The room stays open for New design (Auto or Guided) and for votes, pins and notes.
 
@@ -156,7 +173,7 @@ Rooms made with `assets/room/make-room.py` are ready: the request form and `_req
 ### Watch
 Start the Monitor tool (30 minute timeout, re-arm on expiry while the user is working) on:
 `node <this skill>/assets/requests/browser-watch.mjs <room url or index.html> --room <room dir> 2>&1 | grep --line-buffered -E "WATCHING|NEW_REQUEST|DONE|WATCH_ENDED|rror"`
-It opens the room in a Chrome window with its own profile (`~/.design-flow/browser`, so a hosted room's SSO sign-in is remembered), mirrors each new request to `<room>/_requests/<id>.json` and prints `NEW_REQUEST <file>`, copies `status`, `name`, `stage`, `percent`, `progress` and `result` back into the page every 2 seconds, and reloads it when a design is done. Tell the user to use that window. `WATCH_ENDED` means they closed it; offer to reopen. Only one watcher per room at a time.
+It opens the room in a window with its own profile (`~/.design-flow/browser`, created on first run, so a hosted room's SSO sign-in is remembered; Google Chrome when installed, else Playwright's Chromium), mirrors each new request to `<room>/_requests/<id>.json` and prints `NEW_REQUEST <file>`, copies `status`, `name`, `stage`, `percent`, `progress` and `result` back into the page every 2 seconds, and reloads it when a design is done. Tell the user to use that window. `WATCH_ENDED` means they closed it; offer to reopen. Only one watcher per room at a time.
 
 ### Progress protocol (the room shows it live)
 The rail shows each request's stage, a progress bar, an ETA (from `eta`, else estimated from percent and elapsed time) and the latest line; clicking it opens a timeline. Whoever builds writes these fields into the request file (read it, keep every field, write it back):
@@ -183,6 +200,7 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle. `anshul-ui-standards` (v1) stays untouched for older work |
 | `directions/` | one file per look, eleven to start, plus `_template.md` |
 | `assets/room/` | the design room template: `index.html` (preview in device frames, compare as grid, pair or duel, blind mode, per-element votes, pins, notes, export, Expand and Full screen, New design with progress and ETA), `_vote/` (`hub-bridge.js`, `vote.js`, `server.py`, README), `make-room.py` (scaffolds a room, `room.js`, `_requests/designs.js` and a `BRIEF.md` skeleton) |
+| `assets/lib/` | `playwright.mjs`: the shared loader every script here uses (find or install `@playwright/test`, Chrome or Chromium, `launch` and `launchPersistent`); import it from any new script instead of `createRequire` |
 | `assets/requests/` | `request-form.js` (New design form, localStorage only; `make-room.py` copies it into a room's `_vote/`), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` (the request queue the room's `server.py` imports), `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
 | `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts and `assets/shoot.mjs`; bundled so no other skill is needed |

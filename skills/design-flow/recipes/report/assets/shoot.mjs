@@ -1,25 +1,20 @@
 // report recipe verification. Usage:
 //   node shoot.mjs /path/to/index.html [--key <slug>] [--sections id,id] [--only dark|800|fallback] [--playwright /path/to/package.json]
 // Writes PNGs to shots/ next to the page and prints a JSON summary. Zero errors and no failed audit lines = pass.
-import { createRequire } from 'node:module';
+// No setup needed: Playwright is found or installed by design-flow/assets/lib/playwright.mjs; --playwright is an optional override.
 import { mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
+import { launch } from '../../../assets/lib/playwright.mjs';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 const file = resolve(args.find(a => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--')) || 'index.html');
 const KEY = opt('--key', 'report');
 const SECTIONS = (opt('--sections', '') || '').split(',').filter(Boolean);
 const only = opt('--only', 'all');
-const pwArg = (() => { const a = process.argv, i = a.indexOf('--playwright'); return i >= 0 ? a[i + 1] : process.env.PLAYWRIGHT_PACKAGE_JSON; })();
-function loadPlaywright() {
-  const tries = [pwArg, process.cwd() + '/package.json', import.meta.url].filter(Boolean);
-  for (const t of tries) { try { return createRequire(t)('@playwright/test'); } catch (e) {} }
-  throw new Error('Playwright not found. Run `npm i -D @playwright/test && npx playwright install chromium` in this folder, or pass --playwright /path/to/package.json (or set PLAYWRIGHT_PACKAGE_JSON).');
-}
-const { chromium } = loadPlaywright();
-const dir = dirname(file) + '/'; const S = dir + 'shots/'; if (!existsSync(S)) mkdirSync(S);
+if (!existsSync(file)) { console.error('shoot.mjs: no such page ' + file + ' (build it first: sh <starter>/build.sh)'); process.exit(2); }
+const dir = dirname(file) + '/'; const S = dir + 'shots/'; mkdirSync(S, { recursive: true });
 const URL_ = 'file://' + file;
-const browser = await chromium.launch();
+const browser = await launch({ headless: true });
 const errs = []; const log = [];
 const audit = (page, tag) => page.evaluate((tag) => {
   const d = document.documentElement; const small = [];

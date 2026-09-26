@@ -1,5 +1,7 @@
 # Tiny CORS vote server for the design comparison. State: votes.json (latest pick per component), log: votes.jsonl
-import json, os, time, http.server, threading
+# usage: python3 server.py [--port 7331] &   A copy already on the port is reused; another program there means a free
+# port is picked and printed (give it to vote.js as data-api and to ballot.html as ?api=).
+import json, os, sys, time, http.server, threading, urllib.request
 LOCK=threading.Lock()
 HERE=os.path.dirname(os.path.abspath(__file__)); STATE=os.path.join(HERE,'votes.json'); LOG=os.path.join(HERE,'votes.jsonl')
 def load():
@@ -34,4 +36,14 @@ class H(http.server.BaseHTTPRequestHandler):
         return self._json(200,d)
     def log_message(self,*a): pass
 if __name__=='__main__':
-    http.server.ThreadingHTTPServer(('127.0.0.1',7331),H).serve_forever()
+    a=sys.argv[1:]; PORT=int(a[a.index('--port')+1]) if '--port' in a else 7331
+    try:
+        with urllib.request.urlopen('http://127.0.0.1:%d/ping'%PORT,timeout=1) as r:
+            if json.load(r).get('ok'): print('vote server already running on http://127.0.0.1:%d'%PORT,flush=True); sys.exit(0)
+    except Exception: pass
+    try: srv=http.server.ThreadingHTTPServer(('127.0.0.1',PORT),H)
+    except OSError:
+        srv=http.server.ThreadingHTTPServer(('127.0.0.1',0),H); PORT=srv.server_address[1]
+        print('port busy, moved to %d: add data-api="http://127.0.0.1:%d" to the vote.js tag and ?api=http://127.0.0.1:%d to ballot.html'%(PORT,PORT,PORT),flush=True)
+    print('VOTE_SERVER http://127.0.0.1:%d'%PORT,flush=True)
+    srv.serve_forever()

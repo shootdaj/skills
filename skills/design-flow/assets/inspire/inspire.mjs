@@ -2,10 +2,11 @@
 // usage: node inspire.mjs "dark analytics dashboard" [--kind all|app|dashboard|landing|report] [--per 8] [--out ./inspire-board]
 //        [--sources dribbble,behance,...] [--playwright /path/package.json]
 // Writes <out>/board.json, <out>/img/*, <out>/picker.html. Thumbnails stay local and link back to the source; do not republish them.
-import { createRequire } from 'node:module';
+// No setup needed: Playwright is found or installed by ../lib/playwright.mjs; --playwright is an optional override.
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { launch } from '../lib/playwright.mjs';
 const here = dirname(fileURLToPath(import.meta.url));
 const a = process.argv.slice(2);
 const opt = (k, d) => { const i = a.indexOf(k); return i >= 0 ? a[i + 1] : d; };
@@ -16,14 +17,11 @@ const kind = opt('--kind', 'all'); const per = +opt('--per', 8);
 const tone = opt('--tone', 'dark'); const share = +opt('--dark-share', 0.8);
  const out = resolve(opt('--out', './inspire-board'));
 const only = (opt('--sources', '') || '').split(',').filter(Boolean);
-const pwArg = opt('--playwright', process.env.PLAYWRIGHT_PACKAGE_JSON);
-function loadPlaywright() { for (const t of [pwArg, process.cwd() + '/package.json', import.meta.url].filter(Boolean)) { try { return createRequire(t)('@playwright/test'); } catch (e) {} } throw new Error('Playwright not found: npm i -D @playwright/test && npx playwright install chromium, or pass --playwright'); }
-const { chromium } = loadPlaywright();
 const { sources } = JSON.parse(readFileSync(join(here, 'sources.json'), 'utf8'));
 const pick = sources.filter(s => (only.length ? only.includes(s.id) : (kind === 'all' || s.kinds.includes('all') || s.kinds.includes(kind))));
 mkdirSync(join(out, 'img'), { recursive: true });
 const q = encodeURIComponent(query);
-const browser = await chromium.launch();
+const browser = await launch({ headless: true });
 const ctx = await browser.newContext({ viewport: { width: 1440, height: 1000 }, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36', deviceScaleFactor: 1 });
 const items = []; const report = [];
 async function scrape(s) {

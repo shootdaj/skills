@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Publish a static folder to Azure Static Web Apps behind SSO. Idempotent: creates what is missing, redeploys what exists.
-# usage: publish.sh <dir> --project <name> [--access sso|invite|public] [--sub <subscription>] [--suffix <owner>]
+# usage: publish.sh <dir> [--project <name>] [--access sso|invite|public] [--sub <subscription>] [--suffix <owner>]
 #                   [--location eastus2] [--sku Standard|Free] [--owner <email>] [--exclude <glob>]...
+# No setup beyond the Azure CLI: --project defaults to the folder name, suffix and owner come from the signed-in user.
+# Stops cleanly with INSTALL_NEEDED (az missing) or LOGIN_NEEDED (not signed in) and the one command to run.
 set -euo pipefail
 DIR=""; PROJECT=""; ACCESS="sso"; SUB="${AZ_STATIC_SUB:-AIX-SANDBOX-SUB-1}"; SUFFIX="${AZ_STATIC_SUFFIX:-}"
 LOC="eastus2"; SKU="Standard"; OWNER="${AZ_STATIC_OWNER:-}"; EXCL=()
@@ -10,10 +12,12 @@ while [ $# -gt 0 ]; do case "$1" in
   --location) LOC="$2"; shift 2;; --sku) SKU="$2"; shift 2;; --owner) OWNER="$2"; shift 2;; --exclude) EXCL+=("--exclude" "$2"); shift 2;;
   -h|--help) sed -n '2,5p' "$0"; exit 0;; *) DIR="$1"; shift;; esac; done
 [ -n "$DIR" ] && [ -f "$DIR/index.html" ] || { echo "ERROR: <dir> with index.html required" >&2; exit 2; }
-[ -n "$PROJECT" ] || { echo "ERROR: --project required" >&2; exit 2; }
-command -v az >/dev/null || { echo "ERROR: Azure CLI (az) not installed" >&2; exit 2; }
-if ! az account show -o none 2>/dev/null; then echo "LOGIN_NEEDED: run  az login" >&2; exit 3; fi
-az account set --subscription "$SUB"
+[ -n "$PROJECT" ] || PROJECT=$(basename "$(cd "$DIR" && pwd)" | tr '[:upper:]' '[:lower:]' | sed -E 's/[^a-z0-9]+/-/g; s/^-+|-+$//g' | cut -c1-40)
+[ -n "$PROJECT" ] || { echo "ERROR: could not derive a project name from the folder; pass --project" >&2; exit 2; }
+command -v node >/dev/null || { echo "INSTALL_NEEDED: Node.js is missing (the deploy client runs on it). Run:  brew install node" >&2; exit 2; }
+command -v az >/dev/null || { echo "INSTALL_NEEDED: the Azure CLI is missing. Run:  brew install azure-cli   then run this again" >&2; exit 2; }
+if ! az account show -o none 2>/dev/null; then echo "LOGIN_NEEDED: not signed in to Azure. Run:  az login   then run this again" >&2; exit 3; fi
+az account set --subscription "$SUB" || { echo "ERROR: no access to subscription $SUB; pass --sub <name> or run az login" >&2; exit 3; }
 [ -n "$OWNER" ] || OWNER=$(az account show --query user.name -o tsv)
 # suffix = first name of the signed-in user (jane.doe@company.com -> jane), unless set
 [ -n "$SUFFIX" ] || SUFFIX=$(printf "%s" "$OWNER" | sed -E "s/@.*//; s/[._-].*//" | tr "[:upper:]" "[:lower:]" | tr -cd "a-z0-9")

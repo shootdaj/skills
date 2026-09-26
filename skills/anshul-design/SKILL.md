@@ -24,3 +24,5 @@ level_default: quick
 ```
 
 Always: no Material chassis, no house palette by default, visible motion with a light budget, plain English, show work in Chrome as it lands, verify with Playwright before presenting.
+
+No setup needed. Everything auto-detects: Playwright installs itself on first use (`~/.design-flow/playwright`), Chrome is used when installed and Chromium otherwise, room servers pick a free port, `~/.design-flow/` is created on first save and an absent `extra_directions` folder just means no extra looks. When `~/.herenow/credentials` is missing the page stays local (open it in Chrome and say so in one line); when Chrome is missing use plain `open`.

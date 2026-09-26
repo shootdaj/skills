@@ -4,7 +4,7 @@ Never present unverified UI. If it wasn't screenshotted, it isn't done.
 
 ## Procedure
 
-1. Load the page in Playwright (`file://` or served URL).
+1. Load the page in Playwright (`file://` or served URL). Nothing to install: import `launch` from `design-flow/assets/lib/playwright.mjs` (finds or installs Playwright, uses Chrome or Chromium), or run a recipe's shoot script.
 2. Screenshot at **1440×900** and one narrow width (**~800px**).
 3. Toggle the theme (click the toggle) → screenshot **both themes**.
 4. Navigate the primary flows: click each nav item, expand a card, open the palette/dialog → screenshot the money view (e.g. approval queue open).

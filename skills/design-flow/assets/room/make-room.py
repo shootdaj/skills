@@ -5,6 +5,9 @@
                [--shots "file:Label[:component],..."] [--langs "en:EN,es:ES"] [--designs "d1:Name,..."]
                [--subtitle "{n} directions, 1 flow"] [--ui-kit kira] [--playwright /path/to/package.json] [--force]
 
+No setup needed: the brief tells builders to load Playwright through design-flow's shared helper (assets/lib/playwright.mjs),
+which finds or installs it. --playwright is an optional override for a project that already has @playwright/test.
+
 Writes <dir>/index.html and <dir>/_vote/* (engine files, refreshed every run), and, when missing, <dir>/room.js
 (the room's config), <dir>/_requests/designs.js (where builders register designs) and <dir>/BRIEF.md (the builders'
 brief, a skeleton to fill in). --force rewrites room.js and BRIEF.md too. Opens nothing; prints the path.
@@ -15,7 +18,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REQUESTS = os.path.join(os.path.dirname(HERE), 'requests')
 ENGINE = ['hub-bridge.js', 'vote.js', 'server.py', 'README.md']
 FROM_REQUESTS = ['request-form.js', 'requests_api.py']
-DEFAULT_PW = os.environ.get('PLAYWRIGHT_PACKAGE_JSON', '<package.json of a project with @playwright/test installed>')
+PW_HELPER = os.path.join(os.path.dirname(HERE), 'lib', 'playwright.mjs')
+DEFAULT_PW = os.environ.get('PLAYWRIGHT_PACKAGE_JSON', '')
 
 
 def slug(s):
@@ -137,7 +141,11 @@ def brief(cfg, out_dir, kira, pw):
     A('')
     A('## Verify and shoot (mandatory)')
     A('')
-    A('Load Playwright with `createRequire(\'%s\')` and `require(\'@playwright/test\')`. Open your page over `file://`,' % pw)
+    A('Load Playwright through the shared helper, which finds or installs it (nothing to set up):')
+    A('`import { launch } from \'%s\'; const browser = await launch({ headless: true });`.' % PW_HELPER)
+    if pw:
+        A('(Or `createRequire(\'%s\')` and `require(\'@playwright/test\')`, the project copy.)' % pw)
+    A('Open your page over `file://`,')
     A('collect console errors (must be zero), assert `document.documentElement.scrollWidth <= clientWidth` at every width,')
     A('scan for text under 12 px, and save these PNGs to `shots/` next to your index.html, with exactly these names:')
     A('')
@@ -178,7 +186,7 @@ def main():
     ap.add_argument('--name', help='room title; default "<project> design room"')
     ap.add_argument('--ui-kit', default='', help='"kira" makes the brief require React + @ayahelix/kira builds')
     ap.add_argument('--port', type=int, help='vote server port; default is picked from the project name')
-    ap.add_argument('--playwright', default=DEFAULT_PW, help='package.json of a project that has @playwright/test installed')
+    ap.add_argument('--playwright', default=DEFAULT_PW, help='optional: package.json of a project that already has @playwright/test; the shared helper is the default')
     ap.add_argument('--force', action='store_true', help='rewrite room.js and BRIEF.md even when they exist')
     a = ap.parse_args()
 
@@ -231,7 +239,8 @@ def main():
     print(os.path.join(out, 'index.html'))
     print('config: %s' % room_js)
     print('brief:  %s (fill in the TODO lines before builders start)' % brief_path)
-    print('server: python3 %s &' % os.path.join(out, '_vote', 'server.py'))
+    print('server: python3 %s &   (picks a free port itself if the default is busy)' % os.path.join(out, '_vote', 'server.py'))
+    print('open:   open %s' % os.path.join(out, 'index.html'))
 
 
 if __name__ == '__main__':

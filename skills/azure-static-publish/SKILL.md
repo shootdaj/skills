@@ -8,8 +8,10 @@ description: Publish a static site (an HTML report, a design room, a prototype f
 One command publishes a folder that has `index.html` at its root:
 
 ```bash
-bash <this skill>/scripts/publish.sh <dir> --project <short-name> [--access sso|invite|public]
+bash <this skill>/scripts/publish.sh <dir> [--project <short-name>] [--access sso|invite|public]
 ```
+
+No setup beyond the Azure CLI. The project name defaults to the folder name, the suffix and owner tag come from the signed-in user, and the deploy client runs through `npx`. If `az` is missing the script prints `INSTALL_NEEDED: brew install azure-cli` and stops; if nobody is signed in it prints `LOGIN_NEEDED: az login` and stops. Relay that one command to the user, then rerun. Every flag below is an optional override.
 
 It creates `rg-<project>-<suffix>` and a Static Web App `<project>-<suffix>` if they are missing, stages the folder, writes an auth config, deploys, checks that anonymous visitors are redirected, and prints `RESULT url=... rg=... app=... access=... anon_status=...`. Open the URL in Chrome afterwards.
 
@@ -28,7 +30,7 @@ It creates `rg-<project>-<suffix>` and a Static Web App `<project>-<suffix>` if 
 
 ## Before you run it
 
-1. Ask for or infer the project name (short, lowercase, hyphens). Never rename later: Azure cannot rename resources, so a new name means delete and recreate.
+1. Infer the project name (short, lowercase, hyphens; default is the folder name) and pass `--project` only when the folder name is a poor fit. Never rename later: Azure cannot rename resources, so a new name means delete and recreate.
 2. Make sure the folder has no secrets and no local-only files; the script already drops `.py`, `.mjs`, logs, `.git`, `node_modules`. Add `--exclude <glob>` for anything else (for example vote data: `--exclude '_vote/*.json'`).
 3. If the folder already has a `staticwebapp.config.json`, the script keeps it.
 
@@ -36,6 +38,7 @@ It creates `rg-<project>-<suffix>` and a Static Web App `<project>-<suffix>` if 
 
 | Symptom | Fix |
 | --- | --- |
+| `INSTALL_NEEDED` | Azure CLI or Node is missing; the line names the one `brew install` to run, then rerun |
 | `LOGIN_NEEDED` or `AADSTS50078` (MFA expired) | Ask the user to run `! az login --tenant <tenant>` in the prompt, then rerun |
 | `Current directory cannot be identical to or contained within artifact folders` | The script deploys from a staging parent folder; do not deploy with the site folder as the working directory |
 | `Insufficient privileges` creating an app registration | Sandbox users cannot create Entra apps. Stay on `sso` (any Microsoft account). For Aya-tenant-only sign-in, someone with Entra rights registers an app; then add an `auth.identityProviders.azureActiveDirectory` block with the tenant issuer and set `AAD_CLIENT_ID` / `AAD_CLIENT_SECRET` app settings |
