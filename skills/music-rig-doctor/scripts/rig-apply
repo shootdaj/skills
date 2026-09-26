@@ -1,0 +1,123 @@
+#!/usr/bin/env python3
+"""Save and restore rig profiles.
+
+  rig-apply --save <name>        snapshot the current rig
+  rig-apply --list
+  rig-apply --show <name>
+  rig-apply <name>               restore (asks before device rebuilds)
+  rig-apply <name> --dry-run     show what would change, touch nothing
+
+Restoring never rebuilds CoreAudio devices without --allow-devices.
+"""
+import argparse, json, os, socket, subprocess, sys, glob
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+PKG  = os.path.dirname(HERE)
+PROF = os.path.join(PKG, "assets", "profiles")
+
+def live(code, t=12):
+    try:
+        s = socket.create_connection(("127.0.0.1", 9877), timeout=t)
+        s.sendall(json.dumps({"type": "exec_python", "params": {"code": code}}).encode())
+        buf = b""
+        while True:
+            c = s.recv(65536)
+            if not c: break
+            buf += c
+            try: json.loads(buf.decode()); break
+            except Exception: continue
+        s.close()
+        return json.loads(buf.decode()).get("result", {}).get("result")
+    except Exception as e:
+        return {"error": str(e)}
+
+def scan():
+    out = subprocess.run([os.path.join(HERE, "rig-scan")], capture_output=True, text=True, timeout=90)
+    return json.loads(out.stdout)
+
+def save(name):
+    s = scan()
+    prof = {
+        "name": name,
+        "audio": {"default_output": s.get("audio", {}).get("default_output"),
+                  "devices": [{k: d[k] for k in ("name", "out_ch", "kind")}
+                              for d in s.get("audio", {}).get("devices", [])]},
+        "ableton": {k: s.get("ableton", {}).get(k) for k in ("master", "returns", "tracks")},
+        "touchdesigner": s.get("touchdesigner", {}),
+        "fixtures": s.get("fixtures", []),
+    }
+    os.makedirs(PROF, exist_ok=True)
+    p = os.path.join(PROF, name + ".json")
+    json.dump(prof, open(p, "w"), indent=1)
+    print(f"saved {p}")
+
+def load(name):
+    p = os.path.join(PROF, name + ".json")
+    if not os.path.exists(p):
+        sys.exit(f"no profile: {name}")
+    return json.load(open(p))
+
+def restore(name, dry, allow_devices):
+    want = load(name); now = scan()
+    plan = []
+    w_out = want.get("audio", {}).get("default_output")
+    n_out = now.get("audio", {}).get("default_output")
+    if w_out and w_out != n_out:
+        plan.append(("system output", n_out, w_out,
+                     f"scripts/setoutput set {n_out!r}"))
+    wm = (want.get("ableton") or {}).get("master")
+    nm = (now.get("ableton") or {}).get("master")
+    if wm and nm and wm != nm:
+        plan.append(("Live master", " ".join(nm), " ".join(wm),
+                     f"master -> {nm[1]}"))
+    for wt in ((want.get("ableton") or {}).get("tracks") or []):
+        for nt in ((now.get("ableton") or {}).get("tracks") or []):
+            if wt[0] == nt[0] and wt[3] != nt[3]:
+                plan.append((f"Live track {wt[1]!r} input", nt[3], wt[3],
+                             f"track {wt[0]} input -> {nt[3]}"))
+    missing = {d["name"] for d in want.get("audio", {}).get("devices", [])} - \
+              {d["name"] for d in now.get("audio", {}).get("devices", [])}
+    if missing:
+        plan.append(("MISSING DEVICES", ", ".join(sorted(missing)), "-",
+                     "hardware not connected - reconnect it"))
+    if not plan:
+        print(f"already matches profile {name!r}"); return
+    print(f"{'what':34} {'now':22} {'->':2} {'profile':22} undo")
+    for w, a, b, u in plan:
+        print(f"{w:34} {str(a)[:22]:22} -> {str(b)[:22]:22} {u}")
+    if dry:
+        print("\n(dry run - nothing changed)"); return
+    if any(p[0] == "MISSING DEVICES" for p in plan) and not allow_devices:
+        sys.exit("\nrefusing: hardware from the profile is not connected")
+    if w_out and w_out != n_out:
+        subprocess.run([os.path.join(HERE, "..", "..", "..", "setoutput")], capture_output=True)
+        so = os.path.join(os.environ.get("MUSIC_RIG_CACHE",
+             os.path.expanduser("~/.cache/music-rig-doctor")), "setoutput")
+        if os.path.exists(so):
+            print(subprocess.run([so, "set", w_out], capture_output=True, text=True).stdout.strip())
+    if wm:
+        print(live("m=song.master_track\n"
+                   "c=[x for x in m.available_output_routing_channels if x.display_name==%r]\n"
+                   "if c: m.output_routing_channel=c[0]\n"
+                   "result=m.output_routing_channel.display_name" % wm[1]))
+    for wt in ((want.get("ableton") or {}).get("tracks") or []):
+        print(live("t=song.tracks[%d]\n"
+                   "c=[x for x in t.available_input_routing_channels if x.display_name==%r]\n"
+                   "if c: t.input_routing_channel=c[0]\n"
+                   "result=t.input_routing_channel.display_name" % (wt[0], wt[3])))
+    print("restored. verify with rig-scan and rig-probe.")
+
+ap = argparse.ArgumentParser()
+ap.add_argument("name", nargs="?")
+ap.add_argument("--save"); ap.add_argument("--show")
+ap.add_argument("--list", action="store_true")
+ap.add_argument("--dry-run", action="store_true")
+ap.add_argument("--allow-devices", action="store_true")
+a = ap.parse_args()
+if a.list:
+    for f in sorted(glob.glob(os.path.join(PROF, "*.json"))):
+        print(" ", os.path.basename(f)[:-5])
+elif a.save: save(a.save)
+elif a.show: print(json.dumps(load(a.show), indent=1))
+elif a.name: restore(a.name, a.dry_run, a.allow_devices)
+else: ap.print_help()

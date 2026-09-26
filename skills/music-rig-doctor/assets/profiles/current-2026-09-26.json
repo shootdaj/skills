@@ -1,0 +1,297 @@
+{
+ "name": "current-2026-09-26",
+ "audio": {
+  "default_output": "Desk\u2192TD",
+  "devices": [
+   {
+    "name": "BlackHole 16ch",
+    "out_ch": "16",
+    "kind": "device[virt]"
+   },
+   {
+    "name": "BlackHole 64ch",
+    "out_ch": "64",
+    "kind": "device[virt]"
+   },
+   {
+    "name": "MacBook Pro Microphone",
+    "out_ch": "0",
+    "kind": "device[bltn]"
+   },
+   {
+    "name": "MacBook Pro Speakers",
+    "out_ch": "2",
+    "kind": "device[bltn]"
+   },
+   {
+    "name": "Desk\u2192TD",
+    "out_ch": "2",
+    "kind": "aggregate(stacked/multi-output)"
+   },
+   {
+    "name": "Ableton\u2192TD KA6",
+    "out_ch": "64",
+    "kind": "aggregate"
+   },
+   {
+    "name": "Ableton\u2192TD LaptopSpeakers",
+    "out_ch": "66",
+    "kind": "aggregate"
+   },
+   {
+    "name": "Komplete BlackHole",
+    "out_ch": "16",
+    "kind": "aggregate"
+   }
+  ]
+ },
+ "ableton": {
+  "master": [
+   "Ext. Out",
+   "1/2"
+  ],
+  "returns": [
+   [
+    "A-Reverb",
+    "Master",
+    "",
+    0.47,
+    false
+   ],
+   [
+    "B-Delay",
+    "Master",
+    "",
+    0.01,
+    false
+   ],
+   [
+    "C-TD Send",
+    "Ext. Out",
+    "1/2",
+    0.85,
+    false
+   ]
+  ],
+  "tracks": [
+   [
+    0,
+    "Denon Ext",
+    "Ext. In",
+    "3/4",
+    0,
+    true,
+    0.0
+   ],
+   [
+    1,
+    "Guitar",
+    "Ext. In",
+    "1",
+    2,
+    true,
+    0.0
+   ],
+   [
+    2,
+    "Guitar",
+    "Ext. In",
+    "1",
+    0,
+    false,
+    0.0
+   ],
+   [
+    3,
+    "djay Pro",
+    "Ext. In",
+    "7/8",
+    0,
+    false,
+    0.0
+   ],
+   [
+    4,
+    "KAIn3/4",
+    "Ext. In",
+    "3/4",
+    0,
+    false,
+    0.0
+   ],
+   [
+    5,
+    "Record",
+    "Ext. In",
+    "7/8",
+    2,
+    false,
+    0.0
+   ],
+   [
+    6,
+    "Remix",
+    "Ext. In",
+    "1/2",
+    null,
+    false,
+    0.0
+   ],
+   [
+    7,
+    "8-14 - Token - Jeep",
+    "Ext. In",
+    "1",
+    1,
+    false,
+    0.0
+   ],
+   [
+    8,
+    "9-Wade - Charles on Acid (Original Mix)",
+    "Ext. In",
+    "1",
+    2,
+    false,
+    0.0
+   ],
+   [
+    9,
+    "Chop",
+    "Ext. In",
+    "1",
+    2,
+    false,
+    0.0
+   ],
+   [
+    10,
+    "Chop",
+    "Ext. In",
+    "1",
+    2,
+    false,
+    0.0
+   ],
+   [
+    11,
+    "12-Glass High Strings Pad",
+    "",
+    "",
+    2,
+    false,
+    0.0
+   ],
+   [
+    12,
+    "13-Operator",
+    "",
+    "",
+    0,
+    false,
+    0.0
+   ],
+   [
+    13,
+    "14-LD Core Kit",
+    "All Ins",
+    "All Channels",
+    0,
+    false,
+    0.0
+   ],
+   [
+    14,
+    "15-Little Synth Piano",
+    "All Ins",
+    "All Channels",
+    1,
+    false,
+    0.0
+   ],
+   [
+    15,
+    "16-FM Piano Dirty",
+    "All Ins",
+    "All Channels",
+    2,
+    false,
+    0.0
+   ],
+   [
+    16,
+    "TD_MIDI",
+    "All Ins",
+    "All Channels",
+    1,
+    false,
+    0.0
+   ],
+   [
+    17,
+    "TD_MIX",
+    "Resampling",
+    "",
+    2,
+    false,
+    0.0
+   ],
+   [
+    18,
+    "TD_STEM1",
+    "Ext. In",
+    "1",
+    2,
+    false,
+    0.0
+   ],
+   [
+    19,
+    "TD_STEM2",
+    "Ext. In",
+    "1",
+    2,
+    false,
+    0.0
+   ],
+   [
+    20,
+    "TD_STEM3",
+    "Ext. In",
+    "1",
+    2,
+    false,
+    0.0
+   ],
+   [
+    21,
+    "TD_STEM4",
+    "Ext. In",
+    "1",
+    2,
+    false,
+    0.0
+   ]
+  ]
+ },
+ "touchdesigner": {
+  "unreachable": "timed out"
+ },
+ "fixtures": [
+  {
+   "name": "HyperCube",
+   "transport": "sacn",
+   "address": "192.168.1.102",
+   "file": "hypercube.json",
+   "alive": true,
+   "raw": {
+    "live": false,
+    "name": "n00bc00b",
+    "product": "HyperCube15-SE",
+    "pixels": 224,
+    "load": 875
+   }
+  }
+ ],
+ "note": "Captured with the Komplete Audio 6 DISCONNECTED - the aggregates had collapsed (Ableton-TD KA6 70->64 ch, Komplete BlackHole 22->16 ch). This is not a desk profile. Save a real 'desk' with the interface connected and Live's master on the interface leg."
+}

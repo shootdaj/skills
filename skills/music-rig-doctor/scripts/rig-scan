@@ -1,0 +1,194 @@
+#!/usr/bin/env python3
+"""Discover the whole rig and print JSON.
+
+  rig-scan                      everything
+  rig-scan --scope audio        audio path only
+  rig-scan --scope fixture:HyperCube
+  rig-scan --scope midi|obs|ableton|td
+
+Never asks anything. Every field here is measured, so the skill must not
+ask the user for it.
+"""
+import argparse, json, os, re, socket, subprocess, sys, glob, urllib.request
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+PKG  = os.path.dirname(HERE)
+
+def sh(cmd, t=12):
+    try:
+        r = subprocess.run(cmd, shell=isinstance(cmd, str), capture_output=True,
+                           text=True, timeout=t)
+        return r.stdout.strip()
+    except Exception:
+        return ""
+
+def cache_dir():
+    d = sh([os.path.join(HERE, "_build.sh")])
+    return d or os.path.expanduser("~/.cache/music-rig-doctor")
+
+# ---------- CoreAudio ----------
+def audio(cache):
+    out = {"devices": [], "default_output": None, "holders": {}}
+    mo = os.path.join(cache, "multiout")
+    if os.path.exists(mo):
+        for ln in sh([mo, "list"]).splitlines():
+            if not ln.strip() or ln.startswith(("NAME", "---")):
+                continue
+            parts = re.split(r"\s{2,}", ln.strip())
+            if len(parts) >= 5:
+                out["devices"].append({"name": parts[0], "uid": parts[1],
+                                       "out_ch": parts[2], "rate": parts[3],
+                                       "kind": parts[4]})
+    so = os.path.join(cache, "setoutput")
+    if os.path.exists(so):
+        out["default_output"] = sh([so, "get"])
+    # which processes have an audio device open
+    for proc in ("Live", "djay", "Traktor", "TouchDesigner", "Spotify", "obs"):
+        pid = sh(f"pgrep -f '{proc}' | head -1")
+        if pid:
+            out["holders"][proc] = int(pid)
+    return out
+
+# ---------- Ableton ----------
+def ableton():
+    # Per-field guards: group tracks raise on current_monitoring_state, and one
+    # bad field used to kill the whole payload.
+    code = (
+        "import json\n"
+        "def g(fn, d=None):\n"
+        "    try: return fn()\n"
+        "    except Exception: return d\n"
+        "m=song.master_track\n"
+        "d={'tempo':song.tempo,'playing':song.is_playing,\n"
+        " 'master':[m.output_routing_type.display_name,m.output_routing_channel.display_name],\n"
+        " 'master_channels':[c.display_name for c in m.available_output_routing_channels],\n"
+        " 'master_meter':round(m.output_meter_left,4),\n"
+        " 'cue':g(lambda: song.cue_out_routing_channel.display_name),\n"
+        " 'returns':[[r.name,g(lambda r=r: r.output_routing_type.display_name),\n"
+        "   g(lambda r=r: r.output_routing_channel.display_name),\n"
+        "   round(r.mixer_device.volume.value,2),r.mute] for r in song.return_tracks],\n"
+        " 'tracks':[[i,t.name,g(lambda t=t: t.input_routing_type.display_name),\n"
+        "   g(lambda t=t: t.input_routing_channel.display_name),\n"
+        "   g(lambda t=t: t.current_monitoring_state),t.mute,\n"
+        "   round(g(lambda t=t: t.output_meter_left, 0.0),4)] for i,t in enumerate(song.tracks)]}\n"
+        "result=json.dumps(d)")
+    try:
+        s = socket.create_connection(("127.0.0.1", 9877), timeout=25)
+        s.sendall(json.dumps({"type": "exec_python", "params": {"code": code}}).encode())
+        buf = b""
+        while True:
+            c = s.recv(65536)
+            if not c:
+                break
+            buf += c
+            try:
+                json.loads(buf.decode()); break
+            except Exception:
+                continue
+        s.close()
+        raw = json.loads(buf.decode())
+        if raw.get("status") != "success":
+            return {"error": raw.get("message", "unknown"), "reachable": True}
+        return json.loads(raw["result"]["result"])
+    except Exception as e:
+        return {"unreachable": str(e)}
+
+# ---------- TouchDesigner ----------
+def td():
+    script = ("import json\n"
+              "d={}\n"
+              "ai=op('/project1/sources/audio_in')\n"
+              "if ai: d['audio']={'device':ai.par.device.eval(),'rate':ai.rate,'buffer':ai.par.bufferlength.eval(),\n"
+              "  'level':max([abs(ai[i][0]) for i in range(min(2,ai.numChans))]) if ai.numChans else 0}\n"
+              "c=op('/project1/cube')\n"
+              "if c: d['cube']={p.name:p.eval() for p in c.customPars}\n"
+              "e=op('/project1/cube/AGC_env')\n"
+              "if e: d['bands']={ch.name:round(ch[0],3) for ch in e.chans()}\n"
+              "result=json.dumps(d)")
+    try:
+        req = urllib.request.Request("http://127.0.0.1:9981/api/td/server/exec",
+              data=json.dumps({"script": script}).encode(), method="POST",
+              headers={"Content-Type": "application/json"})
+        with urllib.request.urlopen(req, timeout=40) as r:
+            return json.loads(json.loads(r.read().decode())["data"]["result"])
+    except Exception as e:
+        return {"unreachable": str(e)}
+
+# ---------- fixtures ----------
+def fixtures(only=None):
+    out = []
+    for fn in sorted(glob.glob(os.path.join(PKG, "assets", "fixtures", "*.json"))):
+        try:
+            f = json.load(open(fn))
+        except Exception:
+            continue
+        if only and f.get("name", "").lower() != only.lower():
+            continue
+        h = f.get("health", {})
+        st = {"name": f.get("name"), "transport": f.get("transport"),
+              "address": f.get("address"), "file": os.path.basename(fn)}
+        if h.get("method") == "http" and h.get("url"):
+            try:
+                with urllib.request.urlopen(h["url"], timeout=4) as r:
+                    j = json.loads(r.read().decode())
+                st["alive"] = True
+                st["raw"] = {k: j.get(k) for k in ("live", "name", "product") if k in j}
+                if isinstance(j.get("leds"), dict):
+                    st["raw"]["pixels"] = j["leds"].get("count")
+                    st["raw"]["load"] = j["leds"].get("pwr")
+            except Exception as e:
+                st["alive"] = False
+                st["error"] = str(e)
+        out.append(st)
+    return out
+
+# ---------- MIDI ----------
+def midi():
+    live = os.path.expanduser("~/Music/djay/MIDI Mappings")
+    out = {"mappings_dir": live, "mappings": [], "devices": []}
+    if os.path.isdir(live):
+        out["mappings"] = sorted(os.path.basename(p) for p in glob.glob(live + "/*"))
+    prof = sh("system_profiler -json SPUSBDataType", 20)
+    for pat in ("MIDImix", "PRIME GO", "Komplete", "Traktor"):
+        if pat.lower() in prof.lower():
+            out["devices"].append(pat)
+    return out
+
+# ---------- OBS ----------
+def obs():
+    out = {"running": bool(sh("pgrep -f '[O]BS' | head -1")), "websocket": False}
+    try:
+        s = socket.create_connection(("127.0.0.1", 4455), timeout=2); s.close()
+        out["websocket"] = True
+    except Exception:
+        pass
+    sc = os.path.expanduser("~/Library/Application Support/obs-studio/basic/scenes")
+    if os.path.isdir(sc):
+        out["scene_collections"] = [os.path.basename(p)[:-5]
+                                    for p in sorted(glob.glob(sc + "/*.json"))]
+    return out
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--scope", default="all")
+    a = ap.parse_args()
+    sc = a.scope.lower()
+    want = lambda k: sc in ("all", k) or sc.startswith("fixture:")
+    cache = cache_dir()
+    r = {"scope": a.scope}
+    if sc in ("all", "audio", "ableton", "td") or sc.startswith("fixture:"):
+        r["audio"] = audio(cache)
+    if sc in ("all", "audio", "ableton") or sc.startswith("fixture:"):
+        r["ableton"] = ableton()
+    if sc in ("all", "td") or sc.startswith("fixture:"):
+        r["touchdesigner"] = td()
+    if sc == "all" or sc.startswith("fixture:"):
+        r["fixtures"] = fixtures(sc.split(":", 1)[1] if ":" in sc else None)
+    if sc in ("all", "midi"):
+        r["midi"] = midi()
+    if sc in ("all", "obs"):
+        r["obs"] = obs()
+    json.dump(r, sys.stdout, indent=1)
+    print()
+
+main()

@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# Probe a CoreAudio input device for actual signal.
+#   rig-probe                 list audio input devices with their ffmpeg index
+#   rig-probe "<name>" [secs] measure it. -91 dB means digital silence.
+set -u
+list() { ffmpeg -f avfoundation -list_devices true -i "" 2>&1 \
+  | sed -n '/AVFoundation audio devices/,$p' | grep -E '^\[.*\] \[[0-9]+\]' \
+  | sed -E 's/^\[[^]]*\] //'; }
+if [ $# -eq 0 ]; then list; exit 0; fi
+NAME="$1"; SECS="${2:-2}"
+IDX=$(list | grep -iF -- "$NAME" | head -1 | grep -oE '^\[[0-9]+\]' | tr -d '[]')
+[ -z "${IDX:-}" ] && { echo "no audio input device matching: $NAME" >&2; exit 1; }
+OUT=$(ffmpeg -hide_banner -f avfoundation -i ":$IDX" -t "$SECS" -af volumedetect -f null - 2>&1)
+MAX=$(echo "$OUT" | grep -oE 'max_volume: -?[0-9.]+ dB' | grep -oE '\-?[0-9.]+' | head -1)
+MEAN=$(echo "$OUT" | grep -oE 'mean_volume: -?[0-9.]+ dB' | grep -oE '\-?[0-9.]+' | head -1)
+[ -z "${MAX:-}" ] && { echo "{\"device\":\"$NAME\",\"error\":\"probe failed\"}"; exit 1; }
+SIL=$(awk -v m="$MAX" 'BEGIN{print (m <= -90.0) ? "true" : "false"}')
+echo "{\"device\":\"$NAME\",\"index\":$IDX,\"max_db\":$MAX,\"mean_db\":$MEAN,\"silent\":$SIL}"
