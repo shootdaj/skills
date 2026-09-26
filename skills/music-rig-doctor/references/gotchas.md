@@ -114,6 +114,17 @@ the feedback tap, never inside it.
 **`numpyArray(delayed=True)` returns the image current at the previous *call*,**
 not the previous frame. Decimating calls stretches the readback delay.
 
+**`project.save(path)` opens a modal dialog and wedges the WebServer bridge.**
+It also increments to `<name>.1.toe` and leaves `project.name` pointing at the
+increment, so later saves target the wrong file. Move the increment aside first,
+then answer the dialog with TouchDesigner frontmost.
+
+**A wedged bridge keeps its port open.** Verified 2026-09-26: TouchDesigner idle
+at 1.9% CPU, no dialog on screen, port 9981 accepting connections, and every
+request timing out. **A reachable port does not prove a working integration** -
+always time a real request. Recovery needs a click inside TouchDesigner; there is
+no remote fix, because the bridge is the remote.
+
 **Pace senders on the frame counter, never a wall clock.** A wall-clock gate
 against a 60 fps render locks to whatever multiple clears it and beats against
 the animation. `if frame % n: return` is exact.
