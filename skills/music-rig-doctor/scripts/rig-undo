@@ -1,0 +1,182 @@
+#!/usr/bin/env python3
+"""Automatic before-state capture and rollback.
+
+  rig-undo --snap "<why>"    capture the rig now, before changing anything (fast scope)
+  rig-undo --snap "<why>" --scope all   full capture including fixtures, MIDI and OBS
+  rig-undo --list            the snapshots, newest first
+  rig-undo --show <id>
+  rig-undo --diff <id>       what changed between that snapshot and now
+  rig-undo [<id>]            restore it (default: the newest). Asks first.
+  rig-undo <id> --dry-run    show what would change, touch nothing
+
+Snapshots live in ~/.local/state/music-rig-doctor/snapshots and are never
+deleted automatically past the keep limit (default 40).
+"""
+import argparse, datetime, glob, json, os, socket, subprocess, sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+STATE = os.path.expanduser(os.environ.get("MUSIC_RIG_STATE",
+        "~/.local/state/music-rig-doctor/snapshots"))
+KEEP = int(os.environ.get("MUSIC_RIG_KEEP", "40"))
+
+
+def scan(scope="all"):
+    r = subprocess.run([os.path.join(HERE, "rig-scan"), "--scope", scope],
+                       capture_output=True, text=True, timeout=120)
+    try:
+        return json.loads(r.stdout)
+    except Exception:
+        sys.exit("rig-scan produced nothing to snapshot")
+
+
+def live(code, t=15):
+    try:
+        s = socket.create_connection(("127.0.0.1", 9877), timeout=t)
+        s.sendall(json.dumps({"type": "exec_python", "params": {"code": code}}).encode())
+        buf = b""
+        while True:
+            c = s.recv(65536)
+            if not c: break
+            buf += c
+            try: json.loads(buf.decode()); break
+            except Exception: continue
+        s.close()
+        return json.loads(buf.decode()).get("result", {}).get("result")
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def snap(why, scope="all"):
+    os.makedirs(STATE, exist_ok=True)
+    sid = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+    s = scan(scope)
+    rec = {"id": sid, "at": datetime.datetime.now().isoformat(timespec="seconds"),
+           "why": why or "(no reason given)", "scope": scope, "state": s}
+    with open(os.path.join(STATE, sid + ".json"), "w") as f:
+        json.dump(rec, f, indent=1)
+    # trim oldest past the keep limit
+    old = sorted(glob.glob(os.path.join(STATE, "*.json")))[:-KEEP]
+    for p in old:
+        os.rename(p, p + ".old")
+    print(f"snapshot {sid}  {rec['why']}")
+    return sid
+
+
+def load(sid=None):
+    fs = sorted(glob.glob(os.path.join(STATE, "*.json")))
+    if not fs:
+        sys.exit("no snapshots yet - run: rig-undo --snap \"<why>\"")
+    if sid:
+        m = [f for f in fs if os.path.basename(f).startswith(sid)]
+        if not m: sys.exit(f"no snapshot matching {sid}")
+        return json.load(open(m[-1]))
+    return json.load(open(fs[-1]))
+
+
+def listing():
+    fs = sorted(glob.glob(os.path.join(STATE, "*.json")), reverse=True)
+    if not fs:
+        print("  no snapshots yet"); return
+    for f in fs:
+        r = json.load(open(f))
+        a = (r.get("state", {}) or {}).get("audio", {}) or {}
+        ab = (r.get("state", {}) or {}).get("ableton", {}) or {}
+        m = ab.get("master")
+        print(f"  {r['id']}  {r['at'][11:16]}  out={str(a.get('default_output'))[:18]:18} "
+              f"master={' '.join(m) if isinstance(m,list) else '-':14} {r['why'][:44]}")
+
+
+def plan(want):
+    """Differences between a snapshot and now, as (what, now, was, how)."""
+    now = scan(want.get("scope", "all"))
+    w, n = want["state"], now
+    out = []
+    wo = (w.get("audio") or {}).get("default_output")
+    no = (n.get("audio") or {}).get("default_output")
+    if wo and wo != no:
+        out.append(("system output", no, wo, "setoutput"))
+    wm = (w.get("ableton") or {}).get("master")
+    nm = (n.get("ableton") or {}).get("master")
+    if isinstance(wm, list) and isinstance(nm, list) and wm != nm:
+        out.append(("Live master", " ".join(nm), " ".join(wm), "live"))
+    wt = {t[0]: t for t in ((w.get("ableton") or {}).get("tracks") or [])}
+    nt = {t[0]: t for t in ((n.get("ableton") or {}).get("tracks") or [])}
+    for i, t in wt.items():
+        if i in nt and t[3] != nt[i][3] and t[3]:
+            out.append((f"track {t[1]!r} input", nt[i][3], t[3], f"live-track:{i}"))
+    wd = {d["name"] for d in (w.get("audio") or {}).get("devices", [])}
+    nd = {d["name"] for d in (n.get("audio") or {}).get("devices", [])}
+    for gone in sorted(wd - nd):
+        out.append((f"device {gone!r}", "absent", "present", "hardware"))
+    for new in sorted(nd - wd):
+        out.append((f"device {new!r}", "present", "absent", "created-since"))
+    return out
+
+
+def show_plan(rows, want):
+    print(f"snapshot {want['id']}  {want['at']}  {want['why']}\n")
+    if not rows:
+        print("  nothing differs - the rig already matches this snapshot"); return False
+    print(f"  {'what':30} {'now':22} {'->':2} {'snapshot':22}")
+    for what, a, b, _ in rows:
+        print(f"  {what:30} {str(a)[:22]:22} -> {str(b)[:22]:22}")
+    return True
+
+
+def restore(sid, dry):
+    want = load(sid)
+    rows = plan(want)
+    if not show_plan(rows, want) or dry:
+        if dry: print("\n(dry run - nothing changed)")
+        return
+    hw = [r for r in rows if r[3] in ("hardware", "created-since")]
+    if hw:
+        print("\n  note: hardware differences cannot be undone by software:")
+        for what, a, b, _ in hw:
+            print(f"    {what}: now {a}, was {b}")
+    doable = [r for r in rows if r[3] not in ("hardware", "created-since")]
+    if not doable:
+        print("\n  nothing left that software can restore"); return
+    if sys.stdin.isatty():
+        if input("\n  restore these? [y/N] ").strip().lower() not in ("y", "yes"):
+            print("  cancelled"); return
+    cache = subprocess.run([os.path.join(HERE, "_build.sh")],
+                           capture_output=True, text=True).stdout.strip()
+    for what, a, b, how in doable:
+        if how == "setoutput":
+            so = os.path.join(cache, "setoutput")
+            if os.path.exists(so):
+                print("  " + subprocess.run([so, "set", b], capture_output=True,
+                                            text=True).stdout.strip())
+        elif how == "live":
+            ch = b.split()[-1]
+            print("  Live master ->", live(
+                "m=song.master_track\n"
+                "c=[x for x in m.available_output_routing_channels if x.display_name==%r]\n"
+                "if c: m.output_routing_channel=c[0]\n"
+                "result=m.output_routing_channel.display_name" % ch))
+        elif how.startswith("live-track:"):
+            i = int(how.split(":")[1])
+            print(f"  track {i} input ->", live(
+                "t=song.tracks[%d]\n"
+                "c=[x for x in t.available_input_routing_channels if x.display_name==%r]\n"
+                "if c: t.input_routing_channel=c[0]\n"
+                "result=t.input_routing_channel.display_name" % (i, b)))
+    print("\n  restored. verify with rig-scan and rig-probe.")
+
+
+ap = argparse.ArgumentParser()
+ap.add_argument("id", nargs="?")
+ap.add_argument("--snap", nargs="?", const="", metavar="WHY")
+ap.add_argument("--scope", default="fast")   # fast = audio + Ableton; use all for a full capture
+ap.add_argument("--list", action="store_true")
+ap.add_argument("--show", metavar="ID")
+ap.add_argument("--diff", nargs="?", const="", metavar="ID")
+ap.add_argument("--dry-run", action="store_true")
+a = ap.parse_args()
+
+if a.snap is not None:   snap(a.snap, a.scope)
+elif a.list:             listing()
+elif a.show:             print(json.dumps(load(a.show), indent=1))
+elif a.diff is not None: w = load(a.diff or None); show_plan(plan(w), w)
+elif a.id or True:       restore(a.id, a.dry_run)

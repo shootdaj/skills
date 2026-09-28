@@ -1,0 +1,3 @@
+name: Music Rig Doctor
+description: Diagnose and repair a macOS music and visual rig
+prompt: Use $music-rig-doctor to find out why my rig is not working and fix it.
