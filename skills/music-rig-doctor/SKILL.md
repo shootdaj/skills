@@ -102,10 +102,22 @@ Modes, default `plan`:
 
 ## Phase 5 - Apply, safest first
 
+**Snapshot before the first change. Always, in every mode.** It takes under a
+second and it is the only thing that makes a run reversible without depending on
+anyone writing undo lines correctly:
+
+```bash
+scripts/rig-undo --snap "<the symptom being fixed>"
+```
+
+Then, in this order:
+
 1. **API** - Ableton socket, TouchDesigner HTTP, WLED/fixture JSON, obs-websocket.
 2. **Shell** - `scripts/setoutput`, `scripts/multiout`.
 3. **GUI** - `cliclick` only where no API exists. Live's Output Config is the
    main one. See `references/ableton.md`.
+
+Snapshot again after a run that worked, so the good state is the newest one.
 
 After any aggregate change, **re-check every app that held that device** - they
 drop it silently. Verify by probing for signal, not by reading settings.
@@ -136,6 +148,12 @@ Report three things, separately:
 2. **Found but not touched** - off-path issues, as a list to act on or ignore.
 3. **Blocked** - anything needing a GUI step mid-set, or hardware action.
 
+Always end with the rollback line, so it is one command and not a reconstruction:
+
+```
+Undo this run:  scripts/rig-undo <snapshot id>
+```
+
 Then offer to save the working state as a profile.
 
 ## Profiles
@@ -147,6 +165,27 @@ system default, Ableton routing, TouchDesigner settings, fixture state.
 Suggested set: `desk`, `couch`, `dj-only`, `dj+visuals`, `production`.
 
 Restoring never rebuilds CoreAudio devices without confirmation, even in auto.
+
+## Undo
+
+`scripts/rig-undo` captures the rig before a change and rolls it back after.
+Snapshots live outside the package in `~/.local/state/music-rig-doctor/` so they
+survive reinstalling the skill, and the newest 40 are kept.
+
+```bash
+rig-undo --snap "<why>"    capture now (fast scope, under a second)
+rig-undo --list            newest first, with what each one was for
+rig-undo --diff            what has changed since the newest snapshot
+rig-undo                   restore the newest, after showing the plan
+rig-undo <id> --dry-run    show what would change, touch nothing
+```
+
+It restores the system output device, Live's master routing and Live's per-track
+input routing. **Hardware differences it reports but cannot fix** - a device that
+has since been unplugged is named, not silently skipped.
+
+This exists because the written rule "record every change with its before-value"
+is a discipline, and disciplines fail. A snapshot does not.
 
 ## Fixtures
 
@@ -181,4 +220,6 @@ Same questions, same order, same rule about never asking measurable facts.
 - Never delete a CoreAudio device that is not an aggregate. `scripts/multiout`
   already refuses, and that guard must stay.
 - Never use `rm` on user files. Move to `~/.Trash/`.
-- Record every change with its before-value as you go, not at the end.
+- Snapshot with `rig-undo --snap` before the first change, in every mode.
+- Record every change with its before-value as you go, not at the end. The
+  snapshot is the safety net; the written undo lines are for the reader.

@@ -2,6 +2,7 @@
 """Discover the whole rig and print JSON.
 
   rig-scan                      everything
+  rig-scan --scope fast         audio + Ableton only, no slow probes
   rig-scan --scope audio        audio path only
   rig-scan --scope fixture:HyperCube
   rig-scan --scope midi|obs|ableton|td
@@ -176,9 +177,9 @@ def main():
     want = lambda k: sc in ("all", k) or sc.startswith("fixture:")
     cache = cache_dir()
     r = {"scope": a.scope}
-    if sc in ("all", "audio", "ableton", "td") or sc.startswith("fixture:"):
+    if sc in ("all", "fast", "audio", "ableton", "td") or sc.startswith("fixture:"):
         r["audio"] = audio(cache)
-    if sc in ("all", "audio", "ableton") or sc.startswith("fixture:"):
+    if sc in ("all", "fast", "audio", "ableton") or sc.startswith("fixture:"):
         r["ableton"] = ableton()
     if sc in ("all", "td") or sc.startswith("fixture:"):
         r["touchdesigner"] = td()
