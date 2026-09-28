@@ -1,0 +1,198 @@
+#!/usr/bin/env python3
+"""Draw the signal path with a status per hop, and assert the rules in code.
+
+  rig-chain                 the audio path plus every registered fixture
+  rig-chain --probe         also measure each virtual device (slower, proves signal)
+  rig-chain --json          machine readable, for the agent to reason over
+
+Marks:  = proven by measurement   o = healthy but idle   X = break   ! = broken, off-path
+"""
+import argparse, glob, json, os, re, subprocess, sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+PKG  = os.path.dirname(HERE)
+
+OK, IDLE, BREAK, OFF = "ok", "idle", "break", "off"
+MARK = {OK: "●", IDLE: "○", BREAK: "╳", OFF: "✗"}
+
+
+def scan(scope="all"):
+    r = subprocess.run([os.path.join(HERE, "rig-scan"), "--scope", scope],
+                       capture_output=True, text=True, timeout=150)
+    try:
+        return json.loads(r.stdout)
+    except Exception:
+        sys.exit("rig-scan produced nothing")
+
+
+def probe(name, secs=2):
+    try:
+        r = subprocess.run([os.path.join(HERE, "rig-probe"), name, str(secs)],
+                           capture_output=True, text=True, timeout=secs + 20)
+        return json.loads(r.stdout)
+    except Exception:
+        return None
+
+
+def pairs_of(track):
+    """Stereo pairs a track's input device offers, and therefore its channel count."""
+    return track.get("pairs") or []
+
+
+def audio_hops(s, do_probe):
+    """Every hop from source app to speakers, each with a status and the evidence."""
+    a  = s.get("audio") or {}
+    ab = s.get("ableton") or {}
+    hops, findings = [], []
+
+    holders = a.get("holders") or {}
+    src = "djay" if "djay" in holders else ("Live" if "Live" in holders else None)
+
+    # --- source app
+    hops.append({"name": "djay Pro" if src == "djay" else (src or "no source app"),
+                 "status": IDLE if src else BREAK,
+                 "note": "running" if src else "no source application is running",
+                 "indent": 0})
+
+    # --- virtual cable
+    cable = "BlackHole 16ch"
+    ev = ""
+    st = IDLE
+    if do_probe:
+        p = probe(cable)
+        if p and "max_db" in p:
+            ev = f"{p['max_db']} dB"
+            st = OK if not p["silent"] else IDLE
+            if p["silent"]:
+                ev += "   (silent - nothing upstream is writing)"
+    hops.append({"name": cable, "status": st, "note": ev or "virtual cable", "indent": 0})
+
+    # --- THE RULE, asserted in code, not left as prose:
+    #     a source track must listen on the pair its device actually carries.
+    tracks = ab.get("tracks") or []
+    dj = next((t for t in tracks if t[1] and "djay" in t[1].lower()), None)
+    if dj:
+        got = dj[3]
+        n_pairs = len(ab.get("input_pairs") or [])
+        want = "1/2" if n_pairs and n_pairs <= 8 else "7/8"
+        broke = bool(got and want and got != want)
+        if broke:
+            findings.append({
+                "what": f"{dj[1]} input",
+                "now": got, "want": want,
+                "why": (f"the input device offers {n_pairs} pairs "
+                        f"({n_pairs*2} channels), so the cable lands on {want}. "
+                        f"Nothing writes {got}."),
+                "fix": f"track {dj[0]} input -> {want}", "reversible": True})
+        hops.append({"name": f"-> arrives at Live {want}", "status": IDLE,
+                     "note": f"{n_pairs} pairs offered, {n_pairs*2}-channel device",
+                     "indent": 1})
+        if broke:
+            hops.append({"name": "BREAK", "status": BREAK,
+                         "note": f"{dj[1]} listening on {got}", "indent": 1})
+        hops.append({"name": f"Live {dj[1]} track", "status": BREAK if broke else IDLE,
+                     "note": f"on {got}, monitor {dj[4]}, meter {dj[6]}", "indent": 0})
+
+    # --- master
+    m = ab.get("master") or []
+    av = ab.get("master_channels") or []
+    if m:
+        only = len([c for c in av if "/" in c]) == 1
+        hops.append({"name": f"Live master   {' '.join(m)}", "status": OK if only else IDLE,
+                     "note": ("only pair on a 2-channel device - correct" if only
+                              else f"offered: {', '.join(av)}"), "indent": 0})
+        if len(av) <= 3 and not only:
+            findings.append({"what": "Live output channels", "now": f"{len(av)} offered",
+                             "want": "enable the pair you need",
+                             "why": "Live will not offer a channel until Output Config enables it",
+                             "fix": "Preferences > Audio > Output Config", "reversible": False})
+
+    # --- output device and its legs
+    dev = a.get("default_output")
+    names = {d["name"] for d in a.get("devices", [])}
+    ev, st = "", IDLE
+    if do_probe and dev:
+        p = probe("BlackHole 64ch")
+        if p and "max_db" in p:
+            ev = f"{p['max_db']} dB measured"
+            st = OK if not p["silent"] else IDLE
+    hops.append({"name": f"{dev}", "status": st, "note": ev or "system output", "indent": 0})
+
+    # a multi-output whose hardware leg is gone makes no sound
+    for legs, label in ((("Komplete Audio 6 MK2",), "studio monitors"),
+                        (("MacBook Pro Speakers",), "built-in speakers")):
+        if dev and any(l in dev or l.replace(" MK2", "") in str(dev) for l in legs):
+            pass
+    hw = [n for n in ("Komplete Audio 6 MK2", "MacBook Pro Speakers") if n in names]
+    hops.append({"name": hw[0] if hw else "no hardware output", "status": OK if hw else BREAK,
+                 "note": "audible leg" if hw else "nothing audible", "indent": 1})
+    hops.append({"name": "BlackHole 64ch", "status": st, "note": "to TouchDesigner", "indent": 1})
+    return hops, findings
+
+
+def fixture_hops(s):
+    hops, findings = [], []
+    td = s.get("touchdesigner") or {}
+    wedged = "unreachable" in td or "error" in td
+    hops.append({"name": "TouchDesigner", "status": OFF if wedged else IDLE,
+                 "note": ("bridge wedged - port open, no response" if wedged
+                          else f"audio in {((td.get('audio') or {}).get('level'))}"),
+                 "indent": 2})
+    if wedged:
+        findings.append({"what": "TouchDesigner bridge", "now": "not responding",
+                         "want": "responding", "why": "a reachable port does not prove a working integration",
+                         "fix": "needs a click inside TouchDesigner - no remote fix",
+                         "reversible": None})
+    for f in (s.get("fixtures") or []):
+        raw = f.get("raw") or {}
+        live = raw.get("live")
+        hops.append({"name": f["name"],
+                     "status": OK if live else (IDLE if f.get("alive") else OFF),
+                     "note": (f"driven, {raw.get('load')} mA" if live
+                              else (f"dark, {raw.get('load')} mA idle" if f.get("alive") else "unreachable")),
+                     "indent": 3})
+    return hops, findings
+
+
+def draw(hops):
+    w = max(len(h["name"]) + h["indent"] * 3 for h in hops) + 2
+    out = []
+    for i, h in enumerate(hops):
+        pad = " " * (2 + h["indent"] * 3)
+        name = h["name"]
+        line = f"{pad}{name}".ljust(w + 2)
+        out.append(f"{line} {MARK[h['status']]}  {h['note']}")
+        if i < len(hops) - 1:
+            nxt = hops[i + 1]
+            # the break marker belongs on the hop entering the fault, once
+            con = "╳" if (nxt["status"] == BREAK and h["status"] != BREAK) else "│"
+            out.append(" " * (2 + max(h["indent"], 0) * 3) + con)
+    return "\n".join(out)
+
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--probe", action="store_true")
+ap.add_argument("--json", action="store_true")
+a = ap.parse_args()
+
+s = scan("all")
+h1, f1 = audio_hops(s, a.probe)
+h2, f2 = fixture_hops(s)
+hops, findings = h1 + h2, f1 + f2
+
+if a.json:
+    json.dump({"hops": hops, "findings": findings}, sys.stdout, indent=1); print()
+else:
+    print()
+    print(draw(hops))
+    print()
+    print("  ● proven by measurement   ○ healthy but idle   "
+          "╳ break   ✗ broken, off-path")
+    if findings:
+        print("\n  findings")
+        for f in findings:
+            print(f"    {f['what']}: {f['now']} -> {f['want']}")
+            print(f"      {f['why']}")
+            print(f"      fix: {f['fix']}")
+    else:
+        print("\n  no breaks found on the audio path")

@@ -64,6 +64,7 @@ def ableton():
         " 'master':[m.output_routing_type.display_name,m.output_routing_channel.display_name],\n"
         " 'master_channels':[c.display_name for c in m.available_output_routing_channels],\n"
         " 'master_meter':round(m.output_meter_left,4),\n"
+        " 'input_pairs':g(lambda: [c.display_name for c in song.tracks[0].available_input_routing_channels if '/' in c.display_name], []),\n"
         " 'cue':g(lambda: song.cue_out_routing_channel.display_name),\n"
         " 'returns':[[r.name,g(lambda r=r: r.output_routing_type.display_name),\n"
         "   g(lambda r=r: r.output_routing_channel.display_name),\n"

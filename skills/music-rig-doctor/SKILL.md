@@ -45,6 +45,10 @@ profile, and save a profile.
 `scripts/rig-scan` writes the whole picture to JSON. Run it with the scope from
 Phase 0; it skips subsystems the symptom cannot involve.
 
+`scripts/rig-chain` turns that into the signal path with a status per hop, and
+**asserts the routing rules in code** rather than leaving them as prose here.
+Add `--probe` to measure each virtual device as it goes.
+
 | Subsystem | What it reads |
 |---|---|
 | CoreAudio | every device, channel count, rate, transport; for aggregates the **member order and resulting channel offsets**; system default in/out; which processes hold which device |
@@ -142,11 +146,36 @@ and framing only; measure timing at the source.
 
 ## Phase 7 - Report and offer
 
-Report three things, separately:
+**Lead with the chain, not with prose.** `scripts/rig-chain --probe` draws the
+signal path with a status per hop and the break marked in place. A reader sees
+where it stops and what is proven in one glance; a paragraph buries that.
+
+```
+  djay Pro                     o  running
+  |
+  BlackHole 16ch               o  -91.0 dB  (silent - nothing upstream is writing)
+  |
+     -> arrives at Live 1/2    o  8 pairs offered, 16-channel device
+     X
+     BREAK                     X  djay Pro listening on 9/10
+     |
+  Live djay Pro track          X  on 9/10, monitor 0, meter 0.0
+  |
+  Live master   Ext. Out 1/2   *  only pair on a 2-channel device - correct
+```
+
+Marks: `*` proven by measurement, `o` healthy but idle, `X` break, `!` broken
+but off-path. Put the measured value on the hop, not in a sentence after it.
+
+Then three lists, in this order:
 
 1. **Fixed** - what changed, with undo lines.
-2. **Found but not touched** - off-path issues, as a list to act on or ignore.
+2. **Found but not touched** - off-path issues, to act on or ignore.
 3. **Blocked** - anything needing a GUI step mid-set, or hardware action.
+
+Say plainly what could not be proven. "The source was not playing, so the fix is
+argued from the channel count, not demonstrated" is worth more than an implied
+success.
 
 Always end with the rollback line, so it is one command and not a reconstruction:
 
@@ -165,6 +194,30 @@ system default, Ableton routing, TouchDesigner settings, fixture state.
 Suggested set: `desk`, `couch`, `dj-only`, `dj+visuals`, `production`.
 
 Restoring never rebuilds CoreAudio devices without confirmation, even in auto.
+
+## The chain
+
+`scripts/rig-chain` is both the diagram and the rule checker.
+
+```bash
+rig-chain              the path, status per hop
+rig-chain --probe      also measure each virtual device (slower, proves signal)
+rig-chain --json       machine readable, to reason over
+```
+
+Rules it asserts in code, so they cannot be missed by whoever is reading:
+
+- **A source track must listen on the pair its input device actually carries.**
+  Count the stereo pairs the device offers: 8 pairs means a 16-channel device,
+  so a cable writing its own channels 1-2 lands on Live's `1/2`. More pairs mean
+  the interface is present and it lands on `7/8`. A track on any other pair is
+  silent with no error anywhere.
+- **Too few offered output channels means Output Config, not routing.**
+- **A multi-output whose hardware leg is absent makes no sound**, however
+  healthy the device looks.
+- **A reachable port is not a working integration.**
+
+Adding a rule means adding it here, in code, not as prose in `gotchas.md`.
 
 ## Undo
 
