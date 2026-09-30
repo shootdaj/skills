@@ -49,7 +49,7 @@ npx skills update -g
 | **clean-my-ai-harness-codex** | (Codex) Map the harness Codex can see and prepare a safe cleanup plan after model/instruction changes. |
 | **use-claude** | (Codex) Delegate implementation or frontend work to real Claude Code from Codex. |
 | **create-skill-ccch** | Create, validate, globally install, and publish one shared skill for Claude Code, Codex, Cursor, and Hermes. |
-| **design-flow** | Design engine: infers what it can, asks the rest at one of three levels (quick, medium, detailed), shows three looks on a swatch board, builds, verifies with Playwright, publishes per the calling door's profile. |
+| **design-flow** | Design engine: infers what it can, asks the rest at one of three levels (quick, medium, detailed), shows an inspiration picker you can skip, builds as many designs as you ask for (two or more open the design room), verifies with Playwright, publishes per the calling door's profile. |
 | **anshul-design** | Personal door on top of design-flow: sets the personal profile. Copy it to make your own flavour. The Aya flavour (`helix-design-anshul`) lives in AyaHelix/skills. |
 | **anshul-ui-standards-v2** | House mechanics the engine applies. Same rules as `anshul-ui-standards` minus the fixed Material chassis and report palette. v1 stays for older work. |
 | **azure-static-publish** | Publish or redeploy a static folder to Azure Static Web Apps behind SSO, with owner-suffixed names, owner tags and a sandbox subscription. Ships with a one-command script; pairs with the `azure-publisher` Claude Code subagent. |
@@ -57,6 +57,14 @@ npx skills update -g
 | **apple-design** | Apply Apple’s fluid-interface principles to web UI: interruptible springs, direct manipulation, momentum, materials, typography, and accessibility. |
 
 > The last several are vendored copies of third-party skills for portability across my machines; they carry their upstream authors' credit and licenses.
+
+## Linked skills (catalogued here, installed from upstream)
+
+Skills I use that live in someone else's repo. Nothing is copied into this repo, so they never go stale: install from the upstream repo, and `npx skills update -g` keeps them current.
+
+| Skill | Upstream | What it does | Install |
+|-------|----------|--------------|---------|
+| **brag** | [latent-spaces/brag](https://github.com/latent-spaces/brag) | Reads a project's code and renders a 15 to 25 second launch video (Hyperframes) with music, a poster frame and share captions. Voice-over is opt-in. | `npx skills add https://github.com/latent-spaces/brag --skill brag -g` |
 
 ## Layout
 

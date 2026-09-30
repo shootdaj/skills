@@ -2,10 +2,11 @@
 // usage: node browser-watch.mjs <url-or-file> --room <room_dir> [--profile ~/.design-flow/browser] [--playwright /path/package.json]
 // Page -> files: each new pending item in localStorage 'design-requests' is written to <room>/_requests/<id>.json and printed as
 //   NEW_REQUEST <path>   (one stdout line per request, for Claude Code's Monitor tool)
-// Files -> page: status, name and result from those files are copied back into the page's queue every 2 s, and the page reloads
+// Files -> page: request files Claude started itself (for example the builders of a new room) join the page's queue;
+//   status, name and result from those files are copied back into the page's queue every 2 s, and the page reloads
 //   once when a request turns done so the new design appears. Closing the window ends the watch (prints WATCH_ENDED).
 // No setup needed: Playwright is found or installed by ../lib/playwright.mjs; --playwright is an optional override.
-import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, readdirSync } from 'node:fs';
 import { resolve, join } from 'node:path';
 import { homedir } from 'node:os';
 import { launchPersistent } from '../lib/playwright.mjs';
@@ -28,6 +29,11 @@ while (!closed) {
   try {
     const q = await page.evaluate(() => { try { return JSON.parse(localStorage.getItem('design-requests') || '[]'); } catch (e) { return []; } });
     let changed = false;
+    const ids = new Set(q.map(r => r.id));
+    for (const f of readdirSync(qdir)) {
+      if (!f.endsWith('.json')) continue;
+      try { const r = JSON.parse(readFileSync(join(qdir, f), 'utf8')); if (r.id && !ids.has(r.id) && r.status !== 'done') { q.push(r); ids.add(r.id); seen.add(r.id); changed = true; } } catch (e) {}
+    }
     for (const r of q) {
       const p = pathFor(r.id);
       if (r.status === 'pending' && !seen.has(r.id) && !existsSync(p)) { writeFileSync(p, JSON.stringify(r, null, 1)); seen.add(r.id); console.log('NEW_REQUEST ' + p); continue; }
