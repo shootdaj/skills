@@ -130,7 +130,7 @@ Recipe by page kind, for every design:
 
 | Page kind | Recipe |
 | --- | --- |
-| Report or tech design | the report recipe, `recipes/report/RECIPE.md` (or the profile's `report_recipe` skill when it is installed), with the chosen look's tokens in place of its default |
+| Report or tech design | the report recipe, `recipes/report/RECIPE.md` (or the profile's `report_recipe` skill when it is installed), with the chosen look's tokens in place of its default. Reports carry the Ask panel (a Claude chat about the page through here.now proxy routes) unless built with `ASK=off`; see `recipes/report/references/ask-panel.md` |
 | App screen or mock | the `ui_kit` skill when the profile has one; otherwise core mechanics plus the look |
 | Dashboard, landing, other | core mechanics plus the look; `frontend-design` for boldness when installed |
 
@@ -157,7 +157,7 @@ python3 <this skill>/assets/room/make-room.py <dir> --project "<Name>" --steps "
 
 ## Step 5: verify
 
-`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. Reports use `recipes/report/assets/shoot.mjs`. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
+`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. Reports use `recipes/report/assets/shoot.mjs`, and `recipes/report/assets/ask-test.mjs` for the Ask panel. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
 
 ## Step 6: publish
 
@@ -205,6 +205,6 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `assets/lib/` | `playwright.mjs`: the shared loader every script here uses (find or install `@playwright/test`, Chrome or Chromium, `launch` and `launchPersistent`); import it from any new script instead of `createRequire` |
 | `assets/requests/` | `request-form.js` (New design form, localStorage only; `make-room.py` copies it into a room's `_vote/`), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` (the request queue the room's `server.py` imports), `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
-| `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts and `assets/shoot.mjs`; bundled so no other skill is needed |
+| `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts, `assets/shoot.mjs`, and the Ask panel's `assets/ask-build.mjs` and `assets/ask-test.mjs`; bundled so no other skill is needed |
 | `recipes/bakeoff/` | the bake-off recipe (`RECIPE.md`), brief templates, directions, builder prompt, vote widget and ballot |
 | `profiles/default.md` | used when no door is loaded |

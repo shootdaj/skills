@@ -20,6 +20,14 @@ curl -s -X PATCH "https://here.now/api/v1/publish/<slug>/access" -H "Authorizati
 curl -s "https://here.now/api/v1/publish/<slug>/access" -H "Authorization: Bearer $KEY"   # mode must be "restricted"
 ```
 
+## The Ask panel's routes
+
+A page built with the Ask panel publishes `.herenow/proxy.json` with it (written by `assets/ask-build.mjs`). here.now reads it at finalize and serves `/api/claude`, `/api/claude-fb`, `/api/claude-count` and, when the owner's Drive is set up, `/api/drive/uploads` and `/api/drive/finalize`. The manifest is never served to visitors.
+
+- Publish the whole folder. Republishing without `.herenow/proxy.json` drops every route, and an invalid manifest disables them silently. After publishing, check one route: `curl -s -X POST https://<slug>.here.now/api/claude-count -H 'content-type: application/json' -d '{}'` must answer with Anthropic JSON (401 while the key is unset, 400 once it is set), not a here.now 404.
+- The key is the owner's `ANTHROPIC_API_KEY` account variable. When `ask-build.mjs` reports it missing, give the owner this one line and stop: "In your here.now dashboard open Variables, add ANTHROPIC_API_KEY with allowed upstream api.anthropic.com, then reload the page." Never set it, print it or put it in a file.
+- A page anyone can open lets anyone spend that key, up to 120 calls an hour per IP. Say so in the reply when the page is public, and suggest Only you (restricted, empty allowlists) and a spend limit on the Anthropic workspace.
+
 Rules:
 
 - Say the access mode in the reply and record it with the slug in project memory.

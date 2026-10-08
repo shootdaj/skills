@@ -1,5 +1,6 @@
 /* ───────────────────────── data blocks ─────────────────────────
-   Every fact the page shows lives here, with a comment that names its source. Figures read only from these. */
+   Every fact the page shows lives here, with a comment that names its source. Figures read only from these.
+   Name the blocks a figure draws from in its data-ask attribute (data-ask="EXAMPLE") so the Ask panel can hand Claude the data. */
 
 // Source: EXAMPLE. Replace with a real count and cite where it came from.
 const EXAMPLE=[{layer:'Layer A',hue:'c1',count:9,items:['item 1','item 2']},{layer:'Layer B',hue:'c2',count:6,items:['item 3']},{layer:'Layer C',hue:'c3',count:3,items:['item 4']}];
