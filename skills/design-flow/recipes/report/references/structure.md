@@ -12,7 +12,7 @@ The page is a pyramid. The reader gets the answer in the first screen and can st
 | 03 to 05 | Supporting chapters, for example build plan, risks or decisions. Five chapters at most in all | closed by default |
 | Prototypes (optional) | Clickable flows the report proposes, each with a tap counter | closed |
 | Appendix | `section.panel#appendix`: the prose the captions link to, one numbered entry per figure, plus any detail that does not change a decision | closed |
-| Footer | Method line, date, author, where the sources live | always |
+| Footer | Method line, date, author, where the sources live, and `Glossary: <file> @ <short sha>` when the project has a glossary | always |
 
 At 1440 by 900 the title, the purpose line and every opening bullet are visible without scrolling, and the first bullet starts within about 150 px of the top of the overview.
 

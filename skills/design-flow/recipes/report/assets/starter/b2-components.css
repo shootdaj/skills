@@ -182,6 +182,9 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .dom-band:hover .dom-bg,.dom-band.sel .dom-bg{fill:var(--s2);stroke:var(--line2)}
 
 
+/* footer: method, sources and (when there is one) the glossary source, spaced apart */
+.colo{display:flex;flex-wrap:wrap;gap:6px 24px;padding:6px 0 48px;font:500 13px/1.5 var(--f);color:var(--txt2)}
+
 /* ── overlays ── */
 .tip{position:fixed;z-index:200;max-width:min(360px,calc(100vw - 24px));left:0;top:0;background:var(--tip-bg);color:var(--tip-fg);padding:10px 12px;border-radius:10px;font:400 13px/1.45 var(--f);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
 .tip.show{opacity:1;transform:none}

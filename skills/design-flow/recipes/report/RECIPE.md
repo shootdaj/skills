@@ -26,11 +26,11 @@ Usually run by `design-flow` through a door (`anshul-design`, or a work door) wi
    Then four to six one-line bullets, starting within about 150 px of the top of the content, with nothing else above them: no label, badge, "Verdict" tag, eyebrow or paragraph. Each bullet starts with its key number or phrase in bold with a soft highlight in the bullet's hue, then says in plain words what it means. A coloured dot or small icon per bullet is optional. Together they say what this is, what it means for the reader and what to do. These bullets are the takeaways; there is no second list. There is no row of stat tiles or headline numbers: a number that matters leads a bullet or goes into a real figure. Each chapter is figures plus captions plus at most one short list. Details in `references/structure.md`.
    Why: on 2026-10-08 Anshul said "at the top of the report put a plain english thing, no label, just the text." Shown a plain paragraph there, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily." Shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), he said "never put these in the report."
 3. Turn text into figures. For each block of prose, pick a figure from `references/components.md` using the map in `references/viz-pack.md`. The opening bullets and the captions stay as text. Use 3D only when it encodes structure and has a 2D fallback.
-4. Build from parts. Copy `assets/starter/` next to your work. Fill `c-body.html`, `d-data.js` and the figure functions in `f-figures.js`, then run `sh build.sh` (Node only) to write `index.html` one folder up. One file, inline CSS and JS, libraries and fonts from CDN only (list in `references/structure.md`).
+4. Build from parts. Copy `assets/starter/` next to your work. Fill `c-body.html`, `d-data.js` and the figure functions in `f-figures.js`. Look for the project's glossary with `node assets/glossary.mjs --repo <project root> --out <starter copy>/h-glossary.js` (see Glossary hover below), then run `sh build.sh` (Node only) to write `index.html` one folder up. One file, inline CSS and JS, libraries and fonts from CDN only (list in `references/structure.md`).
 5. Style with tokens. `assets/starter/b1-tokens.css` holds five palettes, each with a dark and a light theme. Components use tokens only. Category hues go on `--lc`. Large fills blend the hue at 30 to 35 percent into the surface. Details in `references/tokens.md`.
 6. Keep motion on a budget. Page-load choreography, scroll reveals, draw-in strokes, spring press. Lights blink only on the active tab count and missing readiness cells. Details in `references/motion-budget.md`.
 7. Write the captions last. One takeaway per caption, 12 words or fewer in every edition. The lean edition adds a "Details" link to the appendix entry.
-8. Verify with Playwright. Run `node assets/shoot.mjs <index.html> --key <slug>` (no setup: it finds or installs Playwright itself), read the JSON summary, look at the PNGs yourself, fix, re-shoot. Its `opening` line fails a page with a title over 14 words or 32 px, text over 48 px anywhere, italic text in a heading or the overview, a missing purpose line, a label, eyebrow, verdict card, paragraph or stat tiles at the top, bullets starting more than 150 px below the top of the overview, fewer than four or more than six opening bullets, a bullet without a bold lead, or a bullet that wraps past one line at 1440; its `length` line fails a page over the length budget. Details in `references/verification.md`. Open the page in Chrome as sections land so the user sees progress.
+8. Verify with Playwright. Run `node assets/shoot.mjs <index.html> --key <slug> --repo <project root>` (no setup: it finds or installs Playwright itself), read the JSON summary, look at the PNGs yourself, fix, re-shoot. Its `opening` line fails a page with a title over 14 words or 32 px, text over 48 px anywhere, italic text in a heading or the overview, a missing purpose line, a label, eyebrow, verdict card, paragraph or stat tiles at the top, bullets starting more than 150 px below the top of the overview, fewer than four or more than six opening bullets, a bullet without a bold lead, or a bullet that wraps past one line at 1440; its `length` line fails a page over the length budget; its `glossary` lines fail a page whose glossary terms do not open on hover, focus and Escape, or whose glossary does not match what `--repo` declares. Details in `references/verification.md`. Open the page in Chrome as sections land so the user sees progress.
 9. Publish. Follow `references/publish.md`: publish to here.now with the access mode the door's profile says, post the link where the work is tracked. Without here.now credentials the page stays in its folder and you say so.
 
 ## Length budget
@@ -46,6 +46,32 @@ Shorter wins. These caps are hard:
 `assets/shoot.mjs` checks every cap except the restating one, in its `opening` and `length` lines.
 
 Why: on 2026-10-08 Anshul said "any future reports need to be fucking shorter."
+
+## Glossary hover
+
+When the project has a glossary, every glossary term in body text, bullets, captions, detail panels and figure labels gets a dotted underline. Hovering, focusing (each term is in the tab order) or tapping one shows a small popover, 280 px wide at most, with the term in bold and its definition. Moving away, Escape or a tap elsewhere closes it. Headings, links, code and buttons are left alone. With no glossary nothing is added to the page.
+
+Find it at build time, every time; never assume it was mentioned in chat. `node assets/glossary.mjs --repo <project root> --out <starter copy>/h-glossary.js` searches in this order and the first hit wins:
+
+1. A `Glossary:` line in the project's `AGENTS.md` or `CLAUDE.md`, naming a file path or a URL.
+2. `docs/GLOSSARY.md`, `GLOSSARY.md`, `docs/glossary.md`, `glossary.md` from the repo root (`git rev-parse --show-toplevel`), any letter case.
+3. Any file named `glossary.md`, `.yml`, `.yaml` or `.json` in the top two levels of the repo.
+
+It prints the source it used (`GLOSSARY 4 terms from docs/GLOSSARY.md @ a46ef03 (via conventional file)`), and the page footer shows the same `Glossary: <file> @ <short sha>`. With no hit it prints `GLOSSARY none` and leaves `h-glossary.js` empty, so the build skips it. A Linear document URL cannot be fetched by the script: it prints `GLOSSARY needs-linear <url>`; read the document with the Linear MCP `get_document` tool, save the markdown, and rerun with `--from <file> --label "<url>"`.
+
+The file format. Markdown with one `## Term` heading per term, an optional `Also: alias, alias` line, then the definition paragraph:
+
+```markdown
+## Vault
+Also: archive
+Where every original file is kept, on Backblaze B2. Nothing in it is ever edited.
+```
+
+A Markdown table also works: term in the first column, definition in the second, aliases in an optional `Also` column. YAML (`- term:`, `definition:`, `aliases:`) and JSON (`[{term, definition, aliases}]` or `{term: definition}`) are read too. Definitions are cut to two sentences and cleaned to the copy rules. Plurals match (`Layers` finds `Layer`); a name with two capitals or a digit, such as `B2`, matches its exact case only.
+
+The ask panel (built separately on `feat/report-ask-panel`) should put the glossary in its context too: when present, the page exposes it as `window.REPORT_GLOSSARY`, shaped `{source, terms: [{t, d, a}]}`.
+
+Why: on 2026-10-08 Anshul said "if i hover over anything that's in the glossary, it will show a tiny popup with the glossary definition... if there is a glossary for this project, add that, but otherwise, don't." and "when the skill is invoked from another project, it should look for the glossary, cuz maybe it's not in the chat context."
 
 ## Rules that do not bend
 
@@ -77,3 +103,5 @@ Ship the lean edition when the audience is leadership or the page is going into 
 | `references/publish.md` | here.now, the access gate, where to post links |
 | `assets/starter/` | Head, tokens, component CSS, core JS, body skeleton, boot, build script |
 | `assets/shoot.mjs` | The verification script |
+| `assets/glossary.mjs` | Finds and parses the project's glossary, writes `h-glossary.js` for the build (empty when there is none) |
+| `assets/glossary-runtime.js` | The hover popover code `glossary.mjs` bundles into `h-glossary.js` |

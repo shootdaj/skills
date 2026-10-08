@@ -1,16 +1,19 @@
 // report recipe verification. Usage:
-//   node shoot.mjs /path/to/index.html [--key <slug>] [--sections id,id] [--only dark|800|fallback] [--playwright /path/to/package.json]
+//   node shoot.mjs /path/to/index.html [--key <slug>] [--repo <project dir>] [--sections id,id] [--only dark|800|fallback] [--playwright /path/to/package.json]
 // Writes PNGs to shots/ next to the page and prints a JSON summary. Zero errors and no failed audit lines = pass.
 // No setup needed: Playwright is found or installed by design-flow/assets/lib/playwright.mjs; --playwright is an optional override.
 import { mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { launch } from '../../../assets/lib/playwright.mjs';
+import { findGlossary } from './glossary.mjs';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 const file = resolve(args.find(a => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--')) || 'index.html');
 const KEY = opt('--key', 'report');
 const SECTIONS = (opt('--sections', '') || '').split(',').filter(Boolean);
 const only = opt('--only', 'all');
+const REPO = opt('--repo', ''); // the project the report is for: checks the page against the glossary that project declares
+const repoGlossary = REPO ? findGlossary(resolve(REPO)) : undefined;
 if (!existsSync(file)) { console.error('shoot.mjs: no such page ' + file + ' (build it first: sh <starter>/build.sh)'); process.exit(2); }
 const dir = dirname(file) + '/'; const S = dir + 'shots/'; mkdirSync(S, { recursive: true });
 const URL_ = 'file://' + file;
@@ -67,6 +70,24 @@ const length = page => page.evaluate(() => {
   return { tag: 'length', screens: +(endY / 900).toFixed(2), chapters: document.querySelectorAll('section.panel:not(#appendix):not(#prototypes)').length,
     longCaptions: [...document.querySelectorAll('figcaption')].filter(c => words(c) > 12).map(c => words(c) + ' words: ' + c.textContent.trim().slice(0, 40)).slice(0, 8) };
 });
+// Glossary hover (2026-10-08): with a glossary, at least one term is wrapped and hover, focus and Escape work; without one, no glossary
+// markup at all. With --repo the page must match what the project declares.
+async function glossary(page, theme) {
+  const st = await page.evaluate(() => ({ inPage: !!window.REPORT_GLOSSARY, source: window.REPORT_GLOSSARY ? window.REPORT_GLOSSARY.source : null,
+    terms: document.querySelectorAll('.gl-term').length, markup: document.querySelectorAll('.gl-term,#gl-pop,.gl-src').length,
+    footer: (document.querySelector('.gl-src') || {}).textContent || '' }));
+  const r = { tag: 'glossary-' + theme, ...st, declared: repoGlossary === undefined ? null : !!repoGlossary };
+  if (!st.inPage || !st.terms) return r;
+  const shown = () => page.evaluate(() => { const p = document.getElementById('gl-pop'); return p && p.classList.contains('show') && getComputedStyle(p).fontStyle === 'normal' ? p.textContent : ''; });
+  const t = page.locator('.gl-term').first(); await t.scrollIntoViewIfNeeded(); await t.hover(); await page.waitForTimeout(300);
+  r.hoverShows = !!(await shown()); r.popText = (await shown()).slice(0, 80);
+  await page.screenshot({ path: S + `08-1440-${theme}-glossary-hover.png` });
+  await page.mouse.move(2, 2); await page.waitForTimeout(250); r.leaveHides = !(await shown());
+  await t.focus(); await page.waitForTimeout(150); r.focusShows = !!(await shown());
+  await page.keyboard.press('Escape'); await page.waitForTimeout(150); r.escapeHides = !(await shown());
+  await page.evaluate(() => { document.activeElement && document.activeElement.blur(); scrollTo(0, 0); }); await page.waitForTimeout(200);
+  return r;
+}
 async function sweep(page) { const h = await page.evaluate(() => document.documentElement.scrollHeight); for (let y = 0; y < h; y += 500) { await page.evaluate(y => scrollTo(0, y), y); await page.waitForTimeout(90); } await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(300); }
 async function open(viewport, theme, initScript) {
   const ctx = await browser.newContext({ deviceScaleFactor: 1, viewport });
@@ -87,6 +108,7 @@ if (only === 'all' || only === 'dark') {
   await page.screenshot({ path: S + '01-1440-dark-top.png' });
   log.push(await audit(page, 'dark1440-top'));
   log.push(await opening(page));
+  log.push(await glossary(page, 'dark'));
   await expandAll(page); await sweep(page);
   log.push(await audit(page, 'dark1440-expanded'));
   log.push(await length(page));
@@ -102,6 +124,7 @@ if (only === 'all' || only === 'dark') {
   await page.click(tb); await page.waitForTimeout(1500);
   await page.screenshot({ path: S + '03-1440-light-top.png' });
   log.push(await audit(page, 'light1440-top'));
+  log.push(await glossary(page, 'light'));
   for (const id of sections.slice(0, 2)) { const el = page.locator('#' + id); await el.scrollIntoViewIfNeeded(); await page.waitForTimeout(500); await el.screenshot({ path: S + `03-1440-light-${id}.png` }); }
   log.push(await audit(page, 'light1440-expanded'));
   await ctx.close();
@@ -135,6 +158,6 @@ if (only === 'all' || only === 'fallback') {
   await ctx2.close();
 }
 await browser.close();
-const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && (l.missing || !l.titleFirst || l.titleWords > 14 || l.titlePx > 32 || l.bulletsTop > 150 || !l.purposeLine || !l.bulletsFirst || l.bullets < 4 || l.bullets > 6 || l.unled || l.wrapped || !l.firstScreen || l.display.length || l.italic.length || l.banned.length)) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
+const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && (l.missing || !l.titleFirst || l.titleWords > 14 || l.titlePx > 32 || l.bulletsTop > 150 || !l.purposeLine || !l.bulletsFirst || l.bullets < 4 || l.bullets > 6 || l.unled || l.wrapped || !l.firstScreen || l.display.length || l.italic.length || l.banned.length)) || (/^glossary/.test(l.tag) && ((l.inPage && (!l.terms || !l.hoverShows || !l.leaveHides || !l.focusShows || !l.escapeHides || !l.footer)) || (!l.inPage && l.markup) || (l.declared !== null && l.declared !== l.inPage))) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
 console.log(JSON.stringify({ pass: errs.length === 0 && failed.length === 0, errs, log }, null, 1));
 process.exit(errs.length || failed.length ? 1 : 0);

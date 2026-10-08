@@ -5,7 +5,7 @@ Never present an unverified page. If it was not screenshotted, it is not done. T
 ## Run
 
 ```bash
-node assets/shoot.mjs /path/to/index.html --key <slug> [--sections id,id,...] [--only dark|800|fallback]
+node assets/shoot.mjs /path/to/index.html --key <slug> --repo <project root> [--sections id,id,...] [--only dark|800|fallback]
 ```
 
 No setup needed. The script loads Playwright through `design-flow/assets/lib/playwright.mjs`: it looks for an installed `@playwright/test` (current folder, global npm root, `~/.design-flow/playwright`) and, the first time none is found, installs it there itself with Chromium (one line on stderr, a minute or two). It drives installed Google Chrome when there is one and Playwright's Chromium otherwise. Optional overrides: `--playwright <package.json>` or `PLAYWRIGHT_PACKAGE_JSON` to use a project's own copy. It creates `shots/` next to the page and prints a JSON summary on stdout.
@@ -23,6 +23,7 @@ No setup needed. The script loads Playwright through `design-flow/assets/lib/pla
 | Narrow width | Top and the two lead chapters at 800 in dark, top in light |
 | Opening | At 1440: `h1` comes first (14 words or fewer, 32 px at most), then `p.purpose` on one line, then `ul.opening` starting within 150 px of the top of the overview; no text over 48 px and no italic text in a heading or the overview; the bullets are four to six bullets, each led by `b` or `strong`, none wrapping past one line; no `.verdict`, `.eyebrow`, `.tile`, `.tiles` or opening paragraph anywhere |
 | First screen | At 1440 by 900 every opening bullet and at least one figure are fully visible before scrolling |
+| Glossary | With a glossary in the page: at least one `.gl-term`, hover opens the popover upright (no italic), moving away closes it, focus opens it, Escape closes it, the footer names the source; screenshots `08-1440-<theme>-glossary-hover.png`. Without one: no glossary markup at all. With `--repo`, the page must match what the project declares |
 | Length | With every chapter open, at most 3.3 screens of 900 px before `#appendix` (the budget says about three), at most five chapters, no caption over 12 words |
 | Fallbacks | WebGL stubbed out: the 3D figure still renders its planes. Motion CDN aborted: no page errors and every opening bullet visible |
 | Every chapter | One screenshot each with a representative interaction performed (a cell picked, a chip pressed, a node selected) |

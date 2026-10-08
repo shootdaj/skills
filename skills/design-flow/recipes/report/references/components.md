@@ -16,6 +16,7 @@ Every figure the report style has used, what it encodes, and how it was built. T
 | Palette picker | Five palettes, each with dark and light | `.pal-menu` radio menu | Click sets `data-palette`, persists | `setPalette()` |
 | Theme doors | Dark and light toggle | `.doors` overlay | Two doors close, theme swaps, doors open | `#themeBtn` handler |
 | Back to top | | `.totop` pill | Appears after 700 px | `spy()` |
+| Glossary term and popover | A term from the project's glossary and its definition, only when the project has one | `.gl-term` (span, or tspan in SVG), `#gl-pop`, from `assets/glossary.mjs` | Dotted underline; hover, focus or tap opens the popover, Escape or a tap elsewhere closes it | `assets/glossary-runtime.js` |
 
 No stat tiles, verdict card, eyebrow or opening paragraph. Why: on 2026-10-08, shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), Anshul said "never put these in the report." After reading a plain paragraph at the top, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily."
 
