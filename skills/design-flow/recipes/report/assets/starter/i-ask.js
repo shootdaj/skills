@@ -286,9 +286,12 @@ function topH(){const t=Q('#top');return t?t.getBoundingClientRect().height:0}
 function showOnPage(id,{pulse=true,scroll=true,hl=false,note:nt}={}){const t=target(id);if(!t||!t.el)return null;reveal(t.el);
  if(scroll){const r=t.el.getBoundingClientRect();const off=r.top<topH()+8||r.bottom>innerHeight-8;if(off||pulse){const y=Math.max(0,r.top+scrollY-topH()-16);scrollTo({top:y,behavior:RM?'auto':'smooth'})}}
  if(pulse){t.el.classList.remove('ask-pulse');void t.el.offsetWidth;t.el.classList.add('ask-pulse');setTimeout(()=>t.el.classList.remove('ask-pulse'),2600)}
- if(hl){t.el.classList.add('ask-hl');let n=null;nt=String(nt||'').trim();if(nt){n=H(`<div class="ask-hl-note ask-ui"></div>`);n.textContent=nt.slice(0,80);D.body.appendChild(n);
-   const place=()=>{const r=t.el.getBoundingClientRect();n.style.left=(r.left+scrollX+8)+'px';n.style.top=Math.max(scrollY+topH()+4,r.top+scrollY-n.offsetHeight-12)+'px'};setTimeout(place,RM?0:450);place()}
-  setTimeout(()=>{t.el.classList.remove('ask-hl');if(n)n.remove()},6000)}
+ if(hl){t.el.classList.add('ask-hl');let n=null,raf=0;nt=String(nt||'').trim();
+  const place=()=>{if(!n)return;const r=t.el.getBoundingClientRect(),h=n.offsetHeight,w=n.offsetWidth,top=topH()+6;let y=r.top-h-10,x=r.left+8;
+   if(y<top){y=r.bottom+10;if(y+h>innerHeight-6){y=Math.max(top,r.top+10);x=Math.max(8,r.right-w-12)}}n.style.left=Math.round(x)+'px';n.style.top=Math.round(y)+'px'};
+  const onScroll=()=>{cancelAnimationFrame(raf);raf=requestAnimationFrame(place)};
+  if(nt){n=H(`<div class="ask-hl-note ask-ui"></div>`);n.textContent=nt.slice(0,80);D.body.appendChild(n);place();addEventListener('scroll',onScroll,{passive:true})}
+  setTimeout(()=>{t.el.classList.remove('ask-hl');if(n){n.remove();removeEventListener('scroll',onScroll)}},6000)}
  return t}
 
 /* ───────── text selection → Ask chip ───────── */

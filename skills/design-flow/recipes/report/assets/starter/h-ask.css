@@ -132,7 +132,7 @@ figure.fg.ask-has{position:relative}
 .ask-pulse{outline:3px solid var(--red)!important;outline-offset:6px;border-radius:12px;animation:askPulse 1.2s ease-out 2}
 @keyframes askPulse{0%{box-shadow:0 0 0 0 var(--red-glow)}100%{box-shadow:0 0 0 18px transparent}}
 .ask-hl{outline:3px dashed var(--red)!important;outline-offset:6px;border-radius:12px}
-.ask-hl-note{position:absolute;z-index:85;max-width:280px;padding:8px 12px;border-radius:10px;background:var(--tip-bg);color:var(--tip-fg);font:500 13px/1.4 var(--f);box-shadow:var(--shadow);pointer-events:none}
+.ask-hl-note{position:fixed;z-index:85;max-width:280px;padding:8px 12px;border-radius:10px;background:var(--tip-bg);color:var(--tip-fg);font:500 13px/1.4 var(--f);box-shadow:var(--shadow);pointer-events:none}
 
 @media (max-width:560px){
  .ask-sheet{width:100vw;border-left:0}
