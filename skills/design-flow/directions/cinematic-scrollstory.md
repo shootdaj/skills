@@ -12,7 +12,7 @@ Filmic teal dark, ember accent, pinned scenes. Dark first.
   "display": "Fraunces",
   "body": "Albert Sans",
   "mono": "Red Hat Mono",
-  "google": "Albert+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Red+Hat+Mono:wght@400;500;600"
+  "google": "Albert+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Red+Hat+Mono:wght@400;500;600"
  },
  "dark": {
   "bg": "#0B1517",

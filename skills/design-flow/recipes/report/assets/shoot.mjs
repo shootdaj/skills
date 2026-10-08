@@ -32,18 +32,31 @@ const audit = (page, tag) => page.evaluate((tag) => {
   const dash = /[–—“”‘’]/.test(document.body.innerText);
   return { tag, hscroll: d.scrollWidth > d.clientWidth, small: [...new Set(small)].slice(0, 15), smallTargets: smallT, dashesOrCurlyQuotes: dash };
 }, tag);
-// The opening rule (2026-10-08): under the headline the first thing is ul.opening, four to six one-line bullets, each led by a
-// bold key number or phrase. No paragraph, verdict label, eyebrow or stat tiles. Run at 1440 wide, where every bullet must fit on one line.
+// The opening rule (2026-10-08): the overview is an h1 title (the question the report answers or the decision it supports, 14 words
+// or fewer, normal heading size), then p.purpose (one line: the source and what the reader does now), then ul.opening: four to six
+// one-line bullets, each led by a bold key number or phrase, the first starting within 150 px of the overview top. No other paragraph,
+// verdict label, eyebrow or stat tiles. Title 32 px at most, no text above 48 px anywhere, no italic text in any heading or hero element.
+// Run at 1440 wide.
 const opening = page => page.evaluate(() => {
   const ov = document.getElementById('overview'); if (!ov) return { tag: 'opening', missing: '#overview' };
-  const ul = ov.querySelector('ul.opening'); const first = [...ov.children].find(e => e.tagName !== 'H1');
+  const kids = [...ov.children]; const h1 = ov.querySelector('h1'); const purpose = ov.querySelector('p.purpose');
+  const ul = ov.querySelector('ul.opening'); const after = purpose ? purpose.nextElementSibling : null;
   const lis = ul ? [...ul.children].filter(e => e.tagName === 'LI') : [];
-  const lines = li => { const t = li.querySelector('.ot') || li; const lh = parseFloat(getComputedStyle(t).lineHeight) || 24; return Math.round(t.getBoundingClientRect().height / lh); };
+  const lines = el => { const t = el.querySelector('.ot') || el; const lh = parseFloat(getComputedStyle(t).lineHeight) || 24; return Math.round(t.getBoundingClientRect().height / lh); };
   const H = innerHeight, inFold = e => { const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= H; };
-  return { tag: 'opening', bulletsFirst: !!ul && !!first && (first === ul || first.firstElementChild === ul), bullets: lis.length,
+  const shown = e => { const cs = getComputedStyle(e); return e.getClientRects().length && cs.display !== 'none' && cs.visibility !== 'hidden' && !e.closest('.doors,.sr,[inert]'); };
+  const label = e => e.tagName.toLowerCase() + (e.className && typeof e.className === 'string' ? '.' + e.className.split(' ')[0] : '');
+  const textEls = [...document.body.querySelectorAll('*')].filter(e => [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && shown(e));
+  return { tag: 'opening',
+    titleFirst: !!h1 && kids[0] === h1, titleWords: h1 ? h1.textContent.trim().split(/\s+/).length : 0, titlePx: h1 ? parseFloat(getComputedStyle(h1).fontSize) : 0,
+    bulletsTop: lis.length ? Math.round(lis[0].getBoundingClientRect().top - ov.getBoundingClientRect().top) : 0,
+    purposeLine: !!purpose && kids[1] === purpose && lines(purpose) === 1,
+    bulletsFirst: !!ul && !!after && (after === ul || after.firstElementChild === ul), bullets: lis.length,
     firstScreen: lis.length > 0 && lis.every(inFold) && [...document.querySelectorAll('#overview .fg, .panel.open .fg')].some(inFold),
     unled: lis.filter(li => !li.querySelector('b,strong')).length, wrapped: lis.filter(li => lines(li) > 1).length,
-    banned: [...document.querySelectorAll('.verdict,.eyebrow,.tiles,.tile,.stat-tile,#overview p.lede,#overview > p,#overview .ov-grid > p')].map(e => e.tagName.toLowerCase() + '.' + e.className).slice(0, 5) };
+    display: textEls.filter(e => parseFloat(getComputedStyle(e).fontSize) > 48).map(e => label(e) + ' ' + getComputedStyle(e).fontSize).slice(0, 5),
+    italic: [...document.querySelectorAll('h1,h2,h3,h4,h5,h6,h1 *,h2 *,h3 *,h4 *,h5 *,h6 *,#overview,#overview *,.top *,.ph *,.fg-h *')].filter(e => textEls.includes(e) && /italic|oblique/.test(getComputedStyle(e).fontStyle)).map(label).slice(0, 5),
+    banned: [...document.querySelectorAll('.verdict,.eyebrow,.tiles,.tile,.stat-tile,#overview p:not(.purpose),#overview .ov-grid > p')].map(label).slice(0, 5) };
 });
 // The length budget (2026-10-08, "any future reports need to be fucking shorter"): with every chapter open the page fits in about
 // three 900 px screens before the appendix (fails above 3.3), at most five chapters, every caption 12 words or fewer (a Details link excluded).
@@ -122,6 +135,6 @@ if (only === 'all' || only === 'fallback') {
   await ctx2.close();
 }
 await browser.close();
-const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && (l.missing || !l.bulletsFirst || l.bullets < 4 || l.bullets > 6 || l.unled || l.wrapped || !l.firstScreen || l.banned.length)) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
+const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && (l.missing || !l.titleFirst || l.titleWords > 14 || l.titlePx > 32 || l.bulletsTop > 150 || !l.purposeLine || !l.bulletsFirst || l.bullets < 4 || l.bullets > 6 || l.unled || l.wrapped || !l.firstScreen || l.display.length || l.italic.length || l.banned.length)) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
 console.log(JSON.stringify({ pass: errs.length === 0 && failed.length === 0, errs, log }, null, 1));
 process.exit(errs.length || failed.length ? 1 : 0);

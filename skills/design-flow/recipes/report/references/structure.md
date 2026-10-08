@@ -7,14 +7,14 @@ The page is a pyramid. The reader gets the answer in the first screen and can st
 | Block | What it holds | State |
 | --- | --- | --- |
 | Top bar | Brand mark and title, Expand all, Collapse all, palette picker, theme toggle, chapter tabs with a light and a count each, a scroll progress line | always visible, sticky |
-| 00 Overview | Headline with the decisive words in the accent colour, then four to six one-line bullets (the opening, which are also the takeaways), with an optional layer map beside them. No eyebrow, label, badge, verdict card, paragraph or stat tiles | always open |
+| 00 Overview | Title (the question the report answers or the decision it supports), one purpose line under it, then four to six one-line bullets (the opening, which are also the takeaways), with an optional layer map beside them. No display headline, eyebrow, label, badge, verdict card, paragraph or stat tiles | always open |
 | 01 and 02 | The two chapters that carry the answer, for example architecture and readiness | open by default |
 | 03 to 05 | Supporting chapters, for example build plan, risks or decisions. Five chapters at most in all | closed by default |
 | Prototypes (optional) | Clickable flows the report proposes, each with a tap counter | closed |
 | Appendix | `section.panel#appendix`: the prose the captions link to, one numbered entry per figure, plus any detail that does not change a decision | closed |
 | Footer | Method line, date, author, where the sources live | always |
 
-At 1440 by 900 the headline and every opening bullet are visible without scrolling.
+At 1440 by 900 the title, the purpose line and every opening bullet are visible without scrolling, and the first bullet starts within about 150 px of the top of the overview.
 
 Why: on 2026-10-08 Anshul said "at the top of the report put a plain english thing, no label, just the text." Shown a plain paragraph there, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily." Shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), he said "never put these in the report."
 
@@ -30,7 +30,7 @@ A chapter is a `section.panel` with a header button, a body and one or more figu
 
 ## Length budget
 
-- The first screen answers everything: the headline, the four to six opening bullets and one figure, visible at 1440 by 900 without scrolling. The starter puts the layer map beside the bullets for this.
+- The first screen answers everything: the title, the purpose line, the four to six opening bullets and one figure, visible at 1440 by 900 without scrolling. The starter puts the layer map beside the bullets for this.
 - With every chapter open, the page fits in about three screens at 1440 by 900 (about 2,700 px) before the appendix.
 - At most five chapters, none that only restates another.
 - Captions are 12 words or fewer, in every edition.
@@ -72,7 +72,14 @@ Tabs are generated from the sections, so adding a section adds a tab.
 </header>
 ```
 
-The opening. Four to six one-line bullets straight under the headline. Each starts with its key number or phrase in `<b>`, which gets a soft highlight in the bullet's hue (`--lc`); the rest of the line says what it means. The icon chip is optional, and `<span class="oi dot"></span>` gives a plain coloured dot instead. No label or heading above the list, no paragraph, no stat tiles. `data-tk` ties a bullet to the layer map.
+The title and the purpose line. Plain words at a normal heading size, no spans for accent words.
+
+```html
+<h1 class="title rv0" id="title">Should we switch the photo search to the new model this month?</h1>
+<p class="purpose rv0" id="purpose">From the April test runs on our own library. You need to pick yes or no by Friday.</p>
+```
+
+The opening. Four to six one-line bullets straight under the purpose line. Each starts with its key number or phrase in `<b>`, which gets a soft highlight in the bullet's hue (`--lc`); the rest of the line says what it means. The icon chip is optional, and `<span class="oi dot"></span>` gives a plain coloured dot instead. No label or heading above the list, no paragraph, no stat tiles. `data-tk` ties a bullet to the layer map.
 
 ```html
 <ul class="opening" aria-label="Key points">
@@ -108,10 +115,11 @@ Two figures side by side: wrap them in `<div class="pair">`, or `pair w57` and `
 
 ## Copy rules
 
-- Headline: one line of thought, the decisive words in the accent colour, about 24 characters per visual line.
+- Title: the question the report answers or the decision it supports, in plain words, 14 words or fewer. It is a normal page heading: 24 to 28 px at 1440 (never over 32), weight 600 to 700, no display type, no italic or coloured accent words, no slogan. Directly under it sits one short line at body size: what the source is and what the reader needs to do now, or "Nothing to decide yet" and why. Why: on 2026-10-08 Anshul said of a display headline ("A small model that sees the footage, offline."): "this doesn't help at all. remove it and put something actually useful there. like what is this report for exactly." Of its size he said "it doesn't need to be that fucking huge."
 - Write the whole report for a smart reader who is not technical. Every term gets a plain phrase the first time it appears, such as "cache hit rate (how often the saved copy is used instead of fetching again)". Run the copy through the `humanizer` skill when it is installed. Why: on 2026-10-08 Anshul said "humanize the entire report. i dont understand it."
 - No vendor benchmark numbers (model-card scores, launch-post charts) as evidence anywhere in the report. Use only numbers measured on Anshul's own data, or numbers that bear directly on him: cost, size, time, quota. Why: on 2026-10-08 Anshul said "never use any measures that we haven't either measured or is directly relevant to us".
 - Opening bullets: four to six, one line each at 1440 wide. Lead with the key number or phrase in bold, then what it means in plain words. Together they say what this is, what it means for the reader and what to do. No label above them and no paragraph. A number that matters leads a bullet or goes into a figure, never into a stat tile. Why: on 2026-10-08 Anshul said "at the top of the report put a plain english thing, no label, just the text." Shown a plain paragraph there, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily." Shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), he said "never put these in the report."
+- No italic display or accent type: no italic headings, no italic serif for emphasis, no italic pull-quotes. Emphasis is weight or colour only. Why: on 2026-10-08 Anshul said "never use that fucking stupid italic font".
 - Caption: the takeaway of the figure in 12 words or fewer, not a description of it. "The App module has the most gaps" beats "Bar chart of gaps by layer".
 - Hint: what the reader can do with the figure, such as "Hover a route" or "Drag a node".
 - Figure numbers read `Fig. <chapter>.<n>` and captions in the appendix repeat them.

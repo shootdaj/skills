@@ -82,7 +82,7 @@ Medium, one more screen:
 | Header | Options |
 | --- | --- |
 | Palette | Warm · Cool · Neutral · Candy |
-| Type | Grotesk · Serif accent · Mono heavy · Rounded |
+| Type | Grotesk · Serif accent, upright · Mono heavy · Rounded |
 | Motion | Calm · Standard · Lively |
 | Editions (multi) | Full · Lean with appendix · Prototypes chapter · Go deeper |
 
@@ -137,6 +137,8 @@ Recipe by page kind, for every design:
 When the profile says `ui_kit_required: all`, every recipe uses the `ui_kit` skill, room designs included.
 
 Always: `anshul-ui-standards-v2` (its SKILL.md plus `references/material-usability.md`, `theming.md`, `dataviz-motion.md`); the look's tokens, type, radius, motion signature and forms; profile vocabulary; every visible string through the `copy` skill.
+
+Never italic, in any report, room or design: no italic display or accent type, no italic headings, no italic serif for emphasis, no italic pull-quotes. Emphasis is weight or colour only. Load fonts without their italic axis. Why: on 2026-10-08 Anshul said "never use that fucking stupid italic font".
 
 ### One design
 
