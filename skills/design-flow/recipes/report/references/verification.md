@@ -21,14 +21,17 @@ No setup needed. The script loads Playwright through `design-flow/assets/lib/pla
 | Typography | No em dashes, en dashes or curly quotes in the rendered text |
 | Themes | Top of page in dark and light at 1440; light also on the two lead chapters |
 | Narrow width | Top and the two lead chapters at 800 in dark, top in light |
-| Fallbacks | WebGL stubbed out: the 3D figure still renders its planes. Motion CDN aborted: no page errors and every tile visible |
+| Opening | At 1440: `ul.opening` is the first thing under the headline, four to six bullets, each led by `b` or `strong`, none wrapping past one line; no `.verdict`, `.eyebrow`, `.tile`, `.tiles` or opening paragraph anywhere |
+| First screen | At 1440 by 900 every opening bullet and at least one figure are fully visible before scrolling |
+| Length | With every chapter open, at most 3.3 screens of 900 px before `#appendix` (the budget says about three), at most five chapters, no caption over 12 words |
+| Fallbacks | WebGL stubbed out: the 3D figure still renders its planes. Motion CDN aborted: no page errors and every opening bullet visible |
 | Every chapter | One screenshot each with a representative interaction performed (a cell picked, a chip pressed, a node selected) |
 
 ## Look at the pictures
 
 The JSON says whether rules held. Only the PNGs say whether it looks right. Open them and check:
 
-- The verdict, tiles and the first takeaways fit above the fold at 1440 by 900.
+- The headline and every opening bullet fit above the fold at 1440 by 900, and the bold leads are readable at a glance in both themes. Nothing labels the list and no paragraph sits above it. Why: on 2026-10-08 Anshul asked for "something i can scan fast, bullet points" and said of stat tiles "never put these in the report."
 - Large light text over the page background is painted (an old bug: gradients on `body` made headless Chromium drop the text; gradients belong on `body::before`).
 - Nothing clips at 800 px, tabs scroll sideways instead of wrapping, side-by-side figures stack.
 - Lights glow only where the budget allows.

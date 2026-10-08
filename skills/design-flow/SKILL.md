@@ -94,10 +94,12 @@ Detailed, two more screens:
 | --- | --- |
 | Shape | Soft, 16 px · Regular, 12 px · Sharp, 2 px |
 | Density | Airy · Regular · Dense |
-| Lights | Tiles only · Every status · None |
+| Lights | Tab count and gaps only · Every status · None |
 | 3D | Isometric SVG · WebGL with fallback · None |
-| Forms (multi, one question per block that matters: navigation, headline numbers, takeaways, main diagram, status view, sections) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
+| Forms (multi, one question per block that matters: navigation, opening bullets, main diagram, status view, sections) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
 | Sources (multi) | Dribbble, Behance, 21st.dev, Awwwards · SaaS Landing Page, Lapa Ninja · Browse links only (Godly, Land-book, Dark Mode Design, SiteInspire) · Login sites (Mobbin, Refero, Page Flows) |
+
+No form or light option offers stat tiles or a headline-number row: reports open with four to six highlighted bullets instead (`recipes/report/RECIPE.md`). Why: on 2026-10-08 Anshul, shown a row of stat cards, said "never put these in the report."
 
 Only the first six sources return search results; the rest open in Chrome. Default without asking: every source that fits the page kind in `assets/inspire/sources.json`.
 

@@ -22,7 +22,7 @@ Eight directions built for the Skills Assessment report on 2026-09-23. Use them 
 
 ## The synthesis that won
 
-Boldness of D4, approachability of D7, simplicity of D6. Elements carried over: D6 system graph and sequence diagram, D8 exploded stack, D4 stat tiles with lights and brackets, D2 state machine and treemap. Plum palette from D7 as default with a five-palette picker. Top chapter tabs and collapsible sections (final A) beat a left rail with a long scroll (final B). The result is the report recipe (`../report/RECIPE.md`).
+Boldness of D4, approachability of D7, simplicity of D6. Elements carried over: D6 system graph and sequence diagram, D8 exploded stack, D4 stat tiles with lights and brackets, D2 state machine and treemap. (The stat tiles left the report on 2026-10-08; see the lessons table.) Plum palette from D7 as default with a five-palette picker. Top chapter tabs and collapsible sections (final A) beat a left rail with a long scroll (final B). The result is the report recipe (`../report/RECIPE.md`).
 
 ## Writing a new direction
 

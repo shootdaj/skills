@@ -25,15 +25,16 @@ text-to-diagram map), and `{{HUMANIZER_SKILL}}` (every visible string follows it
 
 ## Structure (pyramid)
 Sticky top bar: title, chapter tabs with light and count (scroll-spy, click scrolls), Expand all / Collapse all, theme toggle.
-00 Overview: eyebrow · headline · one-sentence verdict · stat tiles · takeaways plus layer map.
+00 Overview: headline · four to six one-line bullets, each led by a highlighted key number or phrase · layer map beside them. No eyebrow, label, verdict, paragraph or stat tiles (the report recipe's opening rule, 2026-10-08).
 {{CHAPTER_LIST_WITH_FIGURES}}
 Chapters 01 onward are collapsible panels (animated height); 00 to 02 open by default.
-Every figure: number, one-line caption, tooltip, click detail, keyboard focus.
+Every figure: number, one-line caption of 12 words or fewer, tooltip, click detail, keyboard focus.
+Length: the report recipe's length budget holds (first screen answers everything, about three screens at 1440 before the appendix, five chapters at most).
 
 ## Motion (motion.dev, visible but calm)
-Load: top bar, headline words, verdict, tiles pop with a spring and lights switch on one by one, cards stagger.
+Load: top bar, headline words, the opening bullets spring in one by one, figures stagger.
 Scroll: `inView` reveals; strokes draw in; lights start when their section enters. Chips: sliding pill. Theme toggle: {{THEME_TRANSITION}}.
-Lights animate only on stat tiles, the active tab count and missing cells. Reduced motion respected; page works if Motion fails.
+Lights animate only on the active tab count and missing cells. Reduced motion respected; page works if Motion fails.
 
 ## Rules
 - No vote widget on the final. No Material, no emoji. Icons: Lucide inline SVG.

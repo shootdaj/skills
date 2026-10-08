@@ -28,7 +28,7 @@ const DESIGNS=[
  ['d1','D1 Name','d1-slug/index.html','d1-slug/shots/01-dark-top-1440.png','One line on the direction'],
 ];
 // Must match COMPONENTS in vote.js.
-const COMPONENTS=[['overall','Overall design'],['hero','Hero + verdict'],['stats','Headline numbers'],['takeaways','Takeaways'],['arch','Architecture view'],['matrix','Readiness view'],['build','Build plan'],['nav','Navigation'],['motion','Motion + feel'],['theme','Theme + type']];
+const COMPONENTS=[['overall','Overall design'],['hero','Hero + opening bullets'],['takeaways','Takeaways'],['arch','Architecture view'],['matrix','Readiness view'],['build','Build plan'],['nav','Navigation'],['motion','Motion + feel'],['theme','Theme + type']];
 function setHTML(el,html){if(window.DOMPurify){el.replaceChildren(DOMPurify.sanitize(String(html),{RETURN_DOM_FRAGMENT:true}));}else{el.textContent=String(html).replace(/<[^>]*>/g,' ');}}
 const PROJECT='default'; // match data-project on the vote.js tags
 async function votes(){try{const r=await fetch((new URLSearchParams(location.search).get('api')||'http://127.0.0.1:7331')+'/votes',{cache:'no-store'});if(r.ok)return await r.json()}catch(e){}try{return JSON.parse(localStorage.getItem('design-votes-'+PROJECT)||'{}')}catch(e){return {}}}

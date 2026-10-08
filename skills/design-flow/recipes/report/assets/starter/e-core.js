@@ -89,7 +89,6 @@ function spy(){let cur=SECTS[0].id;const lim=topH()+90;SECTS.forEach(s=>{if(s.ge
  $('#totop').classList.toggle('show',scrollY>700)}
 addEventListener('scroll',()=>requestAnimationFrame(spy),{passive:true});
 $('#totop').onclick=()=>scrollTo({top:0,behavior:reduced?'auto':'smooth'});
-$$('.tile[data-go]').forEach(t=>t.addEventListener('click',e=>{e.preventDefault();go(t.dataset.go)}));
 
 /* ───────────────────────── in-view helper ───────────────────────── */
 function onView(el,cb,amount){if(!el)return;let seen=false;const fire=()=>{if(seen)return;seen=true;cb()};

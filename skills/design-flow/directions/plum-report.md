@@ -63,8 +63,8 @@ Calm, bold numbers, approachable. Dark first.
 }
 ```
 
-Motion signature: load choreography: bar, headline words, verdict, tiles pop with a spring, lights on one by one; scroll reveals with draw-in strokes; door curtain on theme swap; chips with a sliding pill; lights animate only on tiles, the active tab count and missing cells.
+Motion signature: load choreography: bar, headline words, opening bullets spring in one by one; scroll reveals with draw-in strokes; door curtain on theme swap; chips with a sliding pill; lights animate only on the active tab count and missing cells.
 
-Forms: top chapter tabs with light and count; collapsible panels; stat tiles with lights and corner brackets; figure frames with number, caption, detail panel; five-palette picker.
+Forms: top chapter tabs with light and count; collapsible panels; opening bullets with a highlighted key phrase and an icon or dot each; figure frames with number, caption, detail panel; five-palette picker. No stat tiles (2026-10-08, "never put these in the report").
 
 3D: isometric SVG only.

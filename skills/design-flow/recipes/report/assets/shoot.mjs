@@ -32,6 +32,28 @@ const audit = (page, tag) => page.evaluate((tag) => {
   const dash = /[–—“”‘’]/.test(document.body.innerText);
   return { tag, hscroll: d.scrollWidth > d.clientWidth, small: [...new Set(small)].slice(0, 15), smallTargets: smallT, dashesOrCurlyQuotes: dash };
 }, tag);
+// The opening rule (2026-10-08): under the headline the first thing is ul.opening, four to six one-line bullets, each led by a
+// bold key number or phrase. No paragraph, verdict label, eyebrow or stat tiles. Run at 1440 wide, where every bullet must fit on one line.
+const opening = page => page.evaluate(() => {
+  const ov = document.getElementById('overview'); if (!ov) return { tag: 'opening', missing: '#overview' };
+  const ul = ov.querySelector('ul.opening'); const first = [...ov.children].find(e => e.tagName !== 'H1');
+  const lis = ul ? [...ul.children].filter(e => e.tagName === 'LI') : [];
+  const lines = li => { const t = li.querySelector('.ot') || li; const lh = parseFloat(getComputedStyle(t).lineHeight) || 24; return Math.round(t.getBoundingClientRect().height / lh); };
+  const H = innerHeight, inFold = e => { const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= H; };
+  return { tag: 'opening', bulletsFirst: !!ul && !!first && (first === ul || first.firstElementChild === ul), bullets: lis.length,
+    firstScreen: lis.length > 0 && lis.every(inFold) && [...document.querySelectorAll('#overview .fg, .panel.open .fg')].some(inFold),
+    unled: lis.filter(li => !li.querySelector('b,strong')).length, wrapped: lis.filter(li => lines(li) > 1).length,
+    banned: [...document.querySelectorAll('.verdict,.eyebrow,.tiles,.tile,.stat-tile,#overview p.lede,#overview > p,#overview .ov-grid > p')].map(e => e.tagName.toLowerCase() + '.' + e.className).slice(0, 5) };
+});
+// The length budget (2026-10-08, "any future reports need to be fucking shorter"): with every chapter open the page fits in about
+// three 900 px screens before the appendix (fails above 3.3), at most five chapters, every caption 12 words or fewer (a Details link excluded).
+const length = page => page.evaluate(() => {
+  const ap = document.getElementById('appendix'); const end = ap || document.querySelector('footer') || document.body;
+  const endY = ap ? ap.getBoundingClientRect().top + scrollY : end.getBoundingClientRect().bottom + scrollY;
+  const words = c => { const k = c.cloneNode(true); k.querySelectorAll('.dlink').forEach(d => d.remove()); return k.textContent.trim().split(/\s+/).filter(Boolean).length; };
+  return { tag: 'length', screens: +(endY / 900).toFixed(2), chapters: document.querySelectorAll('section.panel:not(#appendix):not(#prototypes)').length,
+    longCaptions: [...document.querySelectorAll('figcaption')].filter(c => words(c) > 12).map(c => words(c) + ' words: ' + c.textContent.trim().slice(0, 40)).slice(0, 8) };
+});
 async function sweep(page) { const h = await page.evaluate(() => document.documentElement.scrollHeight); for (let y = 0; y < h; y += 500) { await page.evaluate(y => scrollTo(0, y), y); await page.waitForTimeout(90); } await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(300); }
 async function open(viewport, theme, initScript) {
   const ctx = await browser.newContext({ deviceScaleFactor: 1, viewport });
@@ -51,8 +73,10 @@ if (only === 'all' || only === 'dark') {
   const { ctx, page } = await open({ width: 1440, height: 900 }, 'dark');
   await page.screenshot({ path: S + '01-1440-dark-top.png' });
   log.push(await audit(page, 'dark1440-top'));
+  log.push(await opening(page));
   await expandAll(page); await sweep(page);
   log.push(await audit(page, 'dark1440-expanded'));
+  log.push(await length(page));
   const st = await page.addStyleTag({ content: '#top{position:relative!important}.totop{display:none!important}' });
   for (const [i, id] of sections.entries()) {
     const el = page.locator('#' + id); if (!(await el.count())) { errs.push('missing section #' + id); continue; }
@@ -94,10 +118,10 @@ if (only === 'all' || only === 'fallback') {
   p2.on('pageerror', e => e2.push(e.message)); p2.on('console', m => { if (m.type() === 'error' && !/ERR_FAILED/.test(m.text())) errs.push('[no-motion] ' + m.text()); }); // the aborted Motion request itself logs ERR_FAILED
   await p2.goto(URL_); await p2.waitForTimeout(2500);
   await p2.screenshot({ path: S + '07-1440-no-motion-top.png' });
-  log.push({ tag: 'no-motion', pageErrors: e2, visibleTiles: await p2.evaluate(() => [...document.querySelectorAll('.tile')].filter(t => getComputedStyle(t).opacity === '1').length), tiles: await p2.evaluate(() => document.querySelectorAll('.tile').length) });
+  log.push({ tag: 'no-motion', pageErrors: e2, ...(await p2.evaluate(() => { const els = [...document.querySelectorAll('#overview .opening li')]; return { visibleOpening: els.filter(t => getComputedStyle(t).opacity === '1').length, opening: els.length }; })) });
   await ctx2.close();
 }
 await browser.close();
-const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && l.visibleTiles < l.tiles));
+const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && (l.missing || !l.bulletsFirst || l.bullets < 4 || l.bullets > 6 || l.unled || l.wrapped || !l.firstScreen || l.banned.length)) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
 console.log(JSON.stringify({ pass: errs.length === 0 && failed.length === 0, errs, log }, null, 1));
 process.exit(errs.length || failed.length ? 1 : 0);
