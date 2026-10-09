@@ -1,18 +1,18 @@
 # Aurora editorial
 
-Navy aurora, serif italic accent, glass. Dark first.
+Navy aurora, upright serif accent, glass. Dark first.
 
 ```json
 {
  "id": "aurora-editorial",
  "name": "Aurora editorial",
- "mood": "navy aurora, serif italic accent, glass",
+ "mood": "navy aurora, upright serif accent, glass",
  "first": "dark",
  "fonts": {
   "display": "Instrument Serif",
   "body": "Manrope",
   "mono": "IBM Plex Mono",
-  "google": "Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600"
+  "google": "Instrument+Serif&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600"
  },
  "dark": {
   "bg": "#070A17",
@@ -70,7 +70,7 @@ Navy aurora, serif italic accent, glass. Dark first.
 
 Motion signature: aurora background; spring cursor blob; scramble text; parallax; toast stack; diagonal wipe on theme swap.
 
-Forms: serif italic pull-quotes; glass cards; state machine with pill states; routes treemap with ghost tiles.
+Forms: upright serif pull-quotes, emphasis by weight or colour, never italic (on 2026-10-08 Anshul said "never use that fucking stupid italic font".); glass cards; state machine with pill states; routes treemap with ghost tiles.
 
 3D: points morph, optional.
 

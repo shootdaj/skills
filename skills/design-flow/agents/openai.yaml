@@ -1,0 +1,4 @@
+interface:
+  display_name: "Design Flow"
+  short_description: "Design engine for pages, reports, dashboards and rooms"
+  default_prompt: "Use $design-flow to design, build and verify a report page or dashboard."

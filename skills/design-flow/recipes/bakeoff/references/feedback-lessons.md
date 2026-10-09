@@ -13,7 +13,7 @@ What the user said, what it meant, and the fix that stuck. Read this before ever
 | "Way too much!" | Full fills on every surface overwhelmed | Middle setting: full hue on tile top borders, numbers, card edges and icon chips; bodies back to the surface colour |
 | "Places where a huge amount of bright colour dominates need toning down" | Large grouped surfaces (treemap groups, lanes) were solid hue | Large fills at 30 to 35 percent into the surface, full hue on outlines and labels |
 | "These are fine" (readiness grid) | Solid status fills on small cells work | Readiness cells stay solid |
-| "Way too many blinking lights" | Lights everywhere lost their meaning | Lights animate only on stat tiles, the active tab count and missing readiness cells |
+| "Way too many blinking lights" | Lights everywhere lost their meaning | Lights animate only on the active tab count and missing readiness cells (stat tiles were the third place until 2026-10-08) |
 | "I like the little blinking red and yellow lights" | The lights are the signature, keep them | Lights stay on every status, lit and static, glow ring on |
 | "Add some themability" | One palette is not enough | Five palettes, each dark and light, picker in the top bar |
 | "I prefer final A, drop the other" | Top tabs plus collapsible sections beat a left rail | Final A is the reference |
@@ -21,6 +21,11 @@ What the user said, what it meant, and the fix that stuck. Read this before ever
 | "Make it plain English, use the humanizer skill on all text" | AI-flavoured prose is hard to trust | Every string through the humanizer rules; builders get the skill path in their brief |
 | "Only dope 3D, don't AI-slop something out" | 3D is welcome when it encodes data and comes from a proven example | 3D allowed for force graphs, value fields, morphs, exploded stacks, each with a 2D fallback; isometric SVG when in doubt |
 | "Show them as they get done" | Do not batch the reveal | Open each variant in Chrome the moment it lands |
+| "never put these in the report" (2026-10-08, shown a row of stat cards: FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT) | Bare numbers on cards do not explain themselves | No stat tiles. A number that matters leads an opening bullet or goes into a real figure |
+| "at the top of the report put a plain english thing, no label, just the text", then "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily" (2026-10-08) | Lead with the point in words he can scan, with nothing labelling it | The report opens with four to six one-line bullets, each led by a highlighted key number or phrase |
+| "humanize the entire report. i dont understand it." (2026-10-08) | The page was written for engineers | Write for a smart reader who is not technical; every term gets a plain phrase on first use; humanizer on all copy |
+| "any future reports need to be fucking shorter." (2026-10-08) | Length buried the point | Length budget: first screen answers everything, about three screens before the appendix, five chapters at most, 12-word captions |
+| "never use any measures that we haven't either measured or is directly relevant to us" (2026-10-08) | Vendor benchmarks are not evidence about his work | Only numbers measured on his data or bearing on him (cost, size, time, quota) |
 
 ## Technical lessons from the same rounds
 

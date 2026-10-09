@@ -13,8 +13,6 @@ different presentations of the same content, so round two must NOT reuse the com
 Pick the form assigned in your direction message. Each must still be readable, interactive and data-faithful.
 - Navigation: top masthead tabs with page-style transitions · right-edge vertical dot timeline with labels ·
   command palette (Cmd/Ctrl-K) plus breadcrumb progress · bottom dock with magnification.
-- Headline numbers: giant typographic figures column with footnotes · d3-force bubble cluster sized by value (draggable) ·
-  scroll-scrubbed counter wall · sparkline chips · receipt-style tally.
 - Takeaways: numbered pull-quotes across columns · sticky-notes wall (rotated, draggable, pinnable) ·
   horizontal scroll-snap gallery · vertical timeline with connectors.
 - Architecture: swimlane sequence diagram (lifelines plus animated messages) · CSS isometric city blocks with roads and

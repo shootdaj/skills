@@ -58,14 +58,15 @@ Five candy hues for layers, domains or teams. They come from the Toy Blocks vari
 
 `--ink` is `#2B2240`, the text colour on a full-strength hue. Slate, Forest and Sand shift one or two slots so the hues do not fight the accent (see the CSS).
 
-Where hues appear at full strength: the top border of a stat tile, the number in a stat tile, the left edge of a takeaway card, the icon chip, chip outlines, the pressed chip fill, outlines and labels of grouped figures. Where hues appear blended: any surface larger than a chip, at 30 to 35 percent into `--s1`. On light themes the coloured number blends 45 percent toward `--ink` for contrast.
+Where hues appear at full strength: the dot beside an opening bullet, chip outlines, the pressed chip fill, outlines and labels of grouped figures. Where hues appear blended: any surface larger than a chip, at 30 to 35 percent into `--s1`, plus the icon chip and the soft highlight behind each opening bullet's bold lead (26 to 30 percent); the text on them stays a text token. Stat tiles and their coloured numbers left the report on 2026-10-08 (Why: "never put these in the report").
 
 ## Type and shape
 
-- Familjen Grotesk 700 for the headline, chapter titles and figure titles, 500 for labels and buttons, 400 for body. Body is 15.5 px on 1.55.
+- Familjen Grotesk 700 for the title, chapter titles and figure titles, 500 for labels and buttons, 400 for body. Body is 15.5 px on 1.55.
 - Martian Mono 400 to 600 for data: figure numbers, eyebrows, counts, route strings, ids. Never for sentences.
 - 12 px is the floor for anything readable, including SVG text after scaling.
-- 12 px radius on cards, tiles, panels and figures. 999 px pills for chips and buttons. 10 px on inner panels.
+- Never italic. Emphasis is weight (600 to 700) or colour. Why: on 2026-10-08 Anshul said "never use that fucking stupid italic font".
+- 12 px radius on cards, panels and figures. 999 px pills for chips and buttons. 10 px on inner panels.
 - 44 px minimum for anything clickable, 48 px for tabs.
 - One shadow token, used on hover lift only.
 

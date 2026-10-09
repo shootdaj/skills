@@ -27,7 +27,7 @@ const BFF_ROUTES = { existing: { personas: [/* ... */] }, missing: ['POST .../re
 const EVIDENCE_FLOW = { nodes: [/* ... */], links: [/* [from, to, weight] */] };
 ```
 
-Rules for blocks: numbers come from a count you ran or a document you can cite; estimates and emphasis weights say so in the comment and on the figure; step ids, route strings and identifiers are copied verbatim.
+Rules for blocks: numbers come from a count you ran on Anshul's own data, or bear directly on him (cost, size, time, quota), and name their source. Never vendor benchmark numbers (model-card scores, launch-post charts) as evidence. Why: on 2026-10-08 Anshul said "never use any measures that we haven't either measured or is directly relevant to us". Further rules: estimates and emphasis weights say so in the comment and on the figure; step ids, route strings and identifiers are copied verbatim.
 
 ## Text to figure map
 
@@ -35,7 +35,8 @@ Use this table as the starting map. The right column names the block shape the f
 
 | Text that usually appears | Replace with | Block shape |
 | --- | --- | --- |
-| Six findings | Six short cards plus a layer map that pins each finding to a layer | `LAYERS_MAP: [{layer, takeaways[]}]` |
+| Findings, a summary, a verdict | Four to six one-line opening bullets, each led by a highlighted key number or phrase, plus a layer map that pins each to a layer | `LAYERS_MAP: [{layer, takeaways[]}]` |
+| Headline numbers, KPIs, a row of stats | Never stat tiles. The number leads an opening bullet, or a real figure shows it in context | the figure's own block |
 | Architecture paragraphs | Exploded stack or layered system graph | `SYSTEMS: {nodes[{id,label,layer,state}], links[[from,to,state,label]]}` |
 | Call flow description | Swimlane sequence | `SEQ: [{n, from, to, label, state}]` |
 | Readiness prose | Grid with lights plus stacked bars | `READINESS: {layers[], cols[], counts[[ready,partial,missing,na]], cells}` |
@@ -55,9 +56,11 @@ Use this table as the starting map. The right column names the block shape the f
 | A model description | Entity diagram | `MODEL: {root, fields[], children[], vocab, api}` |
 | Layer rules | Domain layering | `DOMAINS: {layers[{name,systems[],repo}], rule}` |
 
+Why: on 2026-10-08, shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), Anshul said "never put these in the report." After reading a plain paragraph at the top, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily."
+
 ## Minimums
 
-- At least ten interactive figures, each with a caption that states the takeaway.
+- Every chapter carries at least one interactive figure with a caption that states the takeaway in 12 words or fewer. The length budget in `../RECIPE.md` caps the total, so pick the figures that change a decision and cut the rest. Why: on 2026-10-08 Anshul said "any future reports need to be fucking shorter."
 - Prose in the supporting chapters cut by at least half; what remains is captions and one-line facts.
 - Verify again after the pass: both themes, 1440 and 800, zero console errors, 12 px floor, and the fallback path when WebGL or Motion is missing.
 

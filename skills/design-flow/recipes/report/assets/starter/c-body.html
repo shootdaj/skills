@@ -44,39 +44,34 @@
 <main class="wrap">
 <!-- ═════════ 00 OVERVIEW ═════════ -->
 <section id="overview" class="hero live" data-title="Overview" data-no="00" data-hue="c4">
- <div class="eyebrow rv0"><b>Report</b><span>2026-01-01</span><span>Author</span><span>Scope in a few words</span><span class="ruler" aria-hidden="true"></span></div>
- <h1 class="headline" id="headline"><span class="w">Headline</span> <span class="w">words,</span> <span class="w red">the</span> <span class="w red">decisive</span> <span class="w red">ones</span> <span class="w">in</span> <span class="w">red.</span></h1>
- <div class="verdict rv0"><div class="vl">Verdict</div>
-  <p>What to do, in one sentence. <span>The one fact that makes it urgent.</span></p></div>
- <p class="meta rv0"><b>Sources</b> where the facts come from. <b>Method</b> how they were gathered.</p>
-
- <div class="tiles" aria-label="Headline numbers">
-  <a class="tile brk" href="#chapter-1" data-go="chapter-1" style="--lc:var(--c1)"><div class="th"><span class="led ok"></span>OK<span class="go">01<svg class="i"><use href="#i-arrow"/></svg></span></div><div class="k"><span data-count="12">12</span><small>of 30</small></div><div class="l">what this number counts</div><div class="ruler" aria-hidden="true"></div></a>
-  <a class="tile brk" href="#chapter-1" data-go="chapter-1" style="--lc:var(--c2)"><div class="th"><span class="led part"></span>Watch<span class="go">01<svg class="i"><use href="#i-arrow"/></svg></span></div><div class="k"><span data-count="1234" data-comma="1">1,234</span></div><div class="l">what this number counts</div><div class="ruler" aria-hidden="true"></div></a>
-  <a class="tile brk" href="#chapter-1" data-go="chapter-1" style="--lc:var(--c3)"><div class="th"><span class="led miss"></span>Gap<span class="go">01<svg class="i"><use href="#i-arrow"/></svg></span></div><div class="k"><span data-count="0">0</span></div><div class="l">what this number counts</div><div class="ruler" aria-hidden="true"></div></a>
-  <a class="tile brk" href="#chapter-1" data-go="chapter-1" style="--lc:var(--c4)"><div class="th"><span class="led off"></span>Ref<span class="go">01<svg class="i"><use href="#i-arrow"/></svg></span></div><div class="k"><span data-count="7">7</span></div><div class="l">what this number counts</div><div class="ruler" aria-hidden="true"></div></a>
-  <a class="tile brk" href="#chapter-1" data-go="chapter-1" style="--lc:var(--c5)"><div class="th"><span class="led part"></span>Watch<span class="go">01<svg class="i"><use href="#i-arrow"/></svg></span></div><div class="k"><span data-count="3">3</span><small>high</small></div><div class="l">what this number counts</div><div class="ruler" aria-hidden="true"></div></a>
-  <a class="tile brk" href="#chapter-1" data-go="chapter-1" style="--lc:var(--c1)"><div class="th"><span class="led ok"></span>OK<span class="go">01<svg class="i"><use href="#i-arrow"/></svg></span></div><div class="k"><span data-count="4">4</span></div><div class="l">what this number counts</div><div class="ruler" aria-hidden="true"></div></a>
- </div>
-
+ <!-- The title is the question this report answers or the decision it supports, in plain words, 14 words or fewer, at a normal heading
+      size. No display type, no italic or coloured accent words, no slogan. Directly under it, one short line: what the source is and what
+      the reader needs to do now (or "Nothing to decide yet" and why). -->
+ <h1 class="title rv0" id="title">Should we switch the photo search to the new model this month?</h1>
+ <p class="purpose rv0" id="purpose">From the April test runs on our own library. You need to pick yes or no by Friday.</p>
+ <!-- The opening: four to six one-line bullets, nothing above them but the title and the purpose line. Each starts with its key number or phrase in <b>,
+      which gets a soft highlight in the bullet's hue (--lc). The icon chip is optional; <span class="oi dot"></span> gives a plain coloured dot.
+      These bullets are the takeaways. No label, badge, verdict tag, eyebrow, paragraph or stat tiles. -->
  <div class="ov-grid">
-  <div class="takes" aria-label="Six takeaways">
-   <div class="take" data-tk="0" style="--lc:var(--c1)"><div class="ico"><svg class="i"><use href="#i-db"/></svg></div><div><span class="tg">Layer · status</span><h3>Takeaway one</h3><p>One or two sentences of evidence.</p></div></div>
-   <div class="take" data-tk="1" style="--lc:var(--c2)"><div class="ico"><svg class="i"><use href="#i-user"/></svg></div><div><span class="tg">Layer · status</span><h3>Takeaway two</h3><p>One or two sentences of evidence.</p></div></div>
-   <div class="take" data-tk="2" style="--lc:var(--c3)"><div class="ico"><svg class="i"><use href="#i-layout"/></svg></div><div><span class="tg">Layer · status</span><h3>Takeaway three</h3><p>One or two sentences of evidence.</p></div></div>
-   <div class="take" data-tk="3" style="--lc:var(--c4)"><div class="ico"><svg class="i"><use href="#i-copy"/></svg></div><div><span class="tg">Layer · status</span><h3>Takeaway four</h3><p>One or two sentences of evidence.</p></div></div>
-   <div class="take" data-tk="4" style="--lc:var(--c5)"><div class="ico"><svg class="i"><use href="#i-compass"/></svg></div><div><span class="tg">Layer · status</span><h3>Takeaway five</h3><p>One or two sentences of evidence.</p></div></div>
-   <div class="take" data-tk="5" style="--lc:var(--c5)"><div class="ico"><svg class="i"><use href="#i-alert"/></svg></div><div><span class="tg">Layer · status</span><h3>Takeaway six</h3><p>One or two sentences of evidence.</p></div></div>
-  </div>
+  <ul class="opening" aria-label="Key points">
+   <li data-tk="0" style="--lc:var(--c1)"><span class="oi"><svg class="i"><use href="#i-db"/></svg></span><span class="ot"><b>Key number</b> what it counts and why it matters, in one line.</span></li>
+   <li data-tk="1" style="--lc:var(--c2)"><span class="oi"><svg class="i"><use href="#i-user"/></svg></span><span class="ot"><b>Key phrase</b> the point, in words a non-technical reader gets.</span></li>
+   <li data-tk="2" style="--lc:var(--c3)"><span class="oi"><svg class="i"><use href="#i-layout"/></svg></span><span class="ot"><b>Another number</b> one line, no jargon, no label in front.</span></li>
+   <li data-tk="3" style="--lc:var(--c4)"><span class="oi"><svg class="i"><use href="#i-alert"/></svg></span><span class="ot"><b>The risk</b> what could go wrong, said plainly.</span></li>
+   <li data-tk="4" style="--lc:var(--c5)"><span class="oi"><svg class="i"><use href="#i-compass"/></svg></span><span class="ot"><b>What to do</b> the next step, four to six bullets in all.</span></li>
+  </ul>
   <figure class="fg rv0" id="fig-lmap" style="margin-top:0">
-   <div class="fg-h"><span class="fgno">Fig. 0.1</span><h3>Where each takeaway lands</h3></div>
+   <div class="fg-h"><span class="fgno">Fig. 0.1</span><h3>Where each point lands</h3><span class="sp"></span><span class="hint">Hover or click a chip</span></div>
    <div class="lmap" id="lmap"></div>
-   <figcaption>Which layer holds most of the findings. Hover a chip to find its card, click it to jump there.</figcaption>
+   <figcaption>Layers A and C hold most of the findings.</figcaption>
   </figure>
  </div>
 </section>
 
 <div class="panels">
+<!-- Length budget (2026-10-08): the first screen answers everything (title, purpose line, the bullets above, one figure). With every chapter open
+     the page fits in about three screens at 1440 by 900 before the appendix (section id="appendix"). At most five chapters, none that
+     restates another. Captions 12 words or fewer. A detail that does not change a decision goes to the collapsed appendix or is cut. -->
 <!-- ═════════ 01 FIRST CHAPTER ═════════ -->
 <section class="panel open" id="chapter-1" data-title="First chapter" data-no="01" data-led="new" data-cnt="2" data-cntl="2 new items" data-hue="c1">
  <button class="ph" type="button" aria-expanded="true"><span class="no">01</span><h2>First chapter</h2><span class="ruler" aria-hidden="true"></span><span class="cnt"><span class="led new on"></span>2 new</span><span class="chev"><svg class="i"><use href="#i-chev"/></svg></span></button>
@@ -91,7 +86,7 @@
  </div></div>
 </section>
 </div>
-<footer class="colo"><span>Generated DATE by Claude Code with AUTHOR</span><span>Sources and method in the appendix</span></footer>
+<footer class="colo"><span>Generated DATE by Claude Code with AUTHOR</span><span>Sources: where the facts come from. Method: how they were gathered.</span></footer>
 </main>
 
 <button class="btn totop" id="totop" type="button"><svg class="i"><use href="#i-up"/></svg>Back to top</button>

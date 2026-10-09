@@ -7,7 +7,7 @@ Eight directions built for the Skills Assessment report on 2026-09-23. Use them 
 | Id | Name | Palette and type | Signature motion and forms | User's read |
 | --- | --- | --- | --- | --- |
 | D1 | Obsidian Spotlight | Near-black glass, electric blue | Cursor spotlight, conic borders, split-text word reveal, physical stagger, iris theme reveal, hold-to-confirm | Slick but generic dark |
-| D2 | Aurora Editorial | Navy aurora, italic serif accent | Spring cursor blob, scramble text, parallax, toast stack, diagonal wipe | Liked the state machine and the BFF routes treemap |
+| D2 | Aurora Editorial | Navy aurora, italic serif accent (italic dropped from the look on 2026-10-08) | Spring cursor blob, scramble text, parallax, toast stack, diagonal wipe | Liked the state machine and the BFF routes treemap |
 | D3 | Paper and Ink | Warm paper, International Orange, hard offset shadows | 3D tilt, rolling digit counters, drag-to-reorder, confetti, fly-to-tray, page flip, rough.js sketch charts | Fun, not for this audience |
 | D4 | Instrument HUD | Graphite blueprint, phosphor green, amber, red | Corner brackets, ring gauge, status LEDs that breathe, pulse and blink, typewriter, pinned HUD strip, shutter blades, footer ticker | Liked the boldness and the lights; the crosshair cursor was removed on request |
 | D5 | Liquid Chrome | Graphite frosted glass, iridescent chrome borders | Morphing blobs, before/after slider, draggable tiles, rolling-text buttons, hue shift on scroll, lightbox | Too much glass |
@@ -22,7 +22,7 @@ Eight directions built for the Skills Assessment report on 2026-09-23. Use them 
 
 ## The synthesis that won
 
-Boldness of D4, approachability of D7, simplicity of D6. Elements carried over: D6 system graph and sequence diagram, D8 exploded stack, D4 stat tiles with lights and brackets, D2 state machine and treemap. Plum palette from D7 as default with a five-palette picker. Top chapter tabs and collapsible sections (final A) beat a left rail with a long scroll (final B). The result is the report recipe (`../report/RECIPE.md`).
+Boldness of D4, approachability of D7, simplicity of D6. Elements carried over: D6 system graph and sequence diagram, D8 exploded stack, D4 stat tiles with lights and brackets, D2 state machine and treemap. (The stat tiles left the report on 2026-10-08; see the lessons table.) Plum palette from D7 as default with a five-palette picker. Top chapter tabs and collapsible sections (final A) beat a left rail with a long scroll (final B). The result is the report recipe (`../report/RECIPE.md`).
 
 ## Writing a new direction
 

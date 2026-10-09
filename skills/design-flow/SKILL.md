@@ -82,7 +82,7 @@ Medium, one more screen:
 | Header | Options |
 | --- | --- |
 | Palette | Warm · Cool · Neutral · Candy |
-| Type | Grotesk · Serif accent · Mono heavy · Rounded |
+| Type | Grotesk · Serif accent, upright · Mono heavy · Rounded |
 | Motion | Calm · Standard · Lively |
 | Editions (multi) | Full · Lean with appendix · Prototypes chapter · Go deeper |
 
@@ -94,10 +94,12 @@ Detailed, two more screens:
 | --- | --- |
 | Shape | Soft, 16 px · Regular, 12 px · Sharp, 2 px |
 | Density | Airy · Regular · Dense |
-| Lights | Tiles only · Every status · None |
+| Lights | Tab count and gaps only · Every status · None |
 | 3D | Isometric SVG · WebGL with fallback · None |
-| Forms (multi, one question per block that matters: navigation, headline numbers, takeaways, main diagram, status view, sections) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
+| Forms (multi, one question per block that matters: navigation, opening bullets, main diagram, status view, sections) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
 | Sources (multi) | Dribbble, Behance, 21st.dev, Awwwards · SaaS Landing Page, Lapa Ninja · Browse links only (Godly, Land-book, Dark Mode Design, SiteInspire) · Login sites (Mobbin, Refero, Page Flows) |
+
+No form or light option offers stat tiles or a headline-number row: reports open with four to six highlighted bullets instead (`recipes/report/RECIPE.md`). Why: on 2026-10-08 Anshul, shown a row of stat cards, said "never put these in the report."
 
 Only the first six sources return search results; the rest open in Chrome. Default without asking: every source that fits the page kind in `assets/inspire/sources.json`.
 
@@ -135,6 +137,8 @@ Recipe by page kind, for every design:
 When the profile says `ui_kit_required: all`, every recipe uses the `ui_kit` skill, room designs included.
 
 Always: `anshul-ui-standards-v2` (its SKILL.md plus `references/material-usability.md`, `theming.md`, `dataviz-motion.md`); the look's tokens, type, radius, motion signature and forms; profile vocabulary; every visible string through the `copy` skill.
+
+Never italic, in any report, room or design: no italic display or accent type, no italic headings, no italic serif for emphasis, no italic pull-quotes. Emphasis is weight or colour only. Load fonts without their italic axis. Why: on 2026-10-08 Anshul said "never use that fucking stupid italic font".
 
 ### One design
 

@@ -10,12 +10,9 @@ Timings from the reference `boot()`; all through `Motion.animate`, all skipped w
 | --- | --- |
 | 0 ms | Top bar fades and drops in (400 ms) |
 | 100 ms | Tabs stagger in, 30 ms apart |
-| 150 ms | Headline words rise in, 60 ms apart |
-| 550 ms | Verdict and eyebrow rise in, 120 ms apart |
-| 800 ms | Tiles pop with a spring (stiffness 420, damping 20), 70 ms apart; their rulers draw from left to right |
-| 850 ms | Numbers count up over 1.1 s, comma-formatted when marked |
-| 1050 ms | Tile lights switch on one by one, 140 ms apart |
-| 1350 ms | Takeaway cards spring in, 80 ms apart; their lights follow |
+| 150 ms | Title, purpose line and layer map figure rise in, 120 ms apart |
+| 800 ms | Opening bullets spring in, 80 ms apart |
+| 850 ms | Any number marked `data-count` counts up over 1.1 s, comma-formatted when marked |
 | 3200 ms | Failsafe: anything still at opacity 0 is forced visible and the `anim` class is removed |
 
 ## Scroll
@@ -27,7 +24,7 @@ Timings from the reference `boot()`; all through `Motion.animate`, all skipped w
 
 ## Press and hover
 
-- Buttons, chips, tiles and cards lift 2 to 3 px on hover with the spring curve and compress to 95 to 97 percent on press with an 80 ms transition.
+- Buttons, chips and cards lift 2 to 3 px on hover with the spring curve and compress to 95 to 97 percent on press with an 80 ms transition.
 - Pressed chips slide a filled pill behind them (`slide()`), with a small spring scale on the chip.
 - Panels animate their height over 450 ms; the chevron overshoots to 200 degrees and settles at 180.
 - Theme toggle: two doors in the opposite theme's colour close over 400 ms, the theme swaps, the doors open over 500 ms. `themechange` fires in between so charts recolour.
@@ -39,13 +36,14 @@ Lights are the signature of the design and also the first thing to overdo. The r
 
 | Where | Behaviour |
 | --- | --- |
-| Stat tiles in the overview | Animated: ok breathes over 3.2 s, part double-pulses over 3 s, miss blinks over 2 s |
-| Active chapter tab count | Animated with the same timings, only while the tab is current |
+| Active chapter tab count | Animated: ok breathes over 3.2 s, part double-pulses over 3 s, miss blinks over 2 s, only while the tab is current |
 | Missing cells in the readiness grid | Blink over 2 s |
-| Everything else: takeaway cards, panel headers, timeline statuses, sequence bands, graph nodes | Static, lit, with a glow ring, no animation |
+| Everything else: panel headers, timeline statuses, sequence bands, graph nodes | Static, lit, with a glow ring, no animation |
 | New-plane glow on the exploded stack | Static drop shadow, no pulse |
 
-The CSS block that enforces this is headed "LED diet" in `b2-components.css`. It turns every light animation off and re-enables the three allowed places with `!important`. Keep it last in the cascade.
+The CSS block that enforces this is headed "LED diet" in `b2-components.css`. It turns every light animation off and re-enables the two allowed places with `!important`. Keep it last in the cascade.
+
+Stat tiles were the third place until they left the report. Why: on 2026-10-08, shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), Anshul said "never put these in the report."
 
 Every light sits next to a word or an icon. A light alone is a defect.
 
@@ -54,4 +52,4 @@ Every light sits next to a word or an icon. A light alone is a defect.
 - `HAS()` is `!!window.Motion && !reduced`. Every animation goes through `anim()`, which returns a resolved promise when `HAS()` is false, so the page renders complete and static without Motion.
 - `prefers-reduced-motion: reduce` also disables CSS transitions and animations globally in the stylesheet.
 - `<html class="anim">` is added in the head script only when motion will run; entrance states in CSS are scoped to `.anim`, so a page without Motion never hides content.
-- Verification aborts the Motion CDN request in one run and checks that all tiles are visible.
+- Verification aborts the Motion CDN request in one run and checks that every opening bullet is visible.

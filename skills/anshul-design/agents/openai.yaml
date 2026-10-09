@@ -1,0 +1,4 @@
+interface:
+  display_name: "Anshul Design"
+  short_description: "Personal design door for Anshul's pages and reports"
+  default_prompt: "Use $anshul-design to design and build a short, scannable report page for this project."
