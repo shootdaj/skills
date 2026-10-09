@@ -1,0 +1,27 @@
+{
+  "key": "PAGE_SLUG",
+  "kind": "proof",
+  "title": "Does the new search page do what PR 999 says it does?",
+  "purpose": "Shot on the preview at 1440 by 900 on 2026-10-09. Read the steps, then approve or send it back.",
+  "brand": { "name": "PR 999 proof", "sub": "Luminatlas" },
+  "repo": "",
+  "bullets": [
+    { "lead": "4 of 4 steps", "text": "work on the preview exactly as the PR describes.", "icon": "check" },
+    { "lead": "Search answers in 0.4 s", "text": "on the dev library, measured in the browser.", "icon": "db" },
+    { "lead": "Empty state", "text": "shows a plain line, not a blank grid.", "icon": "layout" },
+    { "lead": "One thing to decide", "text": "whether the filter row stays above or below the count.", "icon": "compass" }
+  ],
+  "sections": [
+    {
+      "id": "steps",
+      "title": "What you will see",
+      "items": [
+        { "img": "01-open.png", "alt": "Library page after loading", "caption": "The library opens on the grid with the count in the header.", "url": "https://preview.example.com/library" },
+        { "img": "02-search.png", "alt": "Search results for drone", "caption": "Typing drone shows 12 results in 0.4 s.", "url": "https://preview.example.com/library?q=drone" },
+        { "img": "03-empty.png", "alt": "Empty search state", "caption": "A query with no hits says so in one line.", "url": "https://preview.example.com/library?q=zzz" },
+        { "img": "04-filter.png", "alt": "Filter row", "caption": "The filter row sits under the count.", "url": "https://preview.example.com/library?kind=video" }
+      ]
+    }
+  ],
+  "footer": { "left": "Built 2026-10-09 by Claude Code with Anshul", "right": "Screenshots by agent-browser on the preview; nothing retouched." }
+}
