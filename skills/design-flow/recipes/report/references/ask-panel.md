@@ -9,7 +9,7 @@ Why: on 2026-10-08 Anshul said "add an AI chat in the report, where i can ask qu
 | Flag | Effect |
 | --- | --- |
 | default | Panel on. `build.sh` adds `h-ask.css` and `i-ask.js`, then runs `assets/ask-build.mjs` |
-| `ASK=off sh build.sh` | No panel, no build step, no manifest |
+| `ASK=off sh build.sh` | No panel, no build step, no manifest. The publish gate then refuses the report unless it is run with `ASK=off ASK_OFF_REASON="why"`, which writes `Ask panel off: why` into the page footer. Pages from the page recipe (proof, approval, judging, gallery) have no panel by design and need no reason |
 | `ASK_MODEL=claude-sonnet-5 sh build.sh` | Default model Sonnet 5 instead of Fable 5.1 |
 | `ASK_TOOL=<path>/ask-build.mjs` | Where build.sh finds the build step when the starter was copied out of the skill (it also looks in the skill's own folder and in each harness skill root) |
 

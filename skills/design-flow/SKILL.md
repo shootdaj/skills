@@ -130,7 +130,8 @@ Recipe by page kind, for every design:
 
 | Page kind | Recipe |
 | --- | --- |
-| Report or tech design | the report recipe, `recipes/report/RECIPE.md` (or the profile's `report_recipe` skill when it is installed), with the chosen look's tokens in place of its default. Reports carry the Ask panel (a Claude chat about the page through here.now proxy routes) unless built with `ASK=off`; see `recipes/report/references/ask-panel.md` |
+| Report or tech design | the report recipe, `recipes/report/RECIPE.md` (or the profile's `report_recipe` skill when it is installed), with the chosen look's tokens in place of its default. Reports carry the Ask panel (a Claude chat about the page through here.now proxy routes); leaving it out takes `ASK=off` at build and `ASK_OFF_REASON` at publish; see `recipes/report/references/ask-panel.md` |
+| Proof page, approval page (keep or strike), blind judging page, gallery of directions | the page recipe, `recipes/page/RECIPE.md`: one `page.json` plus `build.sh` on the report's shell. No Ask panel on these, by design |
 | App screen or mock | the `ui_kit` skill when the profile has one; otherwise core mechanics plus the look |
 | Dashboard, landing, other | core mechanics plus the look; `frontend-design` for boldness when installed |
 
@@ -163,7 +164,25 @@ python3 <this skill>/assets/room/make-room.py <dir> --project "<Name>" --steps "
 
 ## Step 6: publish
 
-Do what `publish.*` says, post the link where `post_to` says, state the access mode in the reply. Never print an API key.
+One path for every page, report or not:
+
+```bash
+<this skill>/scripts/publish-page.sh <dir> [--slug <slug>] [--repo <project root>]
+```
+
+It runs `scripts/check-page.mjs` (the recipe stamp on `<html>`, the title and opening rules, no italics anywhere, dark by default, zero console errors, the glossary hover checked against what the project declares, the Ask panel and its `.herenow/proxy.json` on a report, a caption and URL under every proof shot) and only then calls the here-now skill's `publish.sh` with the same arguments, then looks at the live page and the proxy route. A page without the stamp (hand-rolled HTML) is refused. A report without its panel is refused unless `ASK=off ASK_OFF_REASON="why"` are both set; the reason is printed and written into the page footer. `--dry-run` stops after the check. Never call `publish.sh` directly.
+
+Then do what `publish.*` says about access, post the link where `post_to` says, state the access mode in the reply. Never print an API key.
+
+## Every page goes through the recipe and the gate
+
+Anshul's rule (2026-10-09, after a proof page went out without the shared parts: "i need to fix the root cause"): every published page is built through a recipe and published through the gate. Proof pages, approval pages, judging pages and galleries included. No hand-rolled HTML, however small; the page recipe is one data file and one command, so there is no time saved by hand-rolling.
+
+Three things made pages differ by day, and the rule for each:
+
+1. Only report-recipe pages got the shell; everything else was hand-built. Now the page recipe reuses the report starter's parts at build time, so both come out of the same files at the same commit.
+2. The recipe only gained a feature when a branch merged, so a page built from an unmerged branch had parts the next page did not. The local checkout (`~/.claude/skills/design-flow` and its siblings) follows master; a feature merges before any page relies on it. A page built from a branch copy of this skill is a preview of that branch until it merges; say so when handing it over.
+3. Nothing stopped a page from skipping the parts. The gate does: `publish-page.sh` is the only documented publish path, and it refuses a page without the stamp, the opening, the glossary part or (on a report) the panel.
 
 A room publishes as a folder: `index.html`, `room.js`, `_vote/*.js`, `_vote/*.py`, `_requests/designs.js` and every finished design folder with its shots. Leave out `_vote/*.json`, `_vote/*.jsonl`, `_requests/*.json`, backups and unfinished design folders. Where it goes is `publish.room`: azure-sso through the azure-static-publish skill, the personal host, or local only.
 
@@ -207,6 +226,9 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `assets/lib/` | `playwright.mjs`: the shared loader every script here uses (find or install `@playwright/test`, Chrome or Chromium, `launch` and `launchPersistent`); import it from any new script instead of `createRequire` |
 | `assets/requests/` | `request-form.js` (New design form, localStorage only; `make-room.py` copies it into a room's `_vote/`), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` (the request queue the room's `server.py` imports), `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
-| `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts, `assets/shoot.mjs`, and the Ask panel's `assets/ask-build.mjs` and `assets/ask-test.mjs`; bundled so no other skill is needed |
+| `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts, `assets/shoot.mjs`, `assets/checks.mjs` (the opening, audit, length and glossary checks shared with the gate), and the Ask panel's `assets/ask-build.mjs` and `assets/ask-test.mjs`; bundled so no other skill is needed |
+| `recipes/page/` | the page recipe (`RECIPE.md`) for proof, approval, judging and gallery pages: `assets/page-build.mjs` builds `index.html` from `page.json` on the report starter's parts, `assets/page.css` and `assets/page.js` hold the kinds, `assets/starter/` is the two files you copy |
 | `recipes/bakeoff/` | the bake-off recipe (`RECIPE.md`), brief templates, directions, builder prompt, vote widget and ballot |
+| `scripts/` | `publish-page.sh`, the only publish path, and `check-page.mjs`, the check it runs |
+| `tests/run.sh` | the harness: builds the report starter and every page kind in a temp folder, runs the gate on each, and checks the gate refuses a hand-rolled page, a report without its panel, italics, a light default, a missing glossary |
 | `profiles/default.md` | used when no door is loaded |

@@ -7,7 +7,7 @@ A figure-first report is one self-contained `index.html`: four to six one-line b
 - A research report, build-out map, tech design, readiness review or architecture write-up.
 - Any page whose job is to get a point across to people who will not read walls of text.
 
-Usually run by `design-flow` through a door (`anshul-design`, or a work door) with the level answers and the chosen look already decided; do not re-ask them. Not for product UI (that is the profile's `ui_kit` skill when it has one). If no look fits, run the bake-off recipe (`../bakeoff/RECIPE.md`) and come back with the picks.
+Usually run by `design-flow` through a door (`anshul-design`, or a work door) with the level answers and the chosen look already decided; do not re-ask them. Not for product UI (that is the profile's `ui_kit` skill when it has one). Not for a proof page, an approval page, a judging page or a gallery: those take the page recipe (`../page/RECIPE.md`), which builds on this recipe's shell from one data file and ships without the Ask panel. If no look fits, run the bake-off recipe (`../bakeoff/RECIPE.md`) and come back with the picks.
 
 ## Before you build
 
@@ -31,7 +31,7 @@ Usually run by `design-flow` through a door (`anshul-design`, or a work door) wi
 6. Keep motion on a budget. Page-load choreography, scroll reveals, draw-in strokes, spring press. Lights blink only on the active tab count and missing readiness cells. Details in `references/motion-budget.md`.
 7. Write the captions last. One takeaway per caption, 12 words or fewer in every edition. The lean edition adds a "Details" link to the appendix entry.
 8. Verify with Playwright. Run `node assets/shoot.mjs <index.html> --key <slug> --repo <project root>` (no setup: it finds or installs Playwright itself), read the JSON summary, look at the PNGs yourself, fix, re-shoot. Its `opening` line fails a page with a title over 14 words or 32 px, text over 48 px anywhere, italic text in a heading or the overview, a missing purpose line, a label, eyebrow, verdict card, paragraph or stat tiles at the top, bullets starting more than 150 px below the top of the overview, fewer than four or more than six opening bullets, a bullet without a bold lead, or a bullet that wraps past one line at 1440; its `length` line fails a page over the length budget; its `glossary` lines fail a page whose glossary terms do not open on hover, focus and Escape, or whose glossary does not match what `--repo` declares. Details in `references/verification.md`. Open the page in Chrome as sections land so the user sees progress. With the panel on, also run `node assets/ask-test.mjs <index.html>`: it drives every Ask tool against a strict mock of the Messages API, so no key is needed, and writes `shots-ask/`.
-9. Publish. Follow `references/publish.md`: publish to here.now with the access mode the door's profile says, post the link where the work is tracked. Publish the folder with its `.herenow/` manifest. If `ask-build.mjs` says `ANTHROPIC_API_KEY` is not set, tell the owner the one line to set it; never set it yourself. Without here.now credentials the page stays in its folder and you say so.
+9. Publish through the gate, never by calling the here-now script yourself: `<design-flow>/scripts/publish-page.sh <folder> [--slug <slug>] [--repo <project root>]`. It runs `scripts/check-page.mjs` (the `data-recipe="report"` stamp `build.sh` puts on `<html>`, the opening rules, no italics, dark by default, zero console errors, the glossary against what the project declares, the panel and its `.herenow/proxy.json`) and only then publishes the folder with its manifest. A report without the panel is refused unless `ASK=off ASK_OFF_REASON="why"` are both set; the reason goes into the page footer. Details in `references/publish.md`. If `ask-build.mjs` says `ANTHROPIC_API_KEY` is not set, tell the owner the one line to set it; never set it yourself. Without here.now credentials the gate stops before publishing, the page stays in its folder and you say so.
 
 ## Length budget
 
@@ -105,6 +105,7 @@ Ship the lean edition when the audience is leadership or the page is going into 
 | `references/ask-panel.md` | The Ask panel: switch, model, how the key is held, context, tools, cost guard, saving threads, tests |
 | `assets/starter/` | Head, tokens, component CSS, core JS, body skeleton, boot, build script |
 | `assets/shoot.mjs` | The verification script |
+| `assets/checks.mjs` | The opening, audit, length and glossary checks, shared by `shoot.mjs` and the publish gate (`design-flow/scripts/check-page.mjs`) |
 | `assets/ask-build.mjs` | Build step for the Ask panel: freezes the report context, writes `.herenow/proxy.json`, checks the variables |
 | `assets/ask-test.mjs` | Drives every Ask tool in a browser against a mock Messages API; local or on the live page |
 | `assets/glossary.mjs` | Finds and parses the project's glossary, writes `h-glossary.js` for the build (empty when there is none) |
