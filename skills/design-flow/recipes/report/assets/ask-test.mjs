@@ -19,7 +19,7 @@ const OUT = resolve(opt('--out', LIVE ? 'ask-shots' : join(dirname(file), 'shots
 
 /* ───────── the mock Messages API ───────── */
 const MOCK = { mode: 'ok', requests: [], violations: [], emitted: new Set(), drive: [], seq: 0 };
-const MODELS = ['claude-fable-5-1', 'claude-sonnet-5'];
+const MODELS = ['claude-opus-5-5', 'claude-fable-5-1', 'claude-sonnet-5'];
 // token estimate: text at ~3.4 chars per token; images at width*height/750 like the API, not by their base64 size
 const tok = s => { let n = 0; const t = String(s).replace(/"data":"([A-Za-z0-9+/=]{200,})"/g, (m, d) => { const z = pngSize(d); n += z ? Math.ceil(z.w * z.h / 750) : 1500; return '"data":""'; }); return n + Math.ceil(t.length / 3.4); };
 function pngSize(b64) { const b = Buffer.from(b64, 'base64'); if (b.slice(1, 4).toString() === 'PNG') return { w: b.readUInt32BE(16), h: b.readUInt32BE(20), bytes: b.length };

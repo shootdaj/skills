@@ -15,7 +15,7 @@ Why: on 2026-10-08 Anshul said "add an AI chat in the report, where i can ask qu
 
 ## Model
 
-Default `claude-fable-5-1`: the best answers, and with the report cached a typical answer costs about 2 to 6 cents. The panel has a model picker; `claude-sonnet-5` is about a fifth of the price for routine questions. Thinking is left at its default (always on for Fable 5.1, adaptive for Sonnet 5), effort is `medium`, `max_tokens` 12000. Fable 5.1 calls go through `/api/claude-fb`, which adds the `server-side-fallback-2026-07-01` beta, and send `fallbacks: "default"`, so a policy decline is re-served inside the same call. A `fallback` marker block is dropped before the turn is echoed back. Forced `tool_choice` is never sent (a 400 on Fable 5.1).
+Default `claude-opus-5-5` (Anshul, 2026-10-09): strong answers at 2.5x less than Fable 5.1; with the report cached a typical answer costs about 1 to 3 cents. Fable 5.1 stays in the picker for the best answers. The panel has a model picker; `claude-sonnet-5` is about a fifth of the price for routine questions. Thinking is left at its default (always on for Fable 5.1, adaptive for Sonnet 5), effort is `medium`, `max_tokens` 12000. Fable 5.1 calls go through `/api/claude-fb`, which adds the `server-side-fallback-2026-07-01` beta, and send `fallbacks: "default"`, so a policy decline is re-served inside the same call. A `fallback` marker block is dropped before the turn is echoed back. Forced `tool_choice` is never sent (a 400 on Fable 5.1).
 
 ## How the key is held
 

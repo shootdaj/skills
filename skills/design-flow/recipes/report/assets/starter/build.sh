@@ -1,13 +1,13 @@
 #!/bin/sh
 # Concatenate the parts into ../index.html and check that the inline script parses.
 # The "Ask about this report" panel (h-ask.css, i-ask.js) is on by default. ASK=off sh build.sh leaves it out.
-# ASK_MODEL sets the panel's default model: claude-fable-5-1 (default) or claude-sonnet-5 (about a fifth of the cost).
+# ASK_MODEL sets the panel's default model: claude-opus-5-5 (default), claude-fable-5-1 (best answers, 2.5x the price) or claude-sonnet-5 (half the price).
 # With the panel on, ask-build.mjs then freezes the report text into the page and writes ../.herenow/proxy.json (references/ask-panel.md).
 cd "$(dirname "$0")"
 if [ "${ASK:-on}" = "off" ]; then
   cat a-head.html b1-tokens.css b2-components.css b3-figures.css c-body.html d-data.js e-core.js f-figures.js g-boot.js > ../index.html
 else
-  sed "s/__ASK_MODEL__/${ASK_MODEL:-claude-fable-5-1}/" i-ask.js > _ask.js
+  sed "s/__ASK_MODEL__/${ASK_MODEL:-claude-opus-5-5}/" i-ask.js > _ask.js
   cat a-head.html b1-tokens.css b2-components.css b3-figures.css h-ask.css c-body.html d-data.js e-core.js f-figures.js _ask.js g-boot.js > ../index.html
   rm -f _ask.js
 fi

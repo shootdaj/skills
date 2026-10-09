@@ -13,7 +13,7 @@ const HTTP=/^https?:$/.test(location.protocol);
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const MODEL0='__ASK_MODEL__';
 const CFG=Object.assign({
-  model:/^claude-/.test(MODEL0)?MODEL0:'claude-fable-5-1',
+  model:/^claude-/.test(MODEL0)?MODEL0:'claude-opus-5-5',
   effort:'medium', maxTokens:12000, maxHops:6,
   ctxCap:80000,          // stop a thread once one request carries this many input tokens
   costCap:2.00,          // stop a thread at this many dollars; New thread resets
@@ -25,8 +25,9 @@ const CFG=Object.assign({
 /* Prices in dollars per million tokens: input, output, cache write (5 min), cache read. Fable 5.1 calls go through the route that
    adds the server-side fallback beta, so a policy decline is re-served by Anthropic's recommended model inside the same call. */
 const MODELS={
- 'claude-fable-5-1':{label:'Fable 5.1',note:'best answers',in:10,out:50,cw:12.5,cr:0.25,route:'/api/claude-fb',fallbacks:'default'},
- 'claude-sonnet-5':{label:'Sonnet 5',note:'about 5x cheaper',in:2,out:10,cw:2.5,cr:0.20,route:'/api/claude'}
+ 'claude-opus-5-5':{label:'Opus 5.5',note:'default',in:4,out:20,cw:5,cr:0.20,route:'/api/claude'},
+ 'claude-fable-5-1':{label:'Fable 5.1',note:'best answers, 2.5x the price',in:10,out:50,cw:12.5,cr:0.25,route:'/api/claude-fb',fallbacks:'default'},
+ 'claude-sonnet-5':{label:'Sonnet 5',note:'half the price of Opus',in:2,out:10,cw:2.5,cr:0.20,route:'/api/claude'}
 };
 const PRICE=Object.assign({'claude-opus-4-8':{in:5,out:25,cw:6.25,cr:0.5},'claude-opus-5':{in:5,out:25,cw:6.25,cr:0.5},'claude-opus-5-5':{in:4,out:20,cw:5,cr:0.2},'claude-sonnet-5-5':{in:2,out:10,cw:2.5,cr:0.2}},MODELS);
 const LIBS={marked:['https://cdn.jsdelivr.net/npm/marked@18.1.0/lib/marked.umd.js','marked'],h2i:['https://cdn.jsdelivr.net/npm/html-to-image@1.11.13/dist/html-to-image.js','htmlToImage']};
