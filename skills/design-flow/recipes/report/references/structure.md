@@ -99,10 +99,10 @@ A chapter panel.
 </section>
 ```
 
-A figure.
+A figure. `data-ask` names the `d-data.js` blocks the figure draws from so the Ask panel can hand Claude the data; without it the panel reads the upper-case names used by the figure's draw function in `FIGS`.
 
 ```html
-<figure class="fg" id="fig-grid">
+<figure class="fg" id="fig-grid" data-ask="GRID">
  <div class="fg-h"><span class="fgno">Fig. 2.2</span><h3>Readiness by layer and capability</h3><span class="sp"></span><span class="hint">Click a cell for its evidence</span></div>
  <div class="toolbar">chips with counts on the left, legend on the right</div>
  <div class="fg-b" id="f-grid"></div>
