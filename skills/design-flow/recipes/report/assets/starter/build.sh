@@ -4,6 +4,7 @@
 # ASK_MODEL sets the panel's default model: claude-opus-5-5 (default), claude-fable-5-1 (best answers, 2.5x the price) or claude-sonnet-5 (half the price).
 # With the panel on, ask-build.mjs then freezes the report text into the page and writes ../.herenow/proxy.json (references/ask-panel.md).
 # h-glossary.js is optional: assets/glossary.mjs writes it when the project has a glossary and leaves it empty when not.
+# Publish only through design-flow/scripts/publish-page.sh: it checks the page and refuses a report without its panel unless ASK=off and ASK_OFF_REASON are both given.
 cd "$(dirname "$0")"
 GLOSSARY=$( [ -s h-glossary.js ] && echo h-glossary.js )
 if [ "${ASK:-on}" = "off" ]; then
@@ -14,6 +15,8 @@ else
   rm -f _ask.js
 fi
 node -e "const fs=require('fs');const s=fs.readFileSync('../index.html','utf8');fs.writeFileSync('_check.js',s.slice(s.lastIndexOf('<script>')+8,s.lastIndexOf('</script>')))"
+# Stamp the page as a recipe build: the publish gate (design-flow/scripts/publish-page.sh) refuses a page without data-recipe on <html>.
+node -e "const fs=require('fs');let s=fs.readFileSync('../index.html','utf8');if(!/<html[^>]*data-recipe=/.test(s))s=s.replace(/<html([^>]*)>/,'<html\$1 data-recipe=\"report\">');fs.writeFileSync('../index.html',s)"
 node --check _check.js && rm -f _check.js && echo "BUILD_OK $(wc -c < ../index.html) bytes" || exit 1
 [ "${ASK:-on}" = "off" ] && exit 0
 for t in "${ASK_TOOL:-}" ../ask-build.mjs "$HOME/.claude/skills/design-flow/recipes/report/assets/ask-build.mjs" "$HOME/.agents/skills/design-flow/recipes/report/assets/ask-build.mjs" "$HOME/.codex/skills/design-flow/recipes/report/assets/ask-build.mjs" "$HOME/.cursor/skills/design-flow/recipes/report/assets/ask-build.mjs" "$HOME/.hermes/skills/design-flow/recipes/report/assets/ask-build.mjs"; do
