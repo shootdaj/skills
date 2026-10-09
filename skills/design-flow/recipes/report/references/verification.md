@@ -31,10 +31,10 @@ No setup needed. The script loads Playwright through `design-flow/assets/lib/pla
 
 ```bash
 node assets/ask-test.mjs /path/to/index.html          # local page, mock Messages API and mock Drive
-node assets/ask-test.mjs --live https://<slug>.here.now/   # live page: real key-not-set state and real Drive, Claude mocked
+node assets/ask-test.mjs --live https://<slug>.here.now/   # live page: one real check of the key state, then Claude and the key-not-set 401 mocked, Drive real
 ```
 
-It opens the panel in the key-not-set state, then answers through a strict mock that rejects any request the Messages API would reject and checks that history comes back exactly as streamed. It exercises every tool (scroll_to, highlight, read_figure_data, snapshot_region by camera, by drag and as a tool call, ask_about_selection by chip and as a tool call, open_source, save_thread), the menu export, the model switch, a fallback marker, Stop, a reload, light theme, the cost cap, keyboard open and Escape, and 800 and phone widths. Pass means every step held, the mock saw no violations, panel controls are 44 px and text 12 px or larger, and the console stayed clean apart from the deliberate 401 of the key check. Look at `shots-ask/*.png` yourself; the answers in them are the mock's.
+Live, it first records whether the real proxy has the key (`keySet` in the summary, true when the free count_tokens check passes) and then plays the key-not-set 401 back by interception; locally the mock returns it. It opens the panel in the key-not-set state, then answers through a strict mock that rejects any request the Messages API would reject and checks that history comes back exactly as streamed. It exercises every tool (scroll_to, highlight, read_figure_data, snapshot_region by camera, by drag and as a tool call, ask_about_selection by chip and as a tool call, open_source, save_thread), the menu export, the model switch, a fallback marker, Stop, a reload, light theme, the cost cap, keyboard open and Escape, and 800 and phone widths. Pass means every step held, the mock saw no violations, panel controls are 44 px and text 12 px or larger, and the console stayed clean apart from the deliberate 401 of the key check. Look at `shots-ask/*.png` yourself; the answers in them are the mock's.
 
 ## Look at the pictures
 

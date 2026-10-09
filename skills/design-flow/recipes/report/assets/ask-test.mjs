@@ -1,7 +1,8 @@
 // ask panel test harness. Drives the "Ask about this report" panel in a real browser and screenshots every tool in action.
 //   node ask-test.mjs /path/to/index.html [--out <dir>] [--headed]          local: serves the page plus a mock Anthropic upstream
-//   node ask-test.mjs --live https://<slug>.here.now/ [--out <dir>]          live: the real page; Claude calls are answered by the
-//                                                                              same mock through request interception, Drive calls are real
+//   node ask-test.mjs --live https://<slug>.here.now/ [--out <dir>]          live: the real page; one real look at the proxy's key state
+//                                                                              (set or not), then Claude calls and the key-not-set 401 are
+//                                                                              answered by the same mock through request interception; Drive calls are real
 // No API key is used or needed. The mock is strict: it rejects request shapes the Messages API would reject (model, stream, system
 // cache_control, tools, role order, tool_use/tool_result pairing, images, forbidden thinking or tool_choice settings, fallbacks only on
 // the -fb route) and checks that every earlier assistant turn comes back byte for byte (append-only history). Prints a JSON summary;
@@ -180,16 +181,23 @@ const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 }, d
 const page = await ctx.newPage();
 page.on('console', m => { if (m.type() === 'error') consoleErrors.push({ mode: MOCK.mode, text: m.text().slice(0, 200) }); });
 page.on('pageerror', e => consoleErrors.push({ mode: MOCK.mode, text: 'PAGEERROR ' + e.message }));
-const intercept = async on => { if (!LIVE) return; if (on) await page.route(/\/api\/claude(-fb|-count)?$/, async route => { const req = route.request();
+let routed = false;
+const intercept = async on => { if (!LIVE || routed === on) return; routed = on; if (on) await page.route(/\/api\/claude(-fb|-count)?$/, async route => { const req = route.request();
   if (/-count$/.test(req.url())) return MOCK.mode === 'nokey' ? route.fulfill({ status: 401, contentType: 'application/json', body: JSON.stringify(NOKEY) }) : route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ input_tokens: tok(req.postData() || '') }) }); const r = MOCK.mode === 'nokey' ? { status: 401, json: NOKEY } : (() => { let b = null; try { b = req.postDataJSON(); } catch (e) {} if (!b || !b.model) return { status: 400, json: { type: 'error', error: { type: 'invalid_request_error', message: 'model: Field required' } } }; return events(b, new URL(req.url()).pathname); })();
   if (r.status !== 200) return route.fulfill({ status: r.status, contentType: 'application/json', body: JSON.stringify(r.json) }); return route.fulfill({ status: 200, contentType: 'text/event-stream', body: sse(r.events) }); }); else await page.unroute(/\/api\/claude(-fb|-count)?$/); };
 
-// 1. key not set. Locally the mock returns exactly what here.now + Anthropic return with the variable unset; live it is the real proxy.
-MOCK.mode = 'nokey';
+// 1. the key. Live, one real look first: with ANTHROPIC_API_KEY set under Variables the free count_tokens check passes and the panel is ready;
+//    without it the panel says key not set. Either way the key-not-set screen is then played back by interception (a 401 on the count route),
+//    so the step after it holds whether or not the key is set. Locally the mock returns exactly what here.now + Anthropic return with the variable unset.
 await page.goto(URL0); await page.waitForTimeout(2500);
 await page.evaluate(() => { try { Object.keys(localStorage).filter(k => /-ask-/.test(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {} });
+let keySet = null;
+if (LIVE) { MOCK.mode = 'real'; await page.reload(); await page.waitForTimeout(2500);
+  await step('real proxy key state', async () => { await page.click('.ask-fab'); await page.waitForTimeout(2500); const t = ((await page.textContent('.ask-status')) || '').trim(); const sendDisabled = await page.isDisabled('.ask-send'); keySet = !t && !sendDisabled;
+    await shot(page, 'ask-00-real-key-state', keySet ? 'Real proxy: ANTHROPIC_API_KEY is set, the panel is ready to send' : 'Real proxy: ' + (t.split('\n')[0] || 'no status shown')); await page.click('.ask-close'); return { keySet, status: t.slice(0, 140), sendDisabled, ok: keySet || /key not set/i.test(t) }; }); }
+MOCK.mode = 'nokey'; await intercept(true);
 await page.reload(); await page.waitForTimeout(2500);
-await step('key-not-set state', async () => { await page.click('.ask-fab'); await page.waitForSelector('.ask-status.show', { timeout: 15000 }); await page.waitForTimeout(500); const t = await page.textContent('.ask-status'); await shot(page, 'ask-01-key-not-set', 'Key not set: the panel says so and gives the one-line instruction; nothing secret is in the page'); return { status: t.trim().slice(0, 140), ok: /key not set/i.test(t), sendDisabled: await page.isDisabled('.ask-send') }; });
+await step('key-not-set state', async () => { await page.click('.ask-fab'); await page.waitForSelector('.ask-status.show', { timeout: 15000 }); await page.waitForTimeout(500); const t = await page.textContent('.ask-status'); await shot(page, 'ask-01-key-not-set', 'Key not set: the panel says so and gives the one-line instruction; nothing secret is in the page' + (LIVE ? ' (the 401 is played back by interception)' : '')); return { status: t.trim().slice(0, 140), ok: /key not set/i.test(t), sendDisabled: await page.isDisabled('.ask-send') }; });
 await step('audit (open, 1440 dark)', async () => { const a = await audit(page); return { ...a, ok: !a.hscroll && !a.small.length && !a.smallTargets.length && !a.dashes }; });
 await page.click('.ask-close');
 
@@ -228,9 +236,10 @@ for (const [w, h, name] of [[800, 1000, '800'], [390, 844, 'phone']]) {
   await step(`width ${name}`, async () => { await page.setViewportSize({ width: w, height: h }); await page.waitForTimeout(800); await shot(page, `ask-24-${name}-closed`, `${name}: the Ask button sits clear of Back to top`); await page.click('.ask-fab'); await page.waitForTimeout(900); await shot(page, `ask-25-${name}-open`, `${name}: the sheet ${name === 'phone' ? 'fills the screen' : 'overlays the page'}`); const a = await audit(page); await page.click('.ask-close'); return { ...a, ok: !a.hscroll && !a.small.length && !a.smallTargets.length }; });
 }
 await browser.close(); if (srv) srv.close();
-const expected401 = consoleErrors.filter(e => e.mode === 'nokey' && /401/.test(e.text));
-const otherErrors = consoleErrors.filter(e => !(e.mode === 'nokey' && /401/.test(e.text)));
-const summary = { pass: steps.every(s => s.ok) && !MOCK.violations.length && !otherErrors.length, mode: LIVE ? 'live (Claude mocked by interception, Drive real)' : 'local (mock upstream)', url: URL0, out: OUT,
+const is401 = e => (e.mode === 'nokey' || e.mode === 'real') && /401/.test(e.text);
+const expected401 = consoleErrors.filter(is401);
+const otherErrors = consoleErrors.filter(e => !is401(e));
+const summary = { pass: steps.every(s => s.ok) && !MOCK.violations.length && !otherErrors.length, mode: LIVE ? 'live (one real key check, then Claude and the key-not-set 401 mocked by interception, Drive real)' : 'local (mock upstream)', keySet, url: URL0, out: OUT,
   steps, mockRequests: MOCK.requests.length, mockViolations: [...new Set(MOCK.violations)], drive: MOCK.drive, consoleErrors: otherErrors, expected401: expected401.length, shots };
 writeFileSync(join(OUT, 'ask-test.json'), JSON.stringify(summary, null, 1));
 console.log(JSON.stringify({ ...summary, shots: shots.length }, null, 1));

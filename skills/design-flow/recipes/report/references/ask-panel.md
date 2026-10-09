@@ -107,10 +107,10 @@ At 1180 px and wider the open sheet docks: the page narrows by the sheet's width
 
 ```bash
 node assets/ask-test.mjs /path/to/index.html                  # local: page + strict mock of the Messages API + mock Drive
-node assets/ask-test.mjs --live https://<slug>.here.now/      # live page: real key-not-set state and real Drive, Claude mocked
+node assets/ask-test.mjs --live https://<slug>.here.now/      # live page: one real check of the key state, then Claude and the key-not-set 401 mocked, Drive real
 ```
 
-No key is used. The mock rejects what the Messages API would reject (unknown model, missing stream, system without the cache breakpoint, bad tool schemas, role order, unanswered `tool_use`, bad images, forced `tool_choice`, `fallbacks` off the fallback route) and checks that every earlier assistant turn comes back exactly as streamed, thinking signatures included. It writes screenshots of every tool to `shots-ask/` and a JSON summary; open the pictures. Answers in those screenshots are the mock's, not Claude's.
+No key is spent: live, the only real Claude-side call is the free count_tokens key check, recorded as `keySet` in the summary. The mock rejects what the Messages API would reject (unknown model, missing stream, system without the cache breakpoint, bad tool schemas, role order, unanswered `tool_use`, bad images, forced `tool_choice`, `fallbacks` off the fallback route) and checks that every earlier assistant turn comes back exactly as streamed, thinking signatures included. It writes screenshots of every tool to `shots-ask/` and a JSON summary; open the pictures. Answers in those screenshots are the mock's, not Claude's.
 
 ## Pitfalls
 
