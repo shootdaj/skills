@@ -21,21 +21,23 @@ Usually run by `design-flow` through a door (`anshul-design`, or a work door) wi
 ## Recipe
 
 1. Facts first. Collect every number, name and quote with its source. Put them in `d-data.js` as named blocks (format in `references/viz-pack.md`). Invent nothing. Label estimates and emphasis weights as such on the figure.
-2. Outline the pyramid. The opening bullets, then chapters 01 to 05 at most, inside the length budget below. The page opens with four to six one-line bullets and nothing above them but the headline: no label, badge, "Verdict" tag, eyebrow or paragraph. Each bullet starts with its key number or phrase in bold with a soft highlight in the bullet's hue, then says in plain words what it means. A coloured dot or small icon per bullet is optional. Together they say what this is, what it means for the reader and what to do. These bullets are the takeaways; there is no second list. There is no row of stat tiles or headline numbers: a number that matters leads a bullet or goes into a real figure. Each chapter is figures plus captions plus at most one short list. Details in `references/structure.md`.
+2. Outline the pyramid. The title, the purpose line, the opening bullets, then chapters 01 to 05 at most, inside the length budget below. The title is the question the report answers or the decision it supports, in plain words, 14 words or fewer. It is a normal page heading: 24 to 28 px at 1440 (never over 32), weight 600 to 700, no display type, no italic or coloured accent words, no slogan. Directly under it sits one short line at body size: what the source is and what the reader needs to do now, or "Nothing to decide yet" and why.
+   Why: on 2026-10-08 Anshul said of a display headline ("A small model that sees the footage, offline."): "this doesn't help at all. remove it and put something actually useful there. like what is this report for exactly." Of its size he said "it doesn't need to be that fucking huge."
+   Then four to six one-line bullets, starting within about 150 px of the top of the content, with nothing else above them: no label, badge, "Verdict" tag, eyebrow or paragraph. Each bullet starts with its key number or phrase in bold with a soft highlight in the bullet's hue, then says in plain words what it means. A coloured dot or small icon per bullet is optional. Together they say what this is, what it means for the reader and what to do. These bullets are the takeaways; there is no second list. There is no row of stat tiles or headline numbers: a number that matters leads a bullet or goes into a real figure. Each chapter is figures plus captions plus at most one short list. Details in `references/structure.md`.
    Why: on 2026-10-08 Anshul said "at the top of the report put a plain english thing, no label, just the text." Shown a plain paragraph there, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily." Shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), he said "never put these in the report."
 3. Turn text into figures. For each block of prose, pick a figure from `references/components.md` using the map in `references/viz-pack.md`. The opening bullets and the captions stay as text. Use 3D only when it encodes structure and has a 2D fallback.
-4. Build from parts. Copy `assets/starter/` next to your work. Fill `c-body.html`, `d-data.js` and the figure functions in `f-figures.js`, then run `sh build.sh` to write `index.html` one folder up. One file, inline CSS and JS, libraries and fonts from CDN only (list in `references/structure.md`). The build adds the Ask panel (`h-ask.css`, `i-ask.js`) and runs `assets/ask-build.mjs`, which freezes the report text into the page for Claude and writes `.herenow/proxy.json` next to it. `ASK=off sh build.sh` leaves the panel out. Details in `references/ask-panel.md`.
+4. Build from parts. Copy `assets/starter/` next to your work. Fill `c-body.html`, `d-data.js` and the figure functions in `f-figures.js`. Look for the project's glossary with `node assets/glossary.mjs --repo <project root> --out <starter copy>/h-glossary.js` (see Glossary hover below), then run `sh build.sh` (Node only) to write `index.html` one folder up. One file, inline CSS and JS, libraries and fonts from CDN only (list in `references/structure.md`). The build adds the Ask panel (`h-ask.css`, `i-ask.js`) and runs `assets/ask-build.mjs`, which freezes the report text into the page for Claude and writes `.herenow/proxy.json` next to it. `ASK=off sh build.sh` leaves the panel out. Details in `references/ask-panel.md`.
 5. Style with tokens. `assets/starter/b1-tokens.css` holds five palettes, each with a dark and a light theme. Components use tokens only. Category hues go on `--lc`. Large fills blend the hue at 30 to 35 percent into the surface. Details in `references/tokens.md`.
 6. Keep motion on a budget. Page-load choreography, scroll reveals, draw-in strokes, spring press. Lights blink only on the active tab count and missing readiness cells. Details in `references/motion-budget.md`.
 7. Write the captions last. One takeaway per caption, 12 words or fewer in every edition. The lean edition adds a "Details" link to the appendix entry.
-8. Verify with Playwright. Run `node assets/shoot.mjs <index.html> --key <slug>` (no setup: it finds or installs Playwright itself), read the JSON summary, look at the PNGs yourself, fix, re-shoot. Its `opening` line fails a page with a label, eyebrow, verdict card, paragraph or stat tiles at the top, fewer than four or more than six opening bullets, a bullet without a bold lead, or a bullet that wraps past one line at 1440; its `length` line fails a page over the length budget. Details in `references/verification.md`. Open the page in Chrome as sections land so the user sees progress. With the panel on, also run `node assets/ask-test.mjs <index.html>`: it drives every Ask tool against a strict mock of the Messages API, so no key is needed, and writes `shots-ask/`.
+8. Verify with Playwright. Run `node assets/shoot.mjs <index.html> --key <slug> --repo <project root>` (no setup: it finds or installs Playwright itself), read the JSON summary, look at the PNGs yourself, fix, re-shoot. Its `opening` line fails a page with a title over 14 words or 32 px, text over 48 px anywhere, italic text in a heading or the overview, a missing purpose line, a label, eyebrow, verdict card, paragraph or stat tiles at the top, bullets starting more than 150 px below the top of the overview, fewer than four or more than six opening bullets, a bullet without a bold lead, or a bullet that wraps past one line at 1440; its `length` line fails a page over the length budget; its `glossary` lines fail a page whose glossary terms do not open on hover, focus and Escape, or whose glossary does not match what `--repo` declares. Details in `references/verification.md`. Open the page in Chrome as sections land so the user sees progress. With the panel on, also run `node assets/ask-test.mjs <index.html>`: it drives every Ask tool against a strict mock of the Messages API, so no key is needed, and writes `shots-ask/`.
 9. Publish. Follow `references/publish.md`: publish to here.now with the access mode the door's profile says, post the link where the work is tracked. Publish the folder with its `.herenow/` manifest. If `ask-build.mjs` says `ANTHROPIC_API_KEY` is not set, tell the owner the one line to set it; never set it yourself. Without here.now credentials the page stays in its folder and you say so.
 
 ## Length budget
 
 Shorter wins. These caps are hard:
 
-- The first screen answers everything: the headline, the four to six opening bullets and one figure, all visible at 1440 by 900 without scrolling.
+- The first screen answers everything: the title, the purpose line, the four to six opening bullets and one figure, all visible at 1440 by 900 without scrolling.
 - With every chapter open, the page fits in about three screens at 1440 by 900 (about 2,700 px) before the appendix.
 - At most five chapters. No chapter that only restates another.
 - Captions are 12 words or fewer, in every edition.
@@ -45,9 +47,36 @@ Shorter wins. These caps are hard:
 
 Why: on 2026-10-08 Anshul said "any future reports need to be fucking shorter."
 
+## Glossary hover
+
+When the project has a glossary, every glossary term in body text, bullets, captions, detail panels and figure labels gets a dotted underline. Hovering, focusing (each term is in the tab order) or tapping one shows a small popover, 280 px wide at most, with the term in bold and its definition. Moving away, Escape or a tap elsewhere closes it. Headings, links, code and buttons are left alone. With no glossary nothing is added to the page.
+
+Find it at build time, every time; never assume it was mentioned in chat. `node assets/glossary.mjs --repo <project root> --out <starter copy>/h-glossary.js` searches in this order and the first hit wins:
+
+1. A `Glossary:` line in the project's `AGENTS.md` or `CLAUDE.md`, naming a file path or a URL.
+2. `docs/GLOSSARY.md`, `GLOSSARY.md`, `docs/glossary.md`, `glossary.md` from the repo root (`git rev-parse --show-toplevel`), any letter case.
+3. Any file named `glossary.md`, `.yml`, `.yaml` or `.json` in the top two levels of the repo.
+
+It prints the source it used (`GLOSSARY 4 terms from docs/GLOSSARY.md @ a46ef03 (via conventional file)`), and the page footer shows the same `Glossary: <file> @ <short sha>`. With no hit it prints `GLOSSARY none` and leaves `h-glossary.js` empty, so the build skips it. A Linear document URL cannot be fetched by the script: it prints `GLOSSARY needs-linear <url>`; read the document with the Linear MCP `get_document` tool, save the markdown, and rerun with `--from <file> --label "<url>"`.
+
+The file format. Markdown with one `## Term` heading per term, an optional `Also: alias, alias` line, then the definition paragraph:
+
+```markdown
+## Vault
+Also: archive
+Where every original file is kept, on Backblaze B2. Nothing in it is ever edited.
+```
+
+A Markdown table also works: term in the first column, definition in the second, aliases in an optional `Also` column. YAML (`- term:`, `definition:`, `aliases:`) and JSON (`[{term, definition, aliases}]` or `{term: definition}`) are read too. Definitions are cut to two sentences and cleaned to the copy rules. Plurals match (`Layers` finds `Layer`); a name with two capitals or a digit, such as `B2`, matches its exact case only.
+
+The Ask panel should put the glossary in its context too: when present, the page exposes it as `window.REPORT_GLOSSARY`, shaped `{source, terms: [{t, d, a}]}`.
+
+Why: on 2026-10-08 Anshul said "if i hover over anything that's in the glossary, it will show a tiny popup with the glossary definition... if there is a glossary for this project, add that, but otherwise, don't." and "when the skill is invoked from another project, it should look for the glossary, cuz maybe it's not in the chat context."
+
 ## Rules that do not bend
 
-- The page opens with four to six one-line bullets under the headline, each led by a highlighted key number or phrase. No verdict label, badge, eyebrow, opening paragraph, stat tiles or row of headline numbers anywhere in the report. Why: on 2026-10-08 Anshul said "at the top of the report put a plain english thing, no label, just the text." Shown a plain paragraph there, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily." Shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), he said "never put these in the report."
+- The page opens with a plain title (the question or decision, 24 to 28 px, never over 32), a one-line purpose, then four to six one-line bullets, each led by a highlighted key number or phrase. No verdict label, badge, eyebrow, opening paragraph, stat tiles or row of headline numbers anywhere in the report. Why: on 2026-10-08 Anshul said "at the top of the report put a plain english thing, no label, just the text." Shown a plain paragraph there, he said "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily." Shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT), he said "never put these in the report."
+- No italic display or accent type: no italic headings, no italic serif for emphasis, no italic pull-quotes. Emphasis is weight or colour only. Why: on 2026-10-08 Anshul said "never use that fucking stupid italic font".
 - 12 px minimum text, 44 px minimum targets, no horizontal page scroll at 1440 or 800 wide, zero console errors.
 - Status is never colour alone. Every light sits next to a word or an icon.
 - Text uses text tokens, never the series colour.
@@ -78,3 +107,5 @@ Ship the lean edition when the audience is leadership or the page is going into 
 | `assets/shoot.mjs` | The verification script |
 | `assets/ask-build.mjs` | Build step for the Ask panel: freezes the report context, writes `.herenow/proxy.json`, checks the variables |
 | `assets/ask-test.mjs` | Drives every Ask tool in a browser against a mock Messages API; local or on the live page |
+| `assets/glossary.mjs` | Finds and parses the project's glossary, writes `h-glossary.js` for the build (empty when there is none) |
+| `assets/glossary-runtime.js` | The hover popover code `glossary.mjs` bundles into `h-glossary.js` |

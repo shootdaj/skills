@@ -10,8 +10,7 @@ Timings from the reference `boot()`; all through `Motion.animate`, all skipped w
 | --- | --- |
 | 0 ms | Top bar fades and drops in (400 ms) |
 | 100 ms | Tabs stagger in, 30 ms apart |
-| 150 ms | Headline words rise in, 60 ms apart |
-| 550 ms | The layer map figure rises in |
+| 150 ms | Title, purpose line and layer map figure rise in, 120 ms apart |
 | 800 ms | Opening bullets spring in, 80 ms apart |
 | 850 ms | Any number marked `data-count` counts up over 1.1 s, comma-formatted when marked |
 | 3200 ms | Failsafe: anything still at opacity 0 is forced visible and the `anim` class is removed |

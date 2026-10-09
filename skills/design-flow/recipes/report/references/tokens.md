@@ -62,9 +62,10 @@ Where hues appear at full strength: the dot beside an opening bullet, chip outli
 
 ## Type and shape
 
-- Familjen Grotesk 700 for the headline, chapter titles and figure titles, 500 for labels and buttons, 400 for body. Body is 15.5 px on 1.55.
+- Familjen Grotesk 700 for the title, chapter titles and figure titles, 500 for labels and buttons, 400 for body. Body is 15.5 px on 1.55.
 - Martian Mono 400 to 600 for data: figure numbers, eyebrows, counts, route strings, ids. Never for sentences.
 - 12 px is the floor for anything readable, including SVG text after scaling.
+- Never italic. Emphasis is weight (600 to 700) or colour. Why: on 2026-10-08 Anshul said "never use that fucking stupid italic font".
 - 12 px radius on cards, panels and figures. 999 px pills for chips and buttons. 10 px on inner panels.
 - 44 px minimum for anything clickable, 48 px for tabs.
 - One shadow token, used on hover lift only.

@@ -17,7 +17,7 @@ localStorage key, default dark unless your direction is light-first). {{ABOVE_TH
   focus rings. Cards react to the cursor (spotlight, tilt, glow border) where it fits the direction.
 - Visible motion.dev choreography using `https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js` (global `Motion`:
   `animate`, `stagger`, `inView`, `scroll`, `spring`). Required, and it must be noticeable:
-  1. page-load orchestration (header, title words, opening bullets spring in, figures stagger),
+  1. page-load orchestration (header, title, opening bullets spring in, figures stagger),
   2. scroll-triggered reveals for every section (`Motion.inView`),
   3. number count-up tickers,
   4. chart draw-in (bars grow, cells stagger, edges draw with dash offset, "new" marks breathe),

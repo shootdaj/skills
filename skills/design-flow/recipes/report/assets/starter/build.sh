@@ -3,12 +3,14 @@
 # The "Ask about this report" panel (h-ask.css, i-ask.js) is on by default. ASK=off sh build.sh leaves it out.
 # ASK_MODEL sets the panel's default model: claude-opus-5-5 (default), claude-fable-5-1 (best answers, 2.5x the price) or claude-sonnet-5 (half the price).
 # With the panel on, ask-build.mjs then freezes the report text into the page and writes ../.herenow/proxy.json (references/ask-panel.md).
+# h-glossary.js is optional: assets/glossary.mjs writes it when the project has a glossary and leaves it empty when not.
 cd "$(dirname "$0")"
+GLOSSARY=$( [ -s h-glossary.js ] && echo h-glossary.js )
 if [ "${ASK:-on}" = "off" ]; then
-  cat a-head.html b1-tokens.css b2-components.css b3-figures.css c-body.html d-data.js e-core.js f-figures.js g-boot.js > ../index.html
+  cat a-head.html b1-tokens.css b2-components.css b3-figures.css c-body.html d-data.js e-core.js f-figures.js $GLOSSARY g-boot.js > ../index.html
 else
   sed "s/__ASK_MODEL__/${ASK_MODEL:-claude-opus-5-5}/" i-ask.js > _ask.js
-  cat a-head.html b1-tokens.css b2-components.css b3-figures.css h-ask.css c-body.html d-data.js e-core.js f-figures.js _ask.js g-boot.js > ../index.html
+  cat a-head.html b1-tokens.css b2-components.css b3-figures.css h-ask.css c-body.html d-data.js e-core.js f-figures.js $GLOSSARY _ask.js g-boot.js > ../index.html
   rm -f _ask.js
 fi
 node -e "const fs=require('fs');const s=fs.readFileSync('../index.html','utf8');fs.writeFileSync('_check.js',s.slice(s.lastIndexOf('<script>')+8,s.lastIndexOf('</script>')))"
