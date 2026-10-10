@@ -19,7 +19,7 @@ if (!LIVE && !existsSync(file)) { console.error('ask-test: no such page ' + file
 const OUT = resolve(opt('--out', LIVE ? 'ask-shots' : join(dirname(file), 'shots-ask'))); mkdirSync(OUT, { recursive: true });
 
 /* ───────── the mock Messages API ───────── */
-const MOCK = { mode: 'ok', requests: [], violations: [], emitted: new Set(), drive: [], seq: 0 };
+const MOCK = { mode: 'ok', requests: [], violations: [], emitted: new Set(), drive: [], seq: 0, lastSystem: null };
 const MODELS = ['claude-opus-5-5', 'claude-fable-5-1', 'claude-sonnet-5'];
 // token estimate: text at ~3.4 chars per token; images at width*height/750 like the API, not by their base64 size
 const tok = s => { let n = 0; const t = String(s).replace(/"data":"([A-Za-z0-9+/=]{200,})"/g, (m, d) => { const z = pngSize(d); n += z ? Math.ceil(z.w * z.h / 750) : 1500; return '"data":""'; }); return n + Math.ceil(t.length / 3.4); };
@@ -105,7 +105,7 @@ function plan(body) {
   return { text: `**${ctx.headline || ctx.title}**\n\nIn three lines:\n\n1. ${ctx.opening[0] || 'The first point.'}\n2. ${ctx.opening[1] || 'The second point.'}\n3. ${ctx.opening[2] || 'The third point.'}\n\nThe clearest picture is [[${f.id}]], and the detail sits in [[${sec.id}]].${ctx.sources[0] ? ' Source: [[src:' + ctx.sources[0].id + ']].' : ''}\n\n| Part | Where |\n| --- | --- |\n| Picture | ${f.no || f.id} |\n| Detail | ${sec.title} |` };
 }
 function events(body, route) {
-  const v = validate(body, route); MOCK.requests.push({ route, model: body.model, messages: body.messages.length, effort: body.output_config && body.output_config.effort, fallbacks: body.fallbacks || null, violations: v });
+  const v = validate(body, route); MOCK.lastSystem = body.system; MOCK.requests.push({ route, model: body.model, messages: body.messages.length, effort: body.output_config && body.output_config.effort, fallbacks: body.fallbacks || null, violations: v });
   if (v.length) { MOCK.violations.push(...v); return { status: 400, json: { type: 'error', error: { type: 'invalid_request_error', message: 'mock: ' + v.join('; ') } } }; }
   const p = plan(body); const n = ++MOCK.seq; const sys = tok(JSON.stringify(body.system)) + tok(JSON.stringify(body.tools));
   const hist = tok(JSON.stringify(body.messages.slice(0, -1))), tail = tok(JSON.stringify(body.messages[body.messages.length - 1]));
@@ -206,6 +206,19 @@ MOCK.mode = 'ok'; await intercept(true);
 await page.reload(); await page.waitForTimeout(2500);
 await step('open, empty state', async () => { await page.click('.ask-fab'); await page.waitForTimeout(900); await shot(page, 'ask-02-open', 'Panel open, docked: the page narrows so nothing it points at is hidden'); return { status: await page.evaluate(() => window.__askPanel.state().status), docked: await page.evaluate(() => window.__askPanel.state().docked), ctx: await page.evaluate(() => window.__askPanel.state().ctxSource) }; });
 await step('streamed answer', async () => { await page.click('.ask-sugg'); if (!LIVE) { await page.waitForSelector('.ask-caret', { timeout: 15000 }); await page.waitForTimeout(250); await shot(page, 'ask-03-streaming', 'Streaming: text arrives as it is written'); } /* live: interception hands over the stream in one piece */ await page.waitForFunction(() => document.querySelector('.ask-send span').textContent === 'Send', null, { timeout: 30000 }); await page.waitForTimeout(400); await shot(page, 'ask-04-answer', 'Finished answer: markdown, inline citations, chips that scroll the page, tokens and cost'); const b = await lastBot(page); return { ...b, ok: b && b.refs > 0 && b.chips.length > 0 && /\$/.test(b.use) && /<strong>|<ol>|<table>/.test(b.html + '<strong>') }; });
+// The lead statement (paragraphs, Your call strip, side card) must reach Claude as its own entry, in reading order: after the headline,
+// before the opening bullets. Checked on the system prompt the mock actually received, against the text on the page.
+await step('lead statement reaches Claude, before the bullets', async () => { const dom = await page.evaluate(() => { const ld = document.querySelector('#overview .lead'); if (!ld) return null;
+    const t = e => { const c = e.cloneNode(true); c.querySelectorAll('.hn,svg').forEach(x => x.remove()); return c.textContent.replace(/\s+/g, ' ').trim(); }; const card = ld.querySelector('.how-card');
+    const parts = [...[...ld.querySelectorAll('p')].filter(p => !p.closest('.ask,.how-card')), ld.querySelector('.ask'), ...(card ? card.querySelectorAll('h1,h2,h3,h4,li,p') : [])].filter(Boolean).map(t).filter(Boolean);
+    return { parts, bullet: t(document.querySelector('#overview ul.opening li') || document.createElement('i')) }; });
+  if (!dom) return { skipped: 'this page has no div.lead' };
+  const sys = MOCK.lastSystem || []; const rep = ((sys[sys.length - 1] || {}).text || '').replace(/^<report>\n/, '').replace(/\n<\/report>$/, ''); const ctx = JSON.parse(rep); const enc = x => JSON.stringify(x).slice(1, -1);
+  const lead = JSON.stringify(ctx.lead || ''); const missing = dom.parts.filter(x => !lead.includes(enc(x))); const keys = Object.keys(ctx);
+  const keyOrder = keys.indexOf('headline') < keys.indexOf('lead') && keys.indexOf('lead') < keys.indexOf('opening');
+  const readingOrder = dom.bullet ? rep.indexOf(enc(dom.parts[0])) > -1 && rep.indexOf(enc(dom.parts[0])) < rep.indexOf(enc(dom.bullet)) : true;
+  const named = /\blead\b/i.test((sys[0] || {}).text || '');
+  return { leadParts: dom.parts.length, missing: missing.map(x => x.slice(0, 60)), keys: keys.join(','), keyOrder, readingOrder, instructionsNameIt: named, ok: !!ctx.lead && !missing.length && keyOrder && readingOrder && named }; });
 await step('citation chip scrolls and pulses', async () => { const before = await page.evaluate(() => scrollY); await page.locator('.ask-b').last().locator('.ask-chip[data-ref]').first().click(); await page.waitForTimeout(700); await shot(page, 'ask-05-citation-chip', 'Clicking a citation chip scrolls the page to that figure and pulses it'); const after = await page.evaluate(() => ({ y: scrollY, pulsing: !!document.querySelector('.ask-pulse') })); return { before, after: after.y, pulsing: after.pulsing, ok: after.pulsing }; });
 const figs = await page.evaluate(() => window.__askPanel.context().figures.map(f => ({ id: f.id, title: f.title })));
 const F = figs.find(f => /cost|data|example/i.test(f.id)) || figs[figs.length > 1 ? 1 : 0];
