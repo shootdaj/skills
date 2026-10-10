@@ -45,7 +45,7 @@ A public page with a proxy route lets anyone with the link spend the key (up to 
 
 The system prompt is two text blocks: fixed instructions, then the report as JSON inside `<report>` tags with a cache breakpoint on it. The request also sets top-level automatic caching so the growing conversation is cached too. Tools come first in the cached prefix and never change.
 
-`ask-build.mjs` opens the built page in headless Chrome and freezes the report into `<script type="application/json" id="ask-context">`: title, headline, opening bullets, every section's text, every figure's number, title, caption, hint, detail text, the data blocks it names and its rendered labels, and every outbound link as a source (`s1`, `s2`, ...). Freezing keeps the prompt byte-identical between visits, which is what lets the cache hit. Without the blob the page reads the same thing live.
+`ask-build.mjs` opens the built page in headless Chrome and freezes the report into `<script type="application/json" id="ask-context">`: title, headline, the lead statement (its paragraphs, the Your call line and the side card, in that order), opening bullets, every section's text, every figure's number, title, caption, hint, detail text, the data blocks it names and its rendered labels, and every outbound link as a source (`s1`, `s2`, ...). Freezing keeps the prompt byte-identical between visits, which is what lets the cache hit. Without the blob the page reads the same thing live.
 
 Each figure's data blocks come from `data-ask` on the figure when present, naming `d-data.js` blocks; otherwise the panel takes the upper-case names its draw function in `FIGS` uses (10 of 14 figures in the EmbeddingGemma 2 report were found this way):
 

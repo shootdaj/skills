@@ -44,7 +44,7 @@ if (!has('--no-freeze')) {
     const json = JSON.stringify(c).replace(/</g, '\\u003c').replace(/[\u2028\u2029]/g, ch => '\\u' + ch.charCodeAt(0).toString(16));
     html = html.replace(BLOB, '').replace(/<\/body>/i, `<script type="application/json" id="ask-context">${json}</script>\n</body>`);
     writeFileSync(file, html);
-    out.context = { chars: json.length, approxTokens: Math.round(json.length / 3.4), sections: c.sections.length, figures: c.figures.length, sources: c.sources.length,
+    out.context = { chars: json.length, approxTokens: Math.round(json.length / 3.4), lead: !!c.lead, sections: c.sections.length, figures: c.figures.length, sources: c.sources.length,
       figuresWithData: c.figures.filter(f => f.data && Object.keys(f.data).length).length, truncated: !!c.truncated };
     if (out.context.figuresWithData < out.context.figures) out.next.push(`${out.context.figures - out.context.figuresWithData} of ${out.context.figures} figures have no data block (none named in data-ask, none found in their FIGS draw function); Claude gets their rendered labels instead. Add data-ask="BLOCK" where a figure has real data.`);
   } catch (e) {

@@ -94,7 +94,11 @@ function extract(){
   if(bodyText)o.text=bodyText;
   const lb=labelsOf(f);if(lb.length)o.labels=lb;return o});
  const seen=new Set(),sources=[];QA('a[href^="http"]').forEach(a=>{if(a.closest('.ask-ui'))return;const u=a.href;if(seen.has(u))return;seen.add(u);sources.push({id:'s'+(sources.length+1),title:(tx(a)||a.title||u).slice(0,160),url:u})});
- const ctx={title:D.title,description:meta('description'),headline:tx(Q('#headline')||Q('h1')),opening:QA('#overview ul.opening li').map(tx),sections,figures,sources,footer:tx(Q('footer'))};
+ /* the lead statement under the title, in reading order: its paragraphs, the Your call strip, the side card (How we checked) */
+ const ld=Q('#overview .lead'),card=ld&&Q('.how-card',ld);
+ const lead=ld?{paragraphs:QA('p',ld).filter(p=>!p.closest('.ask,.how-card')).map(tx),call:tx(Q('.ask',ld)),
+  card:card?{title:tx(Q('h1,h2,h3,h4',card)),steps:QA('li',card).map(li=>tx(strip(li,'.hn'))),note:QA('p',card).map(tx).join(' ')}:undefined}:undefined;
+ const ctx={title:D.title,description:meta('description'),headline:tx(Q('#headline')||Q('h1')),lead,opening:QA('#overview ul.opening li').map(tx),sections,figures,sources,footer:tx(Q('footer'))};
  let s=JSON.stringify(ctx);
  if(s.length>CFG.contextChars){ctx.figures.forEach(f=>{delete f.labels});s=JSON.stringify(ctx)}
  if(s.length>CFG.contextChars){ctx.figures.forEach(f=>{delete f.text});s=JSON.stringify(ctx)}
@@ -115,7 +119,7 @@ How to answer:
 - Call read_figure_data before quoting a number that is not written in the report text. Call snapshot_region when how a figure looks matters. Call ask_about_selection when the reader says "this", "that" or refers to what they selected. Call open_source to hand over a link. Call save_thread only when the reader asks to save or export.
 - Never invent numbers, sources or ids.
 
-The report context is JSON: title, headline, opening bullets, sections (id, number, title, text, figure ids), figures (id, number, section, title, caption, data, labels) and sources (id, title, url). Every section and figure id is also an anchor on the page (#id).`;
+The report context is JSON: title, headline, lead (the lead statement under the title: its paragraphs, the call the reader is asked to make, and the side card on how it was checked), opening bullets, sections (id, number, title, text, figure ids), figures (id, number, section, title, caption, data, labels) and sources (id, title, url). Every section and figure id is also an anchor on the page (#id).`;
 function systemBlocks(){context();return [{type:'text',text:INSTRUCTIONS},{type:'text',text:'<report>\n'+CTXS+'\n</report>',cache_control:{type:'ephemeral'}}]}
 function target(id){if(!id)return null;id=String(id).replace(/^#/,'');const c=context();
  const f=c.figures.find(x=>x.id===id);if(f)return {kind:'fig',id,short:f.no||'Figure',long:(f.no?f.no+' ':'')+(f.title||''),el:D.getElementById(id)};
