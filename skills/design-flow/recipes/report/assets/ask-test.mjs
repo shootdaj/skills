@@ -11,6 +11,7 @@ import { createServer } from 'node:http';
 import { readFileSync, existsSync, mkdirSync, statSync, writeFileSync } from 'node:fs';
 import { resolve, dirname, join, extname } from 'node:path';
 import { launch } from '../../../assets/lib/playwright.mjs';
+import { briefGaps, briefStrings } from './brief.mjs';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 const LIVE = opt('--live', '');
@@ -91,6 +92,12 @@ function plan(body) {
   const q = lastText(last); const ql = q.toLowerCase(); const imgs = last.content.filter(b => b.type === 'image');
   const f = pickFig(ctx, q); const tu = (name, input, pre) => ({ pre, tool: { name, input } });
   if (/fallback test/.test(ql)) return { fallback: true, text: 'This answer was served after a fallback switch. The marker block must not be echoed back.' };
+  // Questions about the work behind the report are answered from the context brief, the first entry of the report JSON.
+  if (/why does this report exist|how was this report made|what happens next/.test(ql)) { const b = ctx.brief || null; const g = (o, k) => (o && o[k]) || '';
+    if (!b) return { text: 'This report carries no context brief, so I cannot say why it exists, how it was made or what happens next.' };
+    if (/why/.test(ql)) return { text: `**${g(b.why, 'problem')}** ${g(b.why, 'askedBy')} asked for it: "${g(b.why, 'quote')}"` };
+    if (/how/.test(ql)) return { text: `**${g(b.how, 'ran')}** Data: ${g(b.how, 'sources')} Where: ${g(b.how, 'where')} When: ${g(b.how, 'dates')} Not tested: ${g(b.how, 'notTested')}` };
+    return { text: `**${g(b.decisions, 'yourCall')}** Already decided: ${g(b.decisions, 'decided')} Still open: ${g(b.decisions, 'pending')}` }; }
   if (/long answer/.test(ql)) return { text: Array.from({ length: 40 }, (_, i) => `Line ${i + 1} of a deliberately long answer so the Stop button can be pressed while it streams.`).join('\n\n') };
   if (/highlight|outline/.test(ql)) return tu('highlight', { id: f.id, note: 'This is the one' }, 'Outlining it.');
   if (/select|this text|this line/.test(ql) && !imgs.length && !/selection>/.test(JSON.stringify(last.content))) return tu('ask_about_selection', {}, 'Reading what you selected.');
@@ -219,7 +226,26 @@ await step('lead statement reaches Claude, before the bullets', async () => { co
   const readingOrder = dom.bullet ? rep.indexOf(enc(dom.parts[0])) > -1 && rep.indexOf(enc(dom.parts[0])) < rep.indexOf(enc(dom.bullet)) : true;
   const named = /\blead\b/i.test((sys[0] || {}).text || '');
   return { leadParts: dom.parts.length, missing: missing.map(x => x.slice(0, 60)), keys: keys.join(','), keyOrder, readingOrder, instructionsNameIt: named, ok: !!ctx.lead && !missing.length && keyOrder && readingOrder && named }; });
+// The context brief (2026-10-10): every report carries CONTEXT in d-data.js, with every required field filled ("not recorded" counts).
+// It must reach Claude unchanged as the first entry of the report JSON, before any page text, and the instructions must name it.
+const norm = s => String(s || '').replace(/\s+/g, ' ').trim();
+const pageBrief = () => page.evaluate(() => (typeof CONTEXT !== 'undefined' ? CONTEXT : null));
+await step('context brief reaches Claude, before the page text', async () => { const brief = await pageBrief(); const fails = briefGaps(brief);
+  const sys = MOCK.lastSystem || []; const rep = ((sys[sys.length - 1] || {}).text || '').replace(/^<report>\n/, '').replace(/\n<\/report>$/, ''); let ctx = {}; try { ctx = JSON.parse(rep); } catch (e) {}
+  const keys = Object.keys(ctx); const enc = x => JSON.stringify(x).slice(1, -1); const at = rep.indexOf('"brief":');
+  const pageText = ['"title":', '"headline":', '"lead":', '"opening":', '"sections":'].map(k => rep.indexOf(k)).filter(i => i >= 0);
+  if (!ctx.brief) fails.push('the report JSON Claude got has no brief entry');
+  else { if (brief && JSON.stringify(ctx.brief) !== JSON.stringify(brief)) fails.push('the brief Claude got differs from CONTEXT in d-data.js');
+    if (keys[0] !== 'brief' || !pageText.every(i => at < i)) fails.push('the brief is not first, before the page text (keys: ' + keys.join(',') + ')');
+    const missing = brief ? briefStrings(brief).filter(x => !rep.includes(enc(x)) || rep.indexOf(enc(x)) > Math.min(...pageText)) : []; if (missing.length) fails.push('brief facts not ahead of the page text: ' + missing.map(x => x.slice(0, 40)).join('; ')); }
+  if (!/\bbrief\b/i.test((sys[0] || {}).text || '')) fails.push('the instructions do not tell Claude about the brief');
+  return { fields: brief ? briefStrings(brief).length : 0, keys: keys.slice(0, 4).join(','), fails, ok: !fails.length }; });
 await step('citation chip scrolls and pulses', async () => { const before = await page.evaluate(() => scrollY); await page.locator('.ask-b').last().locator('.ask-chip[data-ref]').first().click(); await page.waitForTimeout(700); await shot(page, 'ask-05-citation-chip', 'Clicking a citation chip scrolls the page to that figure and pulses it'); const after = await page.evaluate(() => ({ y: scrollY, pulsing: !!document.querySelector('.ask-pulse') })); return { before, after: after.y, pulsing: after.pulsing, ok: after.pulsing }; });
+await step('answers why, how and what next from the brief', async () => { const b = await pageBrief() || {}; const got = [];
+  for (const [q, fact, name] of [['Why does this report exist?', (b.why || {}).problem, 'why'], ['How was this report made?', (b.how || {}).ran, 'how'], ['What happens next?', (b.decisions || {}).yourCall, 'next']]) {
+    await ask(page, q); await shot(page, 'ask-05' + 'abc'['why how next'.split(' ').indexOf(name)] + '-brief-' + name, `"${q}": the answer comes from the context brief`);
+    const t = norm((await lastBot(page)).text); got.push({ q, fromBrief: !!norm(fact) && t.includes(norm(fact)), answer: t.slice(0, 90) }); }
+  return { answers: got, ok: got.every(g => g.fromBrief) }; });
 const figs = await page.evaluate(() => window.__askPanel.context().figures.map(f => ({ id: f.id, title: f.title })));
 const F = figs.find(f => /cost|data|example/i.test(f.id)) || figs[figs.length > 1 ? 1 : 0];
 await step('tool: scroll_to', async () => { await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(300); await ask(page, `Where is ${F.title} shown?`); await page.waitForTimeout(300); await shot(page, 'ask-06-scroll_to', 'scroll_to: Claude points at a figure; the page scrolls there and pulses it'); const b = await lastBot(page); const vis = await page.evaluate(id => { const r = document.getElementById(id).getBoundingClientRect(); return r.top < innerHeight && r.bottom > 0; }, F.id); return { acts: b.acts, visible: vis, ok: b.acts.some(a => /Showed/.test(a)) && vis }; });
