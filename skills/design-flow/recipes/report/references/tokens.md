@@ -25,6 +25,7 @@ Everything visual reads a token. `assets/starter/b1-tokens.css` is the source; t
 | `--pt` `--ps` `--pline` | Plane top, plane side and plane outline for the exploded stack |
 | `--shadow` | The one elevation shadow |
 | `--f` `--mono` | Type faces |
+| `--track` `--word` | Letter and word spacing for text set in `--f`: `.015em` and `.05em` |
 | `--r` `--pill` `--gut` `--maxw` `--top` | 12 px radius, 999 px pill, 24 px gutter, 1240 px content width, top bar height |
 | `--spring` `--ease` | `cubic-bezier(.34,1.56,.64,1)` and `cubic-bezier(.2,.7,.1,1)` |
 
@@ -62,7 +63,10 @@ Where hues appear at full strength: the dot beside an opening bullet, chip outli
 
 ## Type and shape
 
-- Familjen Grotesk 700 for the title, chapter titles and figure titles, 500 for labels and buttons, 400 for body. Body is 15.5 px on 1.55.
+- Manrope 700 for the title, chapter titles and figure titles, 600 for highlights and bullet leads, 500 for labels and buttons, 400 for body. Load it as `Manrope:wght@400..700` so 600 and 650 are real weights, never rounded up to bold. Body is 15.5 px on 1.55, the lead 19 px on 1.7, the opening bullets 16 px on 1.45.
+- Letter spacing `--track` (`.015em`) and word spacing `--word` (`.05em`) on the body, the lead and the bullets. Manrope sets letters and words close together, and light text on a dark page blooms, so without them long text looks cramped. Headings keep their own slight negative tracking.
+- The bullets are 16 px because Manrope's small letters are taller than the old font's: 16 px Manrope looks as big as the old 17 px and keeps each bullet on one line at 1440.
+  Why: on 2026-10-10 Anshul, reading a report in the Plum dark theme, said of Familjen Grotesk "this font looks terrible in this theme. find something better, more modern, better fit with the style". Shown five fonts on the same report screen, he picked Manrope: "go with manrope as the font. bake this into the skill too".
 - Martian Mono 400 to 600 for data: figure numbers, eyebrows, counts, route strings, ids. Never for sentences.
 - 12 px is the floor for anything readable, including SVG text after scaling.
 - Never italic. Emphasis is weight (600 to 700) or colour. Why: on 2026-10-08 Anshul said "never use that fucking stupid italic font".

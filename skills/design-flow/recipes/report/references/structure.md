@@ -163,7 +163,7 @@ A short script does the derivation well: edit the full body, assert every captio
 
 Load from CDN only, in this order, before the inline script:
 
-- `https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;700&family=Martian+Mono:wght@400;500;600&display=swap`
+- `https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&family=Martian+Mono:wght@400;500;600&display=swap`
 - `https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js`, used by `setHTML` for every markup string
 - `https://cdn.jsdelivr.net/npm/d3@7`
 - `https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js` when a Sankey or alluvial is used

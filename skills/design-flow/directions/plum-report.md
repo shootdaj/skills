@@ -9,10 +9,10 @@ Calm, bold numbers, approachable. Dark first.
  "mood": "calm, bold numbers, approachable",
  "first": "dark",
  "fonts": {
-  "display": "Familjen Grotesk",
-  "body": "Familjen Grotesk",
+  "display": "Manrope",
+  "body": "Manrope",
   "mono": "Martian Mono",
-  "google": "Familjen+Grotesk:wght@400;500;700&family=Martian+Mono:wght@400;500;600"
+  "google": "Manrope:wght@400..700&family=Martian+Mono:wght@400;500;600"
  },
  "dark": {
   "bg": "#1B1530",
