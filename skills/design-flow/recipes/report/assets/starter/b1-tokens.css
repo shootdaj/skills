@@ -91,7 +91,9 @@
   color-scheme:light;
 }
 :root{
-  --f:'Familjen Grotesk','Helvetica Neue',Arial,sans-serif;
+  --f:'Manrope','Helvetica Neue',Arial,sans-serif;
+  /* Manrope sets letters and words close together; this opens body text, the lead and the bullets on the dark themes (2026-10-10). */
+  --track:.015em; --word:.05em;
   --mono:'Martian Mono',ui-monospace,Menlo,monospace;
   --r:12px; --pill:999px; --gut:24px; --maxw:1240px; --top:112px;
   --spring:cubic-bezier(.34,1.56,.64,1); --ease:cubic-bezier(.2,.7,.1,1);
