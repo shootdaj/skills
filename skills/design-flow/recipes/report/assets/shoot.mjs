@@ -35,32 +35,81 @@ const audit = (page, tag) => page.evaluate((tag) => {
   const dash = /[–—“”‘’]/.test(document.body.innerText);
   return { tag, hscroll: d.scrollWidth > d.clientWidth, small: [...new Set(small)].slice(0, 15), smallTargets: smallT, dashesOrCurlyQuotes: dash };
 }, tag);
-// The opening rule (2026-10-08): the overview is an h1 title (the question the report answers or the decision it supports, 14 words
-// or fewer, normal heading size), then p.purpose (one line: the source and what the reader does now), then ul.opening: four to six
-// one-line bullets, each led by a bold key number or phrase, the first starting within 150 px of the overview top. No other paragraph,
-// verdict label, eyebrow or stat tiles. Title 32 px at most, no text above 48 px anywhere, no italic text in any heading or hero element.
-// Run at 1440 wide.
+// The opening rule (2026-10-10, replaces the 2026-10-08 purpose line): the overview is an h1 title (the question the report answers or
+// the decision it supports, 14 words or fewer, 32 px at most), then div.lead: the lead statement (two or three plain paragraphs at 18 px
+// or more, no wider than 70ch, three to five span.hl highlights), the Your call strip (.ask) and the side card (.how-card), then
+// ul.opening: four to six one-line bullets, each led by a bold key number or phrase. No highlight or bullet lead has a background fill.
+// Every text in the overview outside its figures reaches 10:1 contrast against what is behind it (the page, or the strip or card surface).
+// Title, lead, strip and card fit the first screen at 1440 by 900 and the first bullet is on it. No other paragraph, verdict label,
+// eyebrow or stat tiles; no text above 48 px anywhere, no italic text in any heading or hero element. Run at 1440 wide.
 const opening = page => page.evaluate(() => {
   const ov = document.getElementById('overview'); if (!ov) return { tag: 'opening', missing: '#overview' };
-  const kids = [...ov.children]; const h1 = ov.querySelector('h1'); const purpose = ov.querySelector('p.purpose');
-  const ul = ov.querySelector('ul.opening'); const after = purpose ? purpose.nextElementSibling : null;
+  const kids = [...ov.children]; const h1 = ov.querySelector('h1');
+  const lead = ov.querySelector('.lead'); const ask = lead && lead.querySelector('.ask'); const card = lead && lead.querySelector('.how-card');
+  const paras = lead ? [...lead.querySelectorAll('p')].filter(p => !p.closest('.ask,.how-card')) : [];
+  const hls = paras.flatMap(p => [...p.querySelectorAll('.hl')]);
+  const ul = ov.querySelector('ul.opening'); const after = lead ? lead.nextElementSibling : null;
   const lis = ul ? [...ul.children].filter(e => e.tagName === 'LI') : [];
   const lines = el => { const t = el.querySelector('.ot') || el; const lh = parseFloat(getComputedStyle(t).lineHeight) || 24; return Math.round(t.getBoundingClientRect().height / lh); };
-  const H = innerHeight, inFold = e => { const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= H; };
+  const H = innerHeight, inFold = e => { if (!e) return false; const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= H; };
   const shown = e => { const cs = getComputedStyle(e); return e.getClientRects().length && cs.display !== 'none' && cs.visibility !== 'hidden' && !e.closest('.doors,.sr,[inert]'); };
   const label = e => e.tagName.toLowerCase() + (e.className && typeof e.className === 'string' ? '.' + e.className.split(' ')[0] : '');
+  const snip = e => ' "' + e.textContent.trim().replace(/\s+/g, ' ').slice(0, 32) + '"';
   const textEls = [...document.body.querySelectorAll('*')].filter(e => [...e.childNodes].some(n => n.nodeType === 3 && n.textContent.trim()) && shown(e));
+  // Colours: a 1 px canvas turns any computed colour (rgb, color(srgb), oklab after color-mix) into 8-bit RGBA.
+  const cx = Object.assign(document.createElement('canvas'), { width: 1, height: 1 }).getContext('2d', { willReadFrequently: true });
+  const rgba = s => { cx.clearRect(0, 0, 1, 1); cx.fillStyle = '#000'; cx.fillStyle = s; cx.fillRect(0, 0, 1, 1); const d = cx.getImageData(0, 0, 1, 1).data; return [d[0], d[1], d[2], d[3] / 255]; };
+  const over = (top, bot) => [0, 1, 2].map(i => top[i] * top[3] + bot[i] * (1 - top[3]));
+  const page = [document.documentElement, document.body].reduce((c, e) => over(rgba(getComputedStyle(e).backgroundColor), c), [255, 255, 255]);
+  const behind = el => { const chain = []; for (let e = el; e && e !== document.body && e !== document.documentElement; e = e.parentElement) chain.unshift(e); return chain.reduce((c, e) => over(rgba(getComputedStyle(e).backgroundColor), c), page); };
+  const lum = c => c.map(v => { v /= 255; return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; }).reduce((s, v, i) => s + v * [0.2126, 0.7152, 0.0722][i], 0);
+  const ratio = el => { const bg = behind(el); const fg = over(rgba(getComputedStyle(el).color), bg); const a = lum(fg), b = lum(bg); return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05); };
+  const openingText = textEls.filter(e => ov.contains(e) && !e.closest('.fg,figure,svg'));
+  const filled = e => { const cs = getComputedStyle(e); return rgba(cs.backgroundColor)[3] > 0.01 || cs.backgroundImage !== 'none'; };
+  const chOf = p => { const probe = document.createElement('span'); probe.style.cssText = 'position:absolute;visibility:hidden;width:70ch;font:inherit;letter-spacing:inherit'; p.appendChild(probe); const w = probe.getBoundingClientRect().width / 70; probe.remove(); return p.getBoundingClientRect().width / w; };
   return { tag: 'opening',
     titleFirst: !!h1 && kids[0] === h1, titleWords: h1 ? h1.textContent.trim().split(/\s+/).length : 0, titlePx: h1 ? parseFloat(getComputedStyle(h1).fontSize) : 0,
-    bulletsTop: lis.length ? Math.round(lis[0].getBoundingClientRect().top - ov.getBoundingClientRect().top) : 0,
-    purposeLine: !!purpose && kids[1] === purpose && lines(purpose) === 1,
+    lead: !!lead && paras.length > 0, leadAfterTitle: !!lead && kids[1] === lead, leadParagraphs: paras.length,
+    leadPx: paras.length ? Math.min(...paras.map(p => parseFloat(getComputedStyle(p).fontSize))) : 0,
+    leadCh: paras.length ? Math.round(Math.max(...paras.map(chOf))) : 0,
+    highlights: hls.length, filled: [...hls, ...lis.map(li => li.querySelector('b,strong')).filter(Boolean)].filter(filled).map(e => label(e) + snip(e)).slice(0, 6),
+    lowContrast: openingText.map(e => [e, ratio(e)]).filter(([, r]) => r < 10).map(([e, r]) => r.toFixed(1) + ':1 ' + label(e) + snip(e)).slice(0, 8),
+    ask: !!ask && shown(ask) && !!ask.textContent.trim(), card: !!card && shown(card) && !!card.textContent.trim(),
     bulletsFirst: !!ul && !!after && (after === ul || after.firstElementChild === ul), bullets: lis.length,
-    firstScreen: lis.length > 0 && lis.every(inFold) && [...document.querySelectorAll('#overview .fg, .panel.open .fg')].some(inFold),
+    firstScreen: !!lead && [h1, ...paras, ask, card].every(inFold) && inFold(lis[0]),
     unled: lis.filter(li => !li.querySelector('b,strong')).length, wrapped: lis.filter(li => lines(li) > 1).length,
     display: textEls.filter(e => parseFloat(getComputedStyle(e).fontSize) > 48).map(e => label(e) + ' ' + getComputedStyle(e).fontSize).slice(0, 5),
     italic: [...document.querySelectorAll('h1,h2,h3,h4,h5,h6,h1 *,h2 *,h3 *,h4 *,h5 *,h6 *,#overview,#overview *,.top *,.ph *,.fg-h *')].filter(e => textEls.includes(e) && /italic|oblique/.test(getComputedStyle(e).fontStyle)).map(label).slice(0, 5),
-    banned: [...document.querySelectorAll('.verdict,.eyebrow,.tiles,.tile,.stat-tile,#overview p:not(.purpose),#overview .ov-grid > p')].map(label).slice(0, 5) };
+    banned: [...document.querySelectorAll('.verdict,.eyebrow,.tiles,.tile,.stat-tile'), ...ov.querySelectorAll('p')].filter(e => !e.closest('.lead,figure')).map(label).slice(0, 5) };
 });
+// Plain reasons for every opening failure, so the summary says what to fix.
+const openingFails = l => {
+  if (l.missing) return ['no ' + l.missing];
+  const f = [];
+  if (!l.titleFirst) f.push('the h1 title is not the first thing in #overview');
+  if (l.titleWords > 14) f.push(`title is ${l.titleWords} words, over 14`);
+  if (l.titlePx > 32) f.push(`title is ${l.titlePx} px, over 32`);
+  if (!l.lead) f.push('lead statement missing: div.lead with two or three plain paragraphs right under the title');
+  else {
+    if (!l.leadAfterTitle) f.push('lead statement is not directly under the title');
+    if (l.leadPx < 18) f.push(`lead text is ${l.leadPx} px, under 18`);
+    if (l.leadCh > 70) f.push(`lead is ${l.leadCh}ch wide, over 70`);
+    if (l.highlights < 3 || l.highlights > 5) f.push(`${l.highlights} highlights (span.hl) in the lead, needs 3 to 5`);
+  }
+  if (l.filled.length) f.push('highlight or bullet lead with a background fill: ' + l.filled.join('; '));
+  if (l.lowContrast.length) f.push('opening text under 10:1 contrast: ' + l.lowContrast.join('; '));
+  if (!l.ask) f.push('Your call strip missing (.lead .ask)');
+  if (!l.card) f.push('side card missing (.lead .how-card)');
+  if (!l.firstScreen) f.push('title, lead, Your call strip and side card are not all on the first screen at 1440 by 900 with the first bullet on it');
+  if (!l.bulletsFirst) f.push('ul.opening does not follow the lead');
+  if (l.bullets < 4 || l.bullets > 6) f.push(`${l.bullets} opening bullets, needs 4 to 6`);
+  if (l.unled) f.push(`${l.unled} bullets without a bold lead`);
+  if (l.wrapped) f.push(`${l.wrapped} bullets wrap past one line`);
+  if (l.display.length) f.push('text over 48 px: ' + l.display.join('; '));
+  if (l.italic.length) f.push('italic text: ' + l.italic.join('; '));
+  if (l.banned.length) f.push('label, eyebrow, stat tile or paragraph outside the lead: ' + l.banned.join('; '));
+  return f;
+};
 // The length budget (2026-10-08, "any future reports need to be fucking shorter"): with every chapter open the page fits in about
 // three 900 px screens before the appendix (fails above 3.3), at most five chapters, every caption 12 words or fewer (a Details link excluded).
 const length = page => page.evaluate(() => {
@@ -107,7 +156,7 @@ if (only === 'all' || only === 'dark') {
   const { ctx, page } = await open({ width: 1440, height: 900 }, 'dark');
   await page.screenshot({ path: S + '01-1440-dark-top.png' });
   log.push(await audit(page, 'dark1440-top'));
-  log.push(await opening(page));
+  { const o = await opening(page); o.fails = openingFails(o); log.push(o); }
   log.push(await glossary(page, 'dark'));
   await expandAll(page); await sweep(page);
   log.push(await audit(page, 'dark1440-expanded'));
@@ -124,6 +173,7 @@ if (only === 'all' || only === 'dark') {
   await page.click(tb); await page.waitForTimeout(1500);
   await page.screenshot({ path: S + '03-1440-light-top.png' });
   log.push(await audit(page, 'light1440-top'));
+  { const o = await opening(page); log.push({ tag: 'opening-light', lowContrast: o.lowContrast || [], filled: o.filled || [] }); }
   log.push(await glossary(page, 'light'));
   for (const id of sections.slice(0, 2)) { const el = page.locator('#' + id); await el.scrollIntoViewIfNeeded(); await page.waitForTimeout(500); await el.screenshot({ path: S + `03-1440-light-${id}.png` }); }
   log.push(await audit(page, 'light1440-expanded'));
@@ -133,6 +183,7 @@ if (only === 'all' || only === '800') {
   for (const theme of ['dark', 'light']) {
     const { ctx, page } = await open({ width: 800, height: 1000 }, theme);
     await page.screenshot({ path: S + `04-800-${theme}-top.png` });
+    log.push({ tag: 'lead-800-' + theme, leadPx: await page.evaluate(() => { const ps = [...document.querySelectorAll('#overview .lead p')].filter(p => !p.closest('.ask,.how-card')); return ps.length ? Math.min(...ps.map(p => parseFloat(getComputedStyle(p).fontSize))) : 0; }) });
     await expandAll(page); await sweep(page);
     log.push(await audit(page, theme + '800-expanded'));
     if (theme === 'dark') { await page.addStyleTag({ content: '#top{position:relative!important}.totop{display:none!important}' }); for (const id of sections.slice(0, 2)) { const el = page.locator('#' + id); await el.scrollIntoViewIfNeeded(); await page.waitForTimeout(800); await el.screenshot({ path: S + `04-800-dark-${id}.png` }); } }
@@ -158,6 +209,6 @@ if (only === 'all' || only === 'fallback') {
   await ctx2.close();
 }
 await browser.close();
-const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && (l.missing || !l.titleFirst || l.titleWords > 14 || l.titlePx > 32 || l.bulletsTop > 150 || !l.purposeLine || !l.bulletsFirst || l.bullets < 4 || l.bullets > 6 || l.unled || l.wrapped || !l.firstScreen || l.display.length || l.italic.length || l.banned.length)) || (/^glossary/.test(l.tag) && ((l.inPage && (!l.terms || !l.hoverShows || !l.leaveHides || !l.focusShows || !l.escapeHides || !l.footer)) || (!l.inPage && l.markup) || (l.declared !== null && l.declared !== l.inPage))) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
+const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && l.fails.length) || (l.tag === 'opening-light' && (l.lowContrast.length || l.filled.length)) || (/^lead-800/.test(l.tag) && l.leadPx < 18) || (/^glossary/.test(l.tag) && ((l.inPage && (!l.terms || !l.hoverShows || !l.leaveHides || !l.focusShows || !l.escapeHides || !l.footer)) || (!l.inPage && l.markup) || (l.declared !== null && l.declared !== l.inPage))) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
 console.log(JSON.stringify({ pass: errs.length === 0 && failed.length === 0, errs, log }, null, 1));
 process.exit(errs.length || failed.length ? 1 : 0);
