@@ -45,7 +45,7 @@ A public page with a proxy route lets anyone with the link spend the key (up to 
 
 The system prompt is two text blocks: fixed instructions, then the report as JSON inside `<report>` tags with a cache breakpoint on it. The request also sets top-level automatic caching so the growing conversation is cached too. Tools come first in the cached prefix and never change.
 
-`ask-build.mjs` opens the built page in headless Chrome and freezes the report into `<script type="application/json" id="ask-context">`: title, headline, the lead statement (its paragraphs, the Your call line and the side card, in that order), opening bullets, every section's text, every figure's number, title, caption, hint, detail text, the data blocks it names and its rendered labels, and every outbound link as a source (`s1`, `s2`, ...). Freezing keeps the prompt byte-identical between visits, which is what lets the cache hit. Without the blob the page reads the same thing live.
+`ask-build.mjs` opens the built page in headless Chrome and freezes the report into `<script type="application/json" id="ask-context">`: first the context brief (below), then the page text: title, headline, the lead statement (its paragraphs, the Your call line and the side card, in that order), opening bullets, every section's text, every figure's number, title, caption, hint, detail text, the data blocks it names and its rendered labels, and every outbound link as a source (`s1`, `s2`, ...). Freezing keeps the prompt byte-identical between visits, which is what lets the cache hit. Without the blob the page reads the same thing live.
 
 Each figure's data blocks come from `data-ask` on the figure when present, naming `d-data.js` blocks; otherwise the panel takes the upper-case names its draw function in `FIGS` uses (10 of 14 figures in the EmbeddingGemma 2 report were found this way):
 
@@ -53,7 +53,40 @@ Each figure's data blocks come from `data-ask` on the figure when present, namin
 <figure class="fg" id="fig-cost" data-ask="COST,FOOT">
 ```
 
-The blob is capped at 150,000 characters; labels, then figure text, then large data blocks are dropped first.
+The blob is capped at 150,000 characters; labels, then figure text, then large data blocks are dropped first. The brief is never trimmed.
+
+## Context brief
+
+Every report carries a brief about the work behind it, so Claude can answer "why does this report exist?", "how was this made?" and "what happens next?". It is the `CONTEXT` block in `d-data.js`, written in plain English by the agent that builds the report. Every field is required. A fact the builder does not have is written `'not recorded'`, never guessed; Claude is told to say so rather than fill the gap.
+
+| Field | Holds |
+| --- | --- |
+| `project.name` | The project, in plain words |
+| `project.links` | The tickets or PRs, as `[{label, url}]`, or `'not recorded'` |
+| `project.goal` | The goal the work serves |
+| `why.problem` | The problem this report is for |
+| `why.askedBy` | Who asked for it, and where or when |
+| `why.quote` | Their words, quoted, or `'not recorded'` |
+| `how.sources` | The data sources |
+| `how.ran` | What was actually run: a real run, old records or a calculation |
+| `how.where` | Where it ran |
+| `how.dates` | The dates |
+| `how.tools` | The tools and models |
+| `how.notTested` | What was not tested |
+| `decisions.decided` | What is already decided |
+| `decisions.pending` | What is still pending |
+| `decisions.yourCall` | What the reader is asked to do |
+| `history` | How the report changed between versions, as `[{date: 'YYYY-MM-DD', change}]` |
+| `glossary` | Where the project glossary lives, or `'not recorded'` |
+
+The starter's `d-data.js` holds a filled example. `assets/brief.mjs` holds the same list for the checks.
+
+- The panel's `extract()` puts the brief first in the report JSON, as `brief`, before the title and the rest of the page text, and the instructions tell Claude what it holds and when to use it.
+- `ask-build.mjs` reports it in its summary as `complete`, `incomplete` or `missing` and names every empty field.
+- The page shows the same facts only as a collapsed "About this report" entry (`details#about-report`), the last entry of the closed appendix. `e-core.js` fills it from `CONTEXT`; never write the facts into the HTML. Its text is left out of the appendix text Claude gets, since the brief already carries it.
+- `ask-test.mjs` fails when the brief is missing, a field is empty, or the brief does not reach the mock model unchanged as the first entry, before the page text. It also asks the three questions above and checks each answer comes from the brief. `shoot.mjs` fails a page whose appendix does not end with the entry, collapsed, showing every fact and link in the brief.
+
+Why: on 2026-10-10 Anshul said "make a change where the AI knows the context about the work that the report is about. how it was created, etc. it should know the basics of whats going on with the report etc and why its there what problem its for all that stuff".
 
 ## Tools
 
@@ -110,7 +143,7 @@ node assets/ask-test.mjs /path/to/index.html                  # local: page + st
 node assets/ask-test.mjs --live https://<slug>.here.now/      # live page: one real check of the key state, then Claude and the key-not-set 401 mocked, Drive real
 ```
 
-No key is spent: live, the only real Claude-side call is the free count_tokens key check, recorded as `keySet` in the summary. The mock rejects what the Messages API would reject (unknown model, missing stream, system without the cache breakpoint, bad tool schemas, role order, unanswered `tool_use`, bad images, forced `tool_choice`, `fallbacks` off the fallback route) and checks that every earlier assistant turn comes back exactly as streamed, thinking signatures included. It writes screenshots of every tool to `shots-ask/` and a JSON summary; open the pictures. Answers in those screenshots are the mock's, not Claude's.
+No key is spent: live, the only real Claude-side call is the free count_tokens key check, recorded as `keySet` in the summary. The mock rejects what the Messages API would reject (unknown model, missing stream, system without the cache breakpoint, bad tool schemas, role order, unanswered `tool_use`, bad images, forced `tool_choice`, `fallbacks` off the fallback route) and checks that every earlier assistant turn comes back exactly as streamed, thinking signatures included. It also checks the context brief: present, every field filled, sent first, and used for the why, how and what next answers. It writes screenshots of every tool to `shots-ask/` and a JSON summary; open the pictures. Answers in those screenshots are the mock's, not Claude's.
 
 ## Pitfalls
 
