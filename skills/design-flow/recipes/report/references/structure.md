@@ -11,7 +11,7 @@ The page is a pyramid. The reader gets the answer in the first screen and can st
 | 01 and 02 | The two chapters that carry the answer, for example architecture and readiness | open by default |
 | 03 to 05 | Supporting chapters, for example build plan, risks or decisions. Five chapters at most in all | closed by default |
 | Prototypes (optional) | Clickable flows the report proposes, each with a tap counter | closed |
-| Appendix | `section.panel#appendix`: the prose the captions link to, one numbered entry per figure, plus any detail that does not change a decision | closed |
+| Appendix | `section.panel#appendix`: the prose the captions link to, one numbered entry per figure, plus any detail that does not change a decision. Its last entry is always "About this report", collapsed: the context brief from `CONTEXT` in `d-data.js` (see `ask-panel.md`) | closed |
 | Footer | Method line, date, author, where the sources live, and `Glossary: <file> @ <short sha>` when the project has a glossary | always |
 
 At 1440 by 900 the title, the lead statement, the Your call strip and the side card are fully visible without scrolling, and the opening bullets start on that screen.

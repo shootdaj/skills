@@ -114,3 +114,20 @@ const elk=window.ELK?new ELK():null;
 function elkLayout(children,edges,opts){return elk.layout({id:'root',layoutOptions:Object.assign({'elk.algorithm':'layered','elk.direction':'RIGHT','elk.edgeRouting':'ORTHOGONAL','elk.layered.spacing.nodeNodeBetweenLayers':'56','elk.spacing.nodeNode':'22','elk.spacing.edgeLabel':'3','elk.spacing.edgeNode':'14','elk.layered.spacing.edgeNodeBetweenLayers':'14','elk.edgeLabels.placement':'CENTER','elk.layered.nodePlacement.strategy':'BRANDES_KOEPF'},opts||{}),children,edges})}
 function elkPath(e){const s=e.sections&&e.sections[0];if(!s)return '';const pts=[s.startPoint,...(s.bendPoints||[]),s.endPoint];return 'M'+pts.map(p=>p.x.toFixed(1)+','+p.y.toFixed(1)).join(' L')}
 const TXTW=(s,px)=>s.length*px;
+
+/* ───────────────────────── about this report: the context brief ─────────────────────────
+   Fills the collapsed "About this report" entry at the end of the appendix from CONTEXT in d-data.js: the same brief the Ask panel
+   hands Claude first. The facts live only in CONTEXT; this just shows them. */
+(function(){const host=$('#about-report .ab-b');if(!host)return;const B=typeof CONTEXT!=='undefined'?CONTEXT:null;
+ if(!B){setHTML(host,'<p>No context brief in this report.</p>');return}
+ const NR='not recorded',v=(o,k)=>esc(o&&typeof o[k]==='string'&&o[k].trim()?o[k]:NR),P=B.project||{},W=B.why||{},H=B.how||{},D=B.decisions||{};
+ const links=Array.isArray(P.links)&&P.links.length?`<span class="ab-links">${P.links.map(l=>`<a href="${esc(l.url||'').replace(/"/g,'&quot;')}">${esc(l.label||l.url||'')}</a>`).join('')}</span>`:v(P,'links');
+ const quote=W.quote&&W.quote.trim()&&W.quote.trim()!==NR?`"${v(W,'quote')}"`:NR;
+ const groups=[['Project and work',[['Project',v(P,'name')],['Tickets and PRs',links],['Goal',v(P,'goal')]]],
+  ['Why this report exists',[['Problem',v(W,'problem')],['Asked by',v(W,'askedBy')],['In their words',quote]]],
+  ['How it was made',[['Data',v(H,'sources')],['What was run',v(H,'ran')],['Where',v(H,'where')],['When',v(H,'dates')],['Tools and models',v(H,'tools')],['Not tested',v(H,'notTested')]]],
+  ['Decisions',[['Decided',v(D,'decided')],['Pending',v(D,'pending')],['Your call',v(D,'yourCall')]]],
+  ['History',Array.isArray(B.history)&&B.history.length?B.history.map(h=>[h.date||NR,esc(h.change||NR)]):[['Versions',NR]]],
+  ['Glossary',[['Where it lives',v(B,'glossary')]]]];
+ setHTML(host,groups.map(([h,rows])=>`<h4>${esc(h)}</h4><dl>${rows.map(([t,d])=>`<dt>${esc(t)}</dt><dd>${d}</dd>`).join('')}</dl>`).join(''));
+ $$('a[href]',host).forEach(a=>{a.target='_blank';a.rel='noopener'})})();

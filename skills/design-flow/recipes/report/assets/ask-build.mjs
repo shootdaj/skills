@@ -2,6 +2,7 @@
 //   node ask-build.mjs /path/to/index.html [--no-freeze] [--no-drive] [--drive-id drv_...]
 // 1. Freezes the report text into the page as <script type="application/json" id="ask-context">. That blob is the system prompt
 //    the panel sends with prompt caching, so it must be byte-stable between builds; it is read from the rendered page in headless Chrome.
+//    Its first entry is the context brief (CONTEXT in d-data.js), ahead of the page text; the summary lists any field left empty.
 // 2. Writes .herenow/proxy.json next to the page. here.now injects secrets from account variables server side, so the page never holds one:
 //    /api/claude, /api/claude-fb and /api/claude-count -> api.anthropic.com with ANTHROPIC_API_KEY (-fb adds the server-side fallback
 //    beta header; -count is the free token count the panel uses as its key check),
@@ -44,8 +45,10 @@ if (!has('--no-freeze')) {
     const json = JSON.stringify(c).replace(/</g, '\\u003c').replace(/[\u2028\u2029]/g, ch => '\\u' + ch.charCodeAt(0).toString(16));
     html = html.replace(BLOB, '').replace(/<\/body>/i, `<script type="application/json" id="ask-context">${json}</script>\n</body>`);
     writeFileSync(file, html);
-    out.context = { chars: json.length, approxTokens: Math.round(json.length / 3.4), lead: !!c.lead, sections: c.sections.length, figures: c.figures.length, sources: c.sources.length,
+    let gaps = c.brief ? [] : ['no CONTEXT brief in d-data.js']; try { gaps = (await import('./brief.mjs')).briefGaps(c.brief); } catch (e) {}
+    out.context = { chars: json.length, approxTokens: Math.round(json.length / 3.4), brief: !c.brief ? 'missing' : gaps.length ? 'incomplete' : 'complete', lead: !!c.lead, sections: c.sections.length, figures: c.figures.length, sources: c.sources.length,
       figuresWithData: c.figures.filter(f => f.data && Object.keys(f.data).length).length, truncated: !!c.truncated };
+    if (gaps.length) out.next.push('Context brief incomplete, so Claude cannot fully say why this report exists, how it was made or what happens next: ' + gaps.join('; ') + '. Fill CONTEXT in d-data.js and write "not recorded" for a fact you do not have; ask-test.mjs fails until then.');
     if (out.context.figuresWithData < out.context.figures) out.next.push(`${out.context.figures - out.context.figuresWithData} of ${out.context.figures} figures have no data block (none named in data-ask, none found in their FIGS draw function); Claude gets their rendered labels instead. Add data-ask="BLOCK" where a figure has real data.`);
   } catch (e) {
     out.context = { frozen: false, why: e.message };

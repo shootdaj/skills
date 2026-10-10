@@ -75,15 +75,18 @@ function labelsOf(f){const seen=new Set(),out=[];const add=s=>{s=(s||'').replace
  QA('[aria-label]',f).forEach(x=>{if(!x.closest('.ask-ui,.fg-h'))add(x.getAttribute('aria-label'))});QA('svg text',f).forEach(x=>add(x.textContent));
  let n=0;return out.filter(s=>(n+=s.length)<6000).slice(0,160)}
 /* Which data blocks each figure draws from: data-ask="A,B" on the figure wins; otherwise the upper-case names its draw function in FIGS uses. */
-const CORE=new Set(['KEY','FIGS','LEDK','PANELS','SECTS','HAS','ST','TXTW','CFG','MODELS','PRICE','LIBS','ICONS','TOOLS','INSTRUCTIONS','CORE']);
+const CORE=new Set(['KEY','FIGS','LEDK','PANELS','SECTS','HAS','ST','TXTW','CFG','MODELS','PRICE','LIBS','ICONS','TOOLS','INSTRUCTIONS','CORE','CONTEXT']);
 function inferred(){const out={};try{const F=Function('return typeof FIGS!=="undefined"?FIGS:null')();if(!Array.isArray(F))return out;
  for(const [id,fn] of F){if(typeof fn!=='function')continue;const names=[...new Set(fn.toString().match(/\b[A-Z][A-Z0-9_]{2,}\b/g)||[])].filter(n=>{if(CORE.has(n))return false;
   try{const v=Function('return (typeof '+n+'!=="undefined")?'+n+':undefined')();return v!=null&&typeof v!=='function'&&!(v instanceof Node)}catch(e){return false}});if(names.length)out[id]=names}}catch(e){}return out}
 function extract(){
  const meta=n=>{const m=Q(`meta[name="${n}"]`);return m?m.content:''};const inf=inferred();
+ /* the context brief (CONTEXT in d-data.js): the work behind the report. It goes first, before any page text, and is never trimmed.
+    Its "About this report" entry in the appendix shows the same facts, so it is left out of the appendix text below. */
+ const brief=(()=>{try{const b=Function('return typeof CONTEXT!=="undefined"?CONTEXT:undefined')();return b&&typeof b==='object'?JSON.parse(JSON.stringify(b)):undefined}catch(e){return undefined}})();
  const secs=[Q('#overview'),...QA('section.panel')].filter(Boolean);
  const figs=QA('figure.fg[id]').filter(f=>!f.closest('.ask-ui'));
- const sections=secs.map(s=>{const body=Q('.pbi',s)||s;const c=strip(body,'figure,.ask-ui,svg,script,style,template,.ph');
+ const sections=secs.map(s=>{const body=Q('.pbi',s)||s;const c=strip(body,'figure,.ask-ui,svg,script,style,template,.ph,#about-report');
   return {id:s.id,no:s.dataset.no||'',title:s.dataset.title||tx(Q('h2,h1',s)),open:s.classList.contains('open')||!s.classList.contains('panel'),text:tx(c).slice(0,8000),figures:figs.filter(f=>f.closest('section')===s).map(f=>f.id)}});
  const figures=figs.map(f=>{const sec=f.closest('section');const cap=Q('figcaption',f);const capT=cap?tx(strip(cap,'.dlink')):'';
   const names=f.dataset.ask?f.dataset.ask.split(/[\s,]+/).filter(Boolean):(inf[f.id]||[]);
@@ -98,7 +101,7 @@ function extract(){
  const ld=Q('#overview .lead'),card=ld&&Q('.how-card',ld);
  const lead=ld?{paragraphs:QA('p',ld).filter(p=>!p.closest('.ask,.how-card')).map(tx),call:tx(Q('.ask',ld)),
   card:card?{title:tx(Q('h1,h2,h3,h4',card)),steps:QA('li',card).map(li=>tx(strip(li,'.hn'))),note:QA('p',card).map(tx).join(' ')}:undefined}:undefined;
- const ctx={title:D.title,description:meta('description'),headline:tx(Q('#headline')||Q('h1')),lead,opening:QA('#overview ul.opening li').map(tx),sections,figures,sources,footer:tx(Q('footer'))};
+ const ctx={brief,title:D.title,description:meta('description'),headline:tx(Q('#headline')||Q('h1')),lead,opening:QA('#overview ul.opening li').map(tx),sections,figures,sources,footer:tx(Q('footer'))};
  let s=JSON.stringify(ctx);
  if(s.length>CFG.contextChars){ctx.figures.forEach(f=>{delete f.labels});s=JSON.stringify(ctx)}
  if(s.length>CFG.contextChars){ctx.figures.forEach(f=>{delete f.text});s=JSON.stringify(ctx)}
@@ -117,9 +120,10 @@ How to answer:
 - Keep it short: two to five sentences, or a short list. Plain words for a smart reader who is not technical. Bold the one phrase that answers the question. No em dashes, no preamble.
 - Point at the page. Cite a section or figure inline as [[id]], for example [[fig-cost]], and a source as [[src:s2]]. Use only ids that exist in the context. When one place on the page answers the question, also call scroll_to with that id; to point at several places in turn, call highlight.
 - Call read_figure_data before quoting a number that is not written in the report text. Call snapshot_region when how a figure looks matters. Call ask_about_selection when the reader says "this", "that" or refers to what they selected. Call open_source to hand over a link. Call save_thread only when the reader asks to save or export.
+- Questions about the work behind the report (why it exists, what problem it is for, who asked, how it was made, what data and tools were used, what was not tested, what is decided, what happens next, how it changed) are answered from brief. Where a brief field says "not recorded", say it was not recorded; never fill the gap with a guess.
 - Never invent numbers, sources or ids.
 
-The report context is JSON: title, headline, lead (the lead statement under the title: its paragraphs, the call the reader is asked to make, and the side card on how it was checked), opening bullets, sections (id, number, title, text, figure ids), figures (id, number, section, title, caption, data, labels) and sources (id, title, url). Every section and figure id is also an anchor on the page (#id).`;
+The report context is JSON. It starts with brief, the context brief the report's builder wrote about the work: project (name, ticket or PR links, the goal the work serves), why (the problem, who asked, their words), how (data sources, what was actually run, where, dates, tools and models, what was not tested), decisions (decided, pending, and what the reader is asked to do), history (dated changes between versions) and glossary (where the project glossary lives). The page text follows: title, headline, lead (the lead statement under the title: its paragraphs, the call the reader is asked to make, and the side card on how it was checked), opening bullets, sections (id, number, title, text, figure ids), figures (id, number, section, title, caption, data, labels) and sources (id, title, url). Every section and figure id is also an anchor on the page (#id).`;
 function systemBlocks(){context();return [{type:'text',text:INSTRUCTIONS},{type:'text',text:'<report>\n'+CTXS+'\n</report>',cache_control:{type:'ephemeral'}}]}
 function target(id){if(!id)return null;id=String(id).replace(/^#/,'');const c=context();
  const f=c.figures.find(x=>x.id===id);if(f)return {kind:'fig',id,short:f.no||'Figure',long:(f.no?f.no+' ':'')+(f.title||''),el:D.getElementById(id)};

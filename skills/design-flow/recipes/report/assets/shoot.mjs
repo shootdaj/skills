@@ -6,6 +6,7 @@ import { mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { launch } from '../../../assets/lib/playwright.mjs';
 import { findGlossary } from './glossary.mjs';
+import { briefStrings } from './brief.mjs';
 const args = process.argv.slice(2);
 const opt = (k, d) => { const i = args.indexOf(k); return i >= 0 ? args[i + 1] : d; };
 const file = resolve(args.find(a => !a.startsWith('--') && !args[args.indexOf(a) - 1]?.startsWith('--')) || 'index.html');
@@ -137,6 +138,45 @@ async function glossary(page, theme) {
   await page.evaluate(() => { document.activeElement && document.activeElement.blur(); scrollTo(0, 0); }); await page.waitForTimeout(200);
   return r;
 }
+// The context brief (2026-10-10): the appendix (section#appendix) ends with a collapsed "About this report" entry
+// (details#about-report) that shows the same facts as the CONTEXT block in d-data.js, the brief the Ask panel hands Claude first.
+// Run with every chapter open: opens the entry, screenshots it, audits it open, closes it again.
+async function about(page) {
+  const brief = await page.evaluate(() => (typeof CONTEXT !== 'undefined' ? CONTEXT : null));
+  const r = await page.evaluate(() => { const ap = document.getElementById('appendix'), el = document.getElementById('about-report');
+    const body = ap && (ap.querySelector('.pbi') || ap); const entries = body ? [...body.children].filter(e => !/^(SCRIPT|STYLE|TEMPLATE)$/.test(e.tagName)) : [];
+    const sum = el && el.querySelector(':scope > summary');
+    return { tag: 'about', appendix: !!ap, entry: !!el, inAppendix: !!(ap && el && ap.contains(el)), last: !!el && entries[entries.length - 1] === el,
+      details: !!el && el.tagName === 'DETAILS', openOnLoad: !!el && el.open, summary: sum ? sum.textContent.replace(/\s+/g, ' ').trim() : '' }; });
+  r.brief = !!brief; r.missing = []; r.missingLinks = [];
+  if (r.entry && r.details) {
+    await page.locator('#about-report > summary').scrollIntoViewIfNeeded(); await page.click('#about-report > summary'); await page.waitForTimeout(500);
+    const shown = await page.evaluate(() => { const el = document.getElementById('about-report'); return { open: el.open, text: el.innerText.replace(/\s+/g, ' '), hrefs: [...el.querySelectorAll('a[href]')].map(a => a.href) }; });
+    r.opens = shown.open; const st = await page.addStyleTag({ content: '#top{position:relative!important}.totop{display:none!important}' });
+    await page.evaluate(() => scrollTo(0, document.getElementById('about-report').getBoundingClientRect().top + scrollY - 8)); await page.waitForTimeout(400);
+    await page.locator('#about-report').screenshot({ path: S + '09-1440-dark-about.png' }); await st.evaluate(e => e.remove());
+    if (brief) { const norm = x => x.replace(/\s+/g, ' ').trim(); r.missing = briefStrings(brief).filter(x => !shown.text.includes(norm(x))).map(x => x.slice(0, 40));
+      r.missingLinks = (Array.isArray(brief.project && brief.project.links) ? brief.project.links : []).map(l => l.url).filter(u => !shown.hrefs.some(h => h.replace(/\/$/, '') === u.replace(/\/$/, ''))); }
+    r.openAudit = await audit(page, 'dark1440-about-open');
+    await page.click('#about-report > summary'); await page.waitForTimeout(300);
+  }
+  const f = [];
+  if (!r.brief) f.push('no CONTEXT brief in the page: add the CONTEXT block to d-data.js');
+  if (!r.appendix) f.push('no appendix (section.panel#appendix) to hold the About this report entry');
+  if (!r.entry) f.push('no "About this report" entry (details#about-report)');
+  else {
+    if (!r.inAppendix) f.push('About this report is not inside the appendix');
+    else if (!r.last) f.push('About this report is not the last entry of the appendix');
+    if (!r.details) f.push('About this report is not a collapsible details element');
+    if (r.openOnLoad) f.push('About this report is open on load; it starts collapsed');
+    if (r.summary !== 'About this report') f.push(`its summary reads "${r.summary}", not "About this report"`);
+    if (r.details && !r.opens) f.push('About this report does not open when its summary is clicked');
+    if (r.missing.length) f.push('the entry leaves out brief facts: ' + r.missing.join('; '));
+    if (r.missingLinks.length) f.push('the entry leaves out brief links: ' + r.missingLinks.join(' '));
+    const a = r.openAudit; if (a && (a.small.length || a.smallTargets.length || a.hscroll)) f.push('the open entry breaks the text or target size floor: ' + [...a.small, ...a.smallTargets].slice(0, 4).join('; '));
+  }
+  r.fails = f; return r;
+}
 async function sweep(page) { const h = await page.evaluate(() => document.documentElement.scrollHeight); for (let y = 0; y < h; y += 500) { await page.evaluate(y => scrollTo(0, y), y); await page.waitForTimeout(90); } await page.evaluate(() => scrollTo(0, 0)); await page.waitForTimeout(300); }
 async function open(viewport, theme, initScript) {
   const ctx = await browser.newContext({ deviceScaleFactor: 1, viewport });
@@ -161,6 +201,7 @@ if (only === 'all' || only === 'dark') {
   await expandAll(page); await sweep(page);
   log.push(await audit(page, 'dark1440-expanded'));
   log.push(await length(page));
+  log.push(await about(page));
   const st = await page.addStyleTag({ content: '#top{position:relative!important}.totop{display:none!important}' });
   for (const [i, id] of sections.entries()) {
     const el = page.locator('#' + id); if (!(await el.count())) { errs.push('missing section #' + id); continue; }
@@ -209,6 +250,6 @@ if (only === 'all' || only === 'fallback') {
   await ctx2.close();
 }
 await browser.close();
-const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || (l.tag === 'opening' && l.fails.length) || (l.tag === 'opening-light' && (l.lowContrast.length || l.filled.length)) || (/^lead-800/.test(l.tag) && l.leadPx < 18) || (/^glossary/.test(l.tag) && ((l.inPage && (!l.terms || !l.hoverShows || !l.leaveHides || !l.focusShows || !l.escapeHides || !l.footer)) || (!l.inPage && l.markup) || (l.declared !== null && l.declared !== l.inPage))) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
+const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || ((l.tag === 'opening' || l.tag === 'about') && l.fails.length) || (l.tag === 'opening-light' && (l.lowContrast.length || l.filled.length)) || (/^lead-800/.test(l.tag) && l.leadPx < 18) || (/^glossary/.test(l.tag) && ((l.inPage && (!l.terms || !l.hoverShows || !l.leaveHides || !l.focusShows || !l.escapeHides || !l.footer)) || (!l.inPage && l.markup) || (l.declared !== null && l.declared !== l.inPage))) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
 console.log(JSON.stringify({ pass: errs.length === 0 && failed.length === 0, errs, log }, null, 1));
 process.exit(errs.length || failed.length ? 1 : 0);
