@@ -152,7 +152,9 @@ async function about(page) {
   if (r.entry && r.details) {
     await page.locator('#about-report > summary').scrollIntoViewIfNeeded(); await page.click('#about-report > summary'); await page.waitForTimeout(500);
     const shown = await page.evaluate(() => { const el = document.getElementById('about-report'); return { open: el.open, text: el.innerText.replace(/\s+/g, ' '), hrefs: [...el.querySelectorAll('a[href]')].map(a => a.href) }; });
-    r.opens = shown.open; await page.locator('#about-report').screenshot({ path: S + '09-1440-dark-about.png' });
+    r.opens = shown.open; const st = await page.addStyleTag({ content: '#top{position:relative!important}.totop{display:none!important}' });
+    await page.evaluate(() => scrollTo(0, document.getElementById('about-report').getBoundingClientRect().top + scrollY - 8)); await page.waitForTimeout(400);
+    await page.locator('#about-report').screenshot({ path: S + '09-1440-dark-about.png' }); await st.evaluate(e => e.remove());
     if (brief) { const norm = x => x.replace(/\s+/g, ' ').trim(); r.missing = briefStrings(brief).filter(x => !shown.text.includes(norm(x))).map(x => x.slice(0, 40));
       r.missingLinks = (Array.isArray(brief.project && brief.project.links) ? brief.project.links : []).map(l => l.url).filter(u => !shown.hrefs.some(h => h.replace(/\/$/, '') === u.replace(/\/$/, ''))); }
     r.openAudit = await audit(page, 'dark1440-about-open');
