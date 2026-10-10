@@ -63,7 +63,7 @@ Calm, bold numbers, approachable. Dark first.
 }
 ```
 
-Motion signature: load choreography: bar, title and purpose line, opening bullets spring in one by one; scroll reveals with draw-in strokes; door curtain on theme swap; chips with a sliding pill; lights animate only on the active tab count and missing cells.
+Motion signature: load choreography: bar, title and lead statement, opening bullets spring in one by one; scroll reveals with draw-in strokes; door curtain on theme swap; chips with a sliding pill; lights animate only on the active tab count and missing cells.
 
 Forms: top chapter tabs with light and count; collapsible panels; opening bullets with a highlighted key phrase and an icon or dot each; figure frames with number, caption, detail panel; five-palette picker. No stat tiles (2026-10-08, "never put these in the report").
 

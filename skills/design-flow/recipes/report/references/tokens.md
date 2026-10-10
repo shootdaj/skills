@@ -58,7 +58,7 @@ Five candy hues for layers, domains or teams. They come from the Toy Blocks vari
 
 `--ink` is `#2B2240`, the text colour on a full-strength hue. Slate, Forest and Sand shift one or two slots so the hues do not fight the accent (see the CSS).
 
-Where hues appear at full strength: the dot beside an opening bullet, chip outlines, the pressed chip fill, outlines and labels of grouped figures. Where hues appear blended: any surface larger than a chip, at 30 to 35 percent into `--s1`, plus the icon chip and the soft highlight behind each opening bullet's bold lead (26 to 30 percent); the text on them stays a text token. Stat tiles and their coloured numbers left the report on 2026-10-08 (Why: "never put these in the report").
+Where hues appear at full strength: the dot beside an opening bullet, chip outlines, the pressed chip fill, outlines and labels of grouped figures. Where hues appear blended: any surface larger than a chip, at 30 to 35 percent into `--s1`, plus the icon chip beside each opening bullet (30 percent); the text on them stays a text token. The lead statement highlights and the opening bullets' bold leads carry their hue only as a thin 2 px underline at about 70 percent, never a fill (2026-10-10). Stat tiles and their coloured numbers left the report on 2026-10-08 (Why: "never put these in the report").
 
 ## Type and shape
 
