@@ -159,7 +159,9 @@ python3 <this skill>/assets/room/make-room.py <dir> --project "<Name>" --steps "
 
 ## Step 5: verify
 
-`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. Reports use `recipes/report/assets/shoot.mjs`, and `recipes/report/assets/ask-test.mjs` for the Ask panel. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
+Report tests are OFF for now (Anshul, 2026-10-11: "for now lets turn the report tests off"). For a report, skip the Playwright checks in this step: don't run `shoot.mjs` or `ask-test.mjs`. After publishing, load the live URL once and confirm the page renders. To turn them back on, delete this note.
+
+`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. When the report tests are on, reports use `recipes/report/assets/shoot.mjs`, and `recipes/report/assets/ask-test.mjs` for the Ask panel. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
 
 ## Step 6: publish
 

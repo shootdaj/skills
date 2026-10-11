@@ -138,6 +138,10 @@ At 1180 px and wider the open sheet docks: the page narrows by the sheet's width
 
 ## Test
 
+Report tests are OFF for now (Anshul, 2026-10-11: "for now lets turn the report tests off"). Don't run `shoot.mjs` or `ask-test.mjs`. After publishing, load the live URL once and confirm the page renders. To turn them back on, delete this note.
+
+When the report tests are on:
+
 ```bash
 node assets/ask-test.mjs /path/to/index.html                  # local: page + strict mock of the Messages API + mock Drive
 node assets/ask-test.mjs --live https://<slug>.here.now/      # live page: one real check of the key state, then Claude and the key-not-set 401 mocked, Drive real
