@@ -9,7 +9,7 @@ The page is a pyramid. The reader gets the answer in the first screen and can st
 | Top bar | Brand mark and title, Expand all, Collapse all, palette picker, theme toggle, chapter tabs with a light and a count each, a scroll progress line | always visible, sticky |
 | 00 Overview | Title (the question the report answers or the decision it supports), the lead statement under it (two or three plain paragraphs, then the Your call strip, with the "How we checked" side card beside them), then four to six one-line bullets (the opening, which are also the takeaways), with an optional layer map beside them. No display headline, eyebrow, label, badge, verdict card, paragraph outside the lead or stat tiles | always open |
 | 01 and 02 | The two chapters that carry the answer, for example architecture and readiness | open by default |
-| 03 to 05 | Supporting chapters, for example build plan, risks or decisions. Five chapters at most in all | closed by default |
+| 03 onward | Supporting chapters, for example build plan, risks or decisions, as many as the content needs | closed by default |
 | Prototypes (optional) | Clickable flows the report proposes, each with a tap counter | closed |
 | Appendix | `section.panel#appendix`: the prose the captions link to, one numbered entry per figure, plus any detail that does not change a decision. Its last entry is always "About this report", collapsed: the context brief from `CONTEXT` in `d-data.js` (see `ask-panel.md`) | closed |
 | Footer | Method line, date, author, where the sources live, and `Glossary: <file> @ <short sha>` when the project has a glossary | always |
@@ -30,17 +30,16 @@ A chapter is a `section.panel` with a header button, a body and one or more figu
 - figures, each with a number, a one-line caption, a tooltip on hover, a click detail and keyboard focus
 - at most one short list of plain facts
 
-## Length budget
+## Length
 
-- The first screen answers everything: the title, the lead statement, the Your call strip and the side card are fully visible at 1440 by 900 without scrolling, and the opening bullets start on that screen. The starter puts the layer map beside the bullets.
-- With every chapter open, the page fits in about three screens at 1440 by 900 (about 2,700 px) before the appendix.
-- At most five chapters, none that only restates another.
+- The first screen stays short and scannable: the title, the lead statement, the Your call strip and the side card are fully visible at 1440 by 900 without scrolling, and the opening bullets start on that screen. The starter puts the layer map beside the bullets.
+- After that, as many chapters as the content needs to be understood. Each one earns its place: no filler, none that only restates another.
+- Detail goes in collapsible parts (closed chapters, click panels) or the appendix.
 - Captions are 12 words or fewer, in every edition.
-- A detail that does not change a decision goes to the collapsed appendix, or is cut.
 
-Why: on 2026-10-08 Anshul said "any future reports need to be fucking shorter."
+Why: on 2026-10-08 Anshul said "any future reports need to be fucking shorter." On 2026-10-11 he asked "why do all reports now only produce like 3/4 sections" and said "yes" to keeping the first screen short and dropping the five-chapter, three-screen cap.
 
-Typical chapters and the figure that carries each one. Pick five at most; merge or cut the rest, and put sources in the footer or the appendix:
+Typical chapters and the figure that carries each one. Pick the ones the content needs; merge any that repeat each other, and put sources in the footer or the appendix:
 
 | Chapter | Lead figure | Supporting figures |
 | --- | --- | --- |
