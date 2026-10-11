@@ -169,6 +169,16 @@ Do what `publish.*` says, post the link where `post_to` says, state the access m
 
 A room publishes as a folder: `index.html`, `room.js`, `_vote/*.js`, `_vote/*.py`, `_requests/designs.js` and every finished design folder with its shots. Leave out `_vote/*.json`, `_vote/*.jsonl`, `_requests/*.json`, backups and unfinished design folders. Where it goes is `publish.room`: azure-sso through the azure-static-publish skill, the personal host, or local only.
 
+## Report house rules
+
+Moved here from Anshul's global AGENTS.md, and as binding as it; they apply to every report, whichever door loaded this skill. Whether to make a report at all stays in AGENTS.md: only when he will test something or make a real decision.
+
+- Reports are HTML. No Markdown, plain-text or ad hoc formats unless he explicitly asks for that specific format.
+- Asked to open a report → open it in Google Chrome.
+- Report checks: the report tests are off for now (Step 5 and step 8 of the report recipe), so publish, then load the live URL once and confirm the page renders. When they are back on: run the recipe's scripts plus one look at the first screen; no multi-viewport screenshot loops unless the layout changed.
+- Report-only tests never gate product CI or merges.
+- Still open every screenshot before delivering a report.
+
 ## Live design requests (Claude Code only)
 
 For a design room you work on with Claude Code. Invoke from the project's own build agent with `/design-flow watch the room` (or "start the design room"). Claude drives a Chrome window; the user picks in it. No server and no network calls: the form saves requests in the page's localStorage, and the watcher reads them out of that window.

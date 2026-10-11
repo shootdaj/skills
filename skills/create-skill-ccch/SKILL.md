@@ -14,7 +14,7 @@ creating or installing a skill.
 
 ## Defaults
 
-- Target all four harnesses unless the user narrows the request.
+- Target all four harnesses unless the user explicitly narrows the request.
 - Use `shootdaj/skills` as the publishing repository.
 - Put the primary package at `skills/<skill-name>/` in a local checkout whose
   `origin` points to `shootdaj/skills`.
@@ -24,6 +24,10 @@ creating or installing a skill.
 - Work on a branch and open a pull request. Do not push directly to the default
   branch.
 - Do not ask questions when the request and examples already define the skill.
+- Never make a local-only skill copy when the request is to create or update a
+  reusable skill. Always: one shared source in `shootdaj/skills`, global harness
+  entries symlinked to it, target metadata added, every destination validated,
+  published through a branch and pull request (Anshul's global AGENTS.md rule).
 
 ## 1. Define the skill
 
@@ -162,7 +166,7 @@ After installation, verify all four destinations:
 
 Do not replace an existing non-matching destination without explicit approval.
 
-## 7. Publish when requested
+## 7. Publish (always, through a branch and pull request)
 
 Before publishing:
 

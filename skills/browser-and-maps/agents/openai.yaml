@@ -1,0 +1,4 @@
+interface:
+  display_name: "Browser and Maps"
+  short_description: "Pick the right browser, test or map tool"
+  default_prompt: "Use $browser-and-maps to choose the right tool before driving this website or Google Maps task."

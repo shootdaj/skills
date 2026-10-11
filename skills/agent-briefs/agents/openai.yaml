@@ -1,0 +1,4 @@
+interface:
+  display_name: "Agent Briefs"
+  short_description: "Brief subagents: no CI watching, save as you go"
+  default_prompt: "Use $agent-briefs to write the brief for this subagent or long-running job."
