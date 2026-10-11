@@ -159,9 +159,9 @@ python3 <this skill>/assets/room/make-room.py <dir> --project "<Name>" --steps "
 
 ## Step 5: verify
 
-Report tests are OFF for now (Anshul, 2026-10-11: "for now lets turn the report tests off"). For a report, skip the Playwright checks in this step: don't run `shoot.mjs` or `ask-test.mjs`. After publishing, load the live URL once and confirm the page renders. To turn them back on, delete this note.
+Report tests are ON unless the project's AGENTS.md switches them off (Luminatlas does, as of 2026-10-11). When off: for a report, skip the Playwright checks in this step (don't run `shoot.mjs` or `ask-test.mjs`); after publishing, load the live URL once and confirm the page renders.
 
-`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. When the report tests are on, reports use `recipes/report/assets/shoot.mjs`, and `recipes/report/assets/ask-test.mjs` for the Ask panel. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
+`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. With the report tests on (the default), reports use `recipes/report/assets/shoot.mjs`, and `recipes/report/assets/ask-test.mjs` for the Ask panel. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
 
 ## Step 6: publish
 
@@ -175,7 +175,7 @@ Moved here from Anshul's global AGENTS.md, and as binding as it; they apply to e
 
 - Reports are HTML. No Markdown, plain-text or ad hoc formats unless he explicitly asks for that specific format.
 - Asked to open a report → open it in Google Chrome.
-- Report checks: the report tests are off for now (Step 5 and step 8 of the report recipe), so publish, then load the live URL once and confirm the page renders. When they are back on: run the recipe's scripts plus one look at the first screen; no multi-viewport screenshot loops unless the layout changed.
+- Report checks: report tests are ON by default. A project can switch them off in its own AGENTS.md (Luminatlas has, as of 2026-10-11; see Step 5 and step 8 of the report recipe). On: run the recipe's scripts plus one look at the first screen; no multi-viewport screenshot loops unless the layout changed. Off: publish, then load the live URL once and confirm the page renders.
 - Report-only tests never gate product CI or merges.
 - Still open every screenshot before delivering a report.
 
