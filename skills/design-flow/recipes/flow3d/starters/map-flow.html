@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Map flow starter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&family=Martian+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root,:root[data-theme="dark"]{--bg:#0A0C11;--s1:#11141B;--s2:#171B24;--s3:#1F2430;--line:rgba(255,255,255,.085);--line2:rgba(255,255,255,.16);
+ --txt:#EDEEF2;--txt2:#A6ACB8;--txt3:#838A98;--red:#4C7DFF;--red-txt:#8DB0FF;--ok:#3DDC97;--c1:#5DD3FF;--c2:#9BE15D;--c3:#A597FF;--c4:#FFD93D;--c5:#FF6B6B;
+ --f:'Manrope',system-ui,sans-serif;--mono:'Martian Mono',ui-monospace,monospace;color-scheme:dark}
+:root[data-theme="light"]{--bg:#F6F7F9;--s1:#FFFFFF;--s2:#EEF0F4;--s3:#E2E5EB;--line:rgba(0,0,0,.1);--line2:rgba(0,0,0,.2);
+ --txt:#14171F;--txt2:#4A5160;--txt3:#6B7280;--red:#2F5FE0;--red-txt:#2449B8;--ok:#1F8A4C;--c1:#0E7FB0;--c2:#4C8A12;--c3:#6B4FE0;--c4:#A87A00;--c5:#D23B3B;color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--txt);font:400 16px/1.6 var(--f)}
+main{max-width:1180px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;line-height:1.25;margin:0 0 6px}
+p.note{margin:0 0 20px}
+figcaption{margin-top:10px;font-weight:600}
+.src{font-size:13px;color:var(--txt2)}
+.theme{float:right;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:var(--s2);color:var(--txt);font:600 14px var(--f);cursor:pointer}
+</style>
+</head>
+<body>
+<main>
+<button class="theme" type="button" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='light'?'dark':'light'">Light or dark</button>
+<h1>A shooting trip through Thailand and Vietnam</h1>
+<p class="note">Routes as arcs over a ground plane. Each city sits at its real latitude and longitude; the grid lines are every 2 degrees.</p>
+<figure style="margin:0">
+ <div id="map"></div>
+ <figcaption>Six cities, one loop; arcs show the direction of travel.</figcaption>
+ <p class="src">Data: city coordinates are real; the route is an example. Put your own legs in, with weight for clips shot.</p>
+</figure>
+</main>
+<script src="../flow3d.js"></script>
+<script>
+const CITIES = [ // [id, name, lat, lon, hue]
+  ['bkk', 'Bangkok', 13.7563, 100.5018, '--c4'], ['cnx', 'Chiang Mai', 18.7883, 98.9853, '--c4'], ['hkt', 'Phuket', 7.8804, 98.3923, '--c4'],
+  ['han', 'Hanoi', 21.0278, 105.8342, '--c5'], ['dad', 'Da Nang', 16.0544, 108.2022, '--c5'], ['sgn', 'Ho Chi Minh City', 10.8231, 106.6297, '--c5']
+];
+const ROUTE = ['bkk', 'cnx', 'han', 'dad', 'sgn', 'hkt', 'bkk'];
+const fmt = (v, p, n) => Math.abs(v).toFixed(2) + '°' + (v >= 0 ? p : n);
+Flow3D.mount('#map', {
+  title: 'A shooting trip through Thailand and Vietnam',
+  map: { center: [14.4, 103.3], scale: 1.5, grid: 2 },
+  camera: { az: .18, el: .95, dist: 36 },
+  places: CITIES.map(([id, label, lat, lon, hue]) => ({ id, geo: [lat, lon], shape: 'pin', hue, label, sub: fmt(lat, 'N', 'S') + ', ' + fmt(lon, 'E', 'W') })),
+  paths: ROUTE.slice(1).map((to, i) => ({ from: ROUTE[i], to, hue: '--c1', weight: .5 })),
+  tour: ROUTE.map((id, i) => ({ to: id, dist: i === 0 ? 14 : 18, el: .8, hold: .8 })),
+  tourHue: '--c1'
+});
+</script>
+</body>
+</html>

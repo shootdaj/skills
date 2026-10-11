@@ -7,7 +7,7 @@ The goal is a page that is mostly figure, caption and one short list. Every figu
 1. Earn the ink. A figure must show a relationship, distribution, sequence or structure that text shows worse.
 2. Interactive by default. Hover gives the underlying fact, click focuses, filters or reveals detail, keyboard reaches everything.
 3. Build from proven examples. Base each chart on a known, well-built example (Observable D3 gallery, motion.dev examples, vasturiano's 3d-force-graph examples, three.js examples). Match the mechanics, restyle to the tokens.
-4. 3D only when it encodes. Allowed: a force graph for a real graph, instanced boxes for a value field, a points morph for a de-duplication story, an exploded layer stack. Each needs a 2D fallback, orbit or drag, at most 10k particles, and must read at 800 px wide. If in doubt, draw it isometric in SVG, which is what the reference stack does.
+4. 3D only when it encodes. Allowed: a 3D flow figure for anything that flows (`../../flow3d/RECIPE.md`), a force graph for a real graph, instanced boxes for a value field, a points morph for a de-duplication story, an exploded layer stack. Each needs a 2D fallback, orbit or drag, at most 10k particles, and must read at 800 px wide. If in doubt, draw it isometric in SVG, which is what the reference stack does.
 5. Style stays in tokens. Status colours carry an icon or a word, no rainbow palettes, direct labels, 12 px floor.
 6. Text budget. After the pass, a chapter is figures, captions and one short list. Detail moves into tooltips, detail panels and the appendix.
 
