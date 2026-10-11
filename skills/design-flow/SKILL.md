@@ -159,15 +159,25 @@ python3 <this skill>/assets/room/make-room.py <dir> --project "<Name>" --steps "
 
 ## Step 5: verify
 
-Report tests are OFF for now (Anshul, 2026-10-11: "for now lets turn the report tests off"). For a report, skip the Playwright checks in this step: don't run `shoot.mjs` or `ask-test.mjs`. After publishing, load the live URL once and confirm the page renders. To turn them back on, delete this note.
+Report tests are OFF unless the project's AGENTS.md turns them on with the line `Report tests: ON (design-flow shoot.mjs and ask-test.mjs)`. When off: for a report, skip the Playwright checks in this step (don't run `shoot.mjs` or `ask-test.mjs`); after publishing, load the live URL once and confirm the page renders.
 
-`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. When the report tests are on, reports use `recipes/report/assets/shoot.mjs`, and `recipes/report/assets/ask-test.mjs` for the Ask panel. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
+`anshul-ui-standards-v2/references/verification.md`: both themes, 1440 and 800, zero console errors, 12 px text floor, 44 px targets, no horizontal scroll. Look at the screenshots. With the report tests on, reports use `recipes/report/assets/shoot.mjs`, and `recipes/report/assets/ask-test.mjs` for the Ask panel. For a room, also load `index.html` at 1440 in Preview and Compare, dark and light, with zero console errors, and check the framed design answers the room's Step and Theme controls (the ack pill reads "Design follows hub controls").
 
 ## Step 6: publish
 
 Do what `publish.*` says, post the link where `post_to` says, state the access mode in the reply. Never print an API key.
 
 A room publishes as a folder: `index.html`, `room.js`, `_vote/*.js`, `_vote/*.py`, `_requests/designs.js` and every finished design folder with its shots. Leave out `_vote/*.json`, `_vote/*.jsonl`, `_requests/*.json`, backups and unfinished design folders. Where it goes is `publish.room`: azure-sso through the azure-static-publish skill, the personal host, or local only.
+
+## Report house rules
+
+Moved here from Anshul's global AGENTS.md, and as binding as it; they apply to every report, whichever door loaded this skill. Whether to make a report at all stays in AGENTS.md: only when he will test something or make a real decision.
+
+- Reports are HTML. No Markdown, plain-text or ad hoc formats unless he explicitly asks for that specific format.
+- Asked to open a report → open it in Google Chrome.
+- Report checks: report tests are OFF by default, everywhere. A project turns them on by adding this line to its own AGENTS.md: `Report tests: ON (design-flow shoot.mjs and ask-test.mjs)` (Anshul adds it himself where he wants it; see Step 5 and step 8 of the report recipe). Off: publish, then load the live URL once and confirm the page renders. On: run the recipe's scripts plus one look at the first screen; no multi-viewport screenshot loops unless the layout changed.
+- Report-only tests never gate product CI or merges.
+- Still open every screenshot before delivering a report.
 
 ## Live design requests (Claude Code only)
 

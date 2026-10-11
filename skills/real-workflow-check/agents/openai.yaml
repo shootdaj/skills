@@ -1,0 +1,4 @@
+interface:
+  display_name: "Real Workflow Check"
+  short_description: "Real-data checklist for data, list and filter bugs"
+  default_prompt: "Use $real-workflow-check to verify this filter, search or pagination fix against the real app and data."

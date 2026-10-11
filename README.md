@@ -49,6 +49,10 @@ npx skills update -g
 | **clean-my-ai-harness-codex** | (Codex) Map the harness Codex can see and prepare a safe cleanup plan after model/instruction changes. |
 | **use-claude** | (Codex) Delegate implementation or frontend work to real Claude Code from Codex. |
 | **create-skill-ccch** | Create, validate, globally install, and publish one shared skill for Claude Code, Codex, Cursor, and Hermes. |
+| **visual-proof** | The proof Anshul gets: the published hand-off proof report he tests from, proof in every PR body, and the screenshot rules both follow. Moved out of the global AGENTS.md so it loads only when needed. |
+| **real-workflow-check** | Checklist for data bugs and user-facing testing: state the contract, run the real app on real data, compare to the source of truth (counts, pagination, groups, filters, sort), never swap endpoints silently, test the follow-ons. Moved out of the global AGENTS.md. |
+| **browser-and-maps** | Which tool for which job: agent-browser by default, the Chrome connector for visual checks, Playwright for tests, Computer Use when routine browser UI blocks, and real Google Maps via computer use for any map work. Moved out of the global AGENTS.md. |
+| **agent-briefs** | What every subagent brief says: agents never watch CI (push, report the run ID, stop; the main thread watches) and long tasks save progressively. Moved out of the global AGENTS.md. |
 | **design-flow** | Design engine: infers what it can, asks the rest at one of three levels (quick, medium, detailed), shows an inspiration picker you can skip, builds as many designs as you ask for (two or more open the design room), verifies with Playwright, publishes per the calling door's profile. |
 | **anshul-design** | Personal door on top of design-flow: sets the personal profile. Copy it to make your own flavour. The Aya flavour (`helix-design-anshul`) lives in AyaHelix/skills. |
 | **anshul-ui-standards-v2** | House mechanics the engine applies. Same rules as `anshul-ui-standards` minus the fixed Material chassis and report palette. v1 stays for older work. |

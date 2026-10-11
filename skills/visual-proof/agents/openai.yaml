@@ -1,0 +1,4 @@
+interface:
+  display_name: "Visual Proof"
+  short_description: "Proof reports for hand-offs and every PR"
+  default_prompt: "Use $visual-proof to build the proof report and PR proof for this change before handing it over."
