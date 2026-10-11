@@ -1,6 +1,8 @@
 # Verification
 
-Never present an unverified page. If it was not screenshotted, it is not done. The loop is the one in `anshul-ui-standards-v2/references/verification.md`, with these thresholds.
+Report tests are OFF for now (Anshul, 2026-10-11: "for now lets turn the report tests off"). Don't run `shoot.mjs` or `ask-test.mjs`. After publishing, load the live URL once and confirm the page renders. To turn them back on, delete this note.
+
+When the report tests are on, everything below applies. Never present an unverified page. If it was not screenshotted, it is not done. The loop is the one in `anshul-ui-standards-v2/references/verification.md`, with these thresholds.
 
 ## Run
 
