@@ -138,9 +138,9 @@ At 1180 px and wider the open sheet docks: the page narrows by the sheet's width
 
 ## Test
 
-Report tests are ON unless the project's AGENTS.md switches them off (Luminatlas does, as of 2026-10-11). When off: don't run `shoot.mjs` or `ask-test.mjs`; after publishing, load the live URL once and confirm the page renders.
+Report tests are OFF unless the project's AGENTS.md turns them on with the line `Report tests: ON (design-flow shoot.mjs and ask-test.mjs)`. When off: don't run `shoot.mjs` or `ask-test.mjs`; after publishing, load the live URL once and confirm the page renders.
 
-When on (the default):
+When on:
 
 ```bash
 node assets/ask-test.mjs /path/to/index.html                  # local: page + strict mock of the Messages API + mock Drive

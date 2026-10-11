@@ -1,8 +1,8 @@
 # Verification
 
-Report tests are ON unless the project's AGENTS.md switches them off (Luminatlas does, as of 2026-10-11). When off: don't run `shoot.mjs` or `ask-test.mjs`; after publishing, load the live URL once and confirm the page renders.
+Report tests are OFF unless the project's AGENTS.md turns them on with the line `Report tests: ON (design-flow shoot.mjs and ask-test.mjs)`. When off: don't run `shoot.mjs` or `ask-test.mjs`; after publishing, load the live URL once and confirm the page renders.
 
-When on (the default), everything below applies. Never present an unverified page. If it was not screenshotted, it is not done. The loop is the one in `anshul-ui-standards-v2/references/verification.md`, with these thresholds.
+When on, everything below applies. Never present an unverified page. If it was not screenshotted, it is not done. The loop is the one in `anshul-ui-standards-v2/references/verification.md`, with these thresholds.
 
 ## Run
 
