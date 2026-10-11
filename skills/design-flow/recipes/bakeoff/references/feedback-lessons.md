@@ -24,7 +24,8 @@ What the user said, what it meant, and the fix that stuck. Read this before ever
 | "never put these in the report" (2026-10-08, shown a row of stat cards: FACT 740M, FITS 284MB, KEEP 0.885, SPIKE 2s, COST $0, 1 BENT) | Bare numbers on cards do not explain themselves | No stat tiles. A number that matters leads an opening bullet or goes into a real figure |
 | "at the top of the report put a plain english thing, no label, just the text", then "that's a huge wall of text at top of report. i need something i can scan fast, bullet points, make it more readable, highlights, other visual things to scan the points easily" (2026-10-08) | Lead with the point in words he can scan, with nothing labelling it | The report opens with four to six one-line bullets, each led by a highlighted key number or phrase |
 | "humanize the entire report. i dont understand it." (2026-10-08) | The page was written for engineers | Write for a smart reader who is not technical; every term gets a plain phrase on first use; humanizer on all copy |
-| "any future reports need to be fucking shorter." (2026-10-08) | Length buried the point | Length budget: first screen answers everything, about three screens before the appendix, five chapters at most, 12-word captions |
+| "any future reports need to be fucking shorter." (2026-10-08) | Length buried the point | The first screen stays short and scannable; 12-word captions |
+| "why do all reports now only produce like 3/4 sections", then "yes" to dropping the cap (2026-10-11) | The five-chapter, three-screen cap cut content he needed | After the first screen, as many chapters as the content needs, each earning its place, detail collapsible |
 | "never use any measures that we haven't either measured or is directly relevant to us" (2026-10-08) | Vendor benchmarks are not evidence about his work | Only numbers measured on his data or bearing on him (cost, size, time, quota) |
 
 ## Technical lessons from the same rounds

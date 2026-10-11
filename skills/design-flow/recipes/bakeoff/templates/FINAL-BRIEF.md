@@ -29,7 +29,7 @@ Sticky top bar: title, chapter tabs with light and count (scroll-spy, click scro
 {{CHAPTER_LIST_WITH_FIGURES}}
 Chapters 01 onward are collapsible panels (animated height); 00 to 02 open by default.
 Every figure: number, one-line caption of 12 words or fewer, tooltip, click detail, keyboard focus.
-Length: the report recipe's length budget holds (first screen answers everything, about three screens at 1440 before the appendix, five chapters at most).
+Length: the report recipe's length rules hold (first screen short and scannable, then as many chapters as the content needs, detail collapsible).
 
 ## Motion (motion.dev, visible but calm)
 Load: top bar, title and lead statement, the opening bullets spring in one by one, figures stagger.

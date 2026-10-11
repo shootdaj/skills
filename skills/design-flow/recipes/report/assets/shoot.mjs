@@ -111,8 +111,8 @@ const openingFails = l => {
   if (l.banned.length) f.push('label, eyebrow, stat tile or paragraph outside the lead: ' + l.banned.join('; '));
   return f;
 };
-// The length budget (2026-10-08, "any future reports need to be fucking shorter"): with every chapter open the page fits in about
-// three 900 px screens before the appendix (fails above 3.3), at most five chapters, every caption 12 words or fewer (a Details link excluded).
+// Length (2026-10-11, the five-chapter, three-screen cap dropped): screens before the appendix with every chapter open and the chapter
+// count are reported as information only. Every caption is still 12 words or fewer (a Details link excluded).
 const length = page => page.evaluate(() => {
   const ap = document.getElementById('appendix'); const end = ap || document.querySelector('footer') || document.body;
   const endY = ap ? ap.getBoundingClientRect().top + scrollY : end.getBoundingClientRect().bottom + scrollY;
@@ -250,6 +250,6 @@ if (only === 'all' || only === 'fallback') {
   await ctx2.close();
 }
 await browser.close();
-const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || ((l.tag === 'opening' || l.tag === 'about') && l.fails.length) || (l.tag === 'opening-light' && (l.lowContrast.length || l.filled.length)) || (/^lead-800/.test(l.tag) && l.leadPx < 18) || (/^glossary/.test(l.tag) && ((l.inPage && (!l.terms || !l.hoverShows || !l.leaveHides || !l.focusShows || !l.escapeHides || !l.footer)) || (!l.inPage && l.markup) || (l.declared !== null && l.declared !== l.inPage))) || (l.tag === 'length' && (l.screens > 3.3 || l.chapters > 5 || l.longCaptions.length)));
+const failed = log.filter(l => l.hscroll || (l.small && l.small.length) || (l.smallTargets && l.smallTargets.length) || l.dashesOrCurlyQuotes || (l.pageErrors && l.pageErrors.length) || (l.tag === 'no-webgl' && l.figuresWithContent < l.figures) || (l.tag === 'no-motion' && (!l.opening || l.visibleOpening < l.opening)) || ((l.tag === 'opening' || l.tag === 'about') && l.fails.length) || (l.tag === 'opening-light' && (l.lowContrast.length || l.filled.length)) || (/^lead-800/.test(l.tag) && l.leadPx < 18) || (/^glossary/.test(l.tag) && ((l.inPage && (!l.terms || !l.hoverShows || !l.leaveHides || !l.focusShows || !l.escapeHides || !l.footer)) || (!l.inPage && l.markup) || (l.declared !== null && l.declared !== l.inPage))) || (l.tag === 'length' && l.longCaptions.length));
 console.log(JSON.stringify({ pass: errs.length === 0 && failed.length === 0, errs, log }, null, 1));
 process.exit(errs.length || failed.length ? 1 : 0);

@@ -27,7 +27,7 @@ No setup needed. The script loads Playwright through `design-flow/assets/lib/pla
 | First screen | At 1440 by 900 the title, the lead paragraphs, the Your call strip and the side card are fully visible before scrolling, and the first opening bullet is on that screen |
 | Glossary | With a glossary in the page: at least one `.gl-term`, hover opens the popover upright (no italic), moving away closes it, focus opens it, Escape closes it, the footer names the source; screenshots `08-1440-<theme>-glossary-hover.png`. Without one: no glossary markup at all. With `--repo`, the page must match what the project declares |
 | About this report | With every chapter open: `#appendix` ends with `details#about-report`, collapsed on load, summary "About this report"; opened, it shows every fact and link in `CONTEXT` and keeps the 12 px and 44 px floors; screenshot `09-1440-dark-about.png`. Each failure is listed under `fails` |
-| Length | With every chapter open, at most 3.3 screens of 900 px before `#appendix` (the budget says about three), at most five chapters, no caption over 12 words |
+| Length | No caption over 12 words. Also reports, as information only, the screens of 900 px before `#appendix` with every chapter open and the chapter count; neither fails the page |
 | Fallbacks | WebGL stubbed out: the 3D figure still renders its planes. Motion CDN aborted: no page errors and every opening bullet visible |
 | Every chapter | One screenshot each with a representative interaction performed (a cell picked, a chip pressed, a node selected) |
 
