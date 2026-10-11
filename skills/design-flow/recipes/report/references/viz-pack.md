@@ -60,7 +60,7 @@ Why: on 2026-10-08, shown a row of stat cards (FACT 740M, FITS 284MB, KEEP 0.885
 
 ## Minimums
 
-- Every chapter carries at least one interactive figure with a caption that states the takeaway in 12 words or fewer. The length budget in `../RECIPE.md` caps the total, so pick the figures that change a decision and cut the rest. Why: on 2026-10-08 Anshul said "any future reports need to be fucking shorter."
+- Every chapter carries at least one interactive figure with a caption that states the takeaway in 12 words or fewer. Use as many figures as the content needs; each one earns its place, with no filler or repeats (Length in `../RECIPE.md`).
 - Prose in the supporting chapters cut by at least half; what remains is captions and one-line facts.
 - Verify again after the pass: both themes, 1440 and 800, zero console errors, 12 px floor, and the fallback path when WebGL or Motion is missing.
 
