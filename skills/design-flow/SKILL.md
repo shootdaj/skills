@@ -95,7 +95,7 @@ Detailed, two more screens:
 | Shape | Soft, 16 px · Regular, 12 px · Sharp, 2 px |
 | Density | Airy · Regular · Dense |
 | Lights | Tab count and gaps only · Every status · None |
-| 3D | Isometric SVG · WebGL with fallback · None |
+| 3D | Isometric SVG · WebGL flow figure with flat fallback (`recipes/flow3d/`) · None |
 | Forms (multi, one question per block that matters: navigation, opening bullets, main diagram, status view, sections) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
 | Sources (multi) | Dribbble, Behance, 21st.dev, Awwwards · SaaS Landing Page, Lapa Ninja · Browse links only (Godly, Land-book, Dark Mode Design, SiteInspire) · Login sites (Mobbin, Refero, Page Flows) |
 
@@ -177,6 +177,7 @@ Moved here from Anshul's global AGENTS.md, and as binding as it; they apply to e
 - Asked to open a report → open it in Google Chrome.
 - Report checks: report tests are OFF by default, everywhere. A project turns them on by adding this line to its own AGENTS.md: `Report tests: ON (design-flow shoot.mjs and ask-test.mjs)` (Anshul adds it himself where he wants it; see Step 5 and step 8 of the report recipe). Off: publish, then load the live URL once and confirm the page renders. On: run the recipe's scripts plus one look at the first screen; no multi-viewport screenshot loops unless the layout changed.
 - Report-only tests never gate product CI or merges.
+- Figures: when something moves between places and the route, order or timing is the point (a pipeline, a timeline, routes on a map), use the 3D flow figure, `recipes/flow3d/RECIPE.md`, with its flat fallback; otherwise a flat figure. Step 3 of the report recipe has the triggers and counter-examples.
 - Still open every screenshot before delivering a report.
 
 ## Live design requests (Claude Code only)
@@ -220,5 +221,6 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | `assets/requests/` | `request-form.js` (New design form, localStorage only; `make-room.py` copies it into a room's `_vote/`), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` (the request queue the room's `server.py` imports), `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
 | `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts, `assets/shoot.mjs`, and the Ask panel's `assets/ask-build.mjs` and `assets/ask-test.mjs`; bundled so no other skill is needed |
+| `recipes/flow3d/` | the 3D flow figure (`RECIPE.md`): `flow3d.js` (one include plus a config: places, paths, flow, camera tour, labels, map, point cloud, flat fallback, video), starters for data, time and map flows, and a HyperFrames composition for video |
 | `recipes/bakeoff/` | the bake-off recipe (`RECIPE.md`), brief templates, directions, builder prompt, vote widget and ballot |
 | `profiles/default.md` | used when no door is loaded |

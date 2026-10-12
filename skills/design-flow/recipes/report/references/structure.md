@@ -168,6 +168,7 @@ Load from CDN only, in this order, before the inline script:
 - `https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js` when a Sankey or alluvial is used
 - `https://cdn.jsdelivr.net/npm/elkjs@0.9.3/lib/elk.bundled.js` when a layered graph or DAG is used
 - `https://cdn.jsdelivr.net/npm/motion@11/dist/motion.js`, global `Motion`
+- `https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js`, loaded by `f0-flow3d.js` itself when a 3D flow figure nears the screen; no tag needed (`../../flow3d/RECIPE.md`)
 - `https://unpkg.com/3d-force-graph` and `https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js` only for a 3D figure that has a 2D fallback
 
 The page must still work when Motion fails to load and when WebGL is missing. The reference exploded stack is isometric SVG, so it needs neither.

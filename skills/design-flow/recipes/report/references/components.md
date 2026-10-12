@@ -24,6 +24,7 @@ No stat tiles, verdict card, eyebrow or opening paragraph. Why: on 2026-10-08, s
 
 | Figure | Encodes | Built with | Interaction | Reference |
 | --- | --- | --- | --- | --- |
+| 3D flow figure | Something moving between places: a pipeline with branches, a timeline, routes on a map | `../flow3d/flow3d.js` (Three.js r134, lazy), flat SVG fallback from the same config | Play flies the camera stop by stop, drag or arrow keys turn, click a place, 3D or Flat | `../flow3d/RECIPE.md`, `../flow3d/starters/` |
 | Exploded layer stack | Layers of a system and which plane is new | Isometric SVG, no WebGL | Scrub slider, 3D or flat view, click a plane or a tile, hover traces the beams between planes | `fig-stack`, `buildArch`, `archFrame`, `playStack`, `drawFlat` |
 | Swimlane sequence | Calls between systems in order, grouped into bands by status | SVG lifelines and messages | Filter chips with counts, Replay, click a lifeline or arrow for its evidence | `fig-seq`, `drawSeq` |
 | System graph | Systems and links, layered left to right | elkjs layout, d3 render | Hover traces links, click for detail, edges draw in | `fig-sys`, `drawSys` |

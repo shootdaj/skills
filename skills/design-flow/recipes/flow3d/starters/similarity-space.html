@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Similarity space starter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..700&family=Martian+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* page tokens (Obsidian, dark first). flow3d.js reads these; any house palette works the same way */
+:root,:root[data-theme="dark"]{--bg:#0A0C11;--s1:#11141B;--s2:#171B24;--s3:#1F2430;--line:rgba(255,255,255,.085);--line2:rgba(255,255,255,.16);
+ --txt:#EDEEF2;--txt2:#A6ACB8;--txt3:#838A98;--red:#4C7DFF;--red-txt:#8DB0FF;--ok:#3DDC97;--c1:#5DD3FF;--c2:#9BE15D;--c3:#A597FF;--c4:#FFD93D;--c5:#FF6B6B;
+ --f:'Manrope',system-ui,sans-serif;--mono:'Martian Mono',ui-monospace,monospace;color-scheme:dark}
+:root[data-theme="light"]{--bg:#F6F7F9;--s1:#FFFFFF;--s2:#EEF0F4;--s3:#E2E5EB;--line:rgba(0,0,0,.1);--line2:rgba(0,0,0,.2);
+ --txt:#14171F;--txt2:#4A5160;--txt3:#6B7280;--red:#2F5FE0;--red-txt:#2449B8;--ok:#1F8A4C;--c1:#0E7FB0;--c2:#4C8A12;--c3:#6B4FE0;--c4:#A87A00;--c5:#D23B3B;color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--txt);font:400 16px/1.6 var(--f)}
+main{max-width:1180px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;line-height:1.25;margin:0 0 6px}
+p.note{margin:0 0 20px;color:var(--txt)}
+figcaption{margin-top:10px;font-weight:600}
+.src{font-size:13px;color:var(--txt2)}
+.theme{float:right;min-height:44px;padding:0 14px;border-radius:10px;border:1px solid var(--line2);background:var(--s2);color:var(--txt);font:600 14px var(--f);cursor:pointer}
+/* query chips, stage beside a compact ranked list (list drops below on narrow screens) */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
+.chip{min-height:44px;padding:0 18px;border-radius:999px;border:1px solid color-mix(in srgb,var(--red) 55%,transparent);background:transparent;color:var(--txt);font:500 14px var(--f);cursor:pointer;transition:background .2s,border-color .2s,transform .12s}
+.chip:hover{background:var(--s2)}.chip:active{transform:scale(.97)}
+.chip[aria-pressed="true"]{background:var(--red);border-color:var(--red);color:#fff}
+.chip:focus-visible,.theme:focus-visible{outline:2px solid var(--red-txt);outline-offset:2px}
+.sp{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:16px;align-items:start}
+.sp-stage{min-width:0}
+.panel{margin-top:54px;border-radius:12px;background:var(--s1);border:1px solid var(--line2);padding:12px 14px}
+.panel h2{margin:0 0 4px;display:flex;align-items:center;gap:8px;font:700 14px var(--f)}
+.panel h2 .sw{width:10px;height:10px;border-radius:50%;background:var(--red)}
+#query-status{margin:0 0 10px;font:500 13px/1.45 var(--f);color:var(--txt2)}
+#result-list{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+#result-list li{display:flex;align-items:center;gap:10px;min-height:40px;padding:0 8px;border-radius:8px;background:var(--s2);animation:rIn .35s both}
+#result-list li:nth-child(2){animation-delay:.07s}#result-list li:nth-child(3){animation-delay:.14s}
+#result-list b{min-width:24px;padding:1px 0;border:1px solid var(--red);border-radius:7px;text-align:center;font:700 12px var(--mono)}
+#result-list span{font:600 14px var(--f)}#result-list small{margin-left:auto;font:500 12px var(--f);color:var(--txt2)}
+@keyframes rIn{from{opacity:0;transform:translateX(8px)}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;margin:10px 0 0;font:500 12.5px var(--f);color:var(--txt2)}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
+/* 3D rank and query labels, drawn by flow3d's label layer */
+.f3d-l.rank{min-width:24px;padding:2px 7px;text-align:center;font:700 12px var(--mono);border-color:var(--red)}
+@media (max-width:860px){.sp{grid-template-columns:1fr}.panel{margin-top:0}}
+@media (prefers-reduced-motion:reduce){#result-list li{animation:none}}
+</style>
+</head>
+<body>
+<main>
+<button class="theme" type="button" onclick="document.documentElement.dataset.theme=document.documentElement.dataset.theme==='light'?'dark':'light'">Light or dark</button>
+<h1>A query finds its nearest neighbors</h1>
+<p class="note">Every item is a point; similar items sit close together. Pick a query: it lands near its cluster, links to its matches and pulls the top three forward.</p>
+<figure style="margin:0">
+ <div class="chips" role="group" aria-label="Query">
+  <button class="chip" type="button" data-query="soft" aria-pressed="true">Soft curves</button>
+  <button class="chip" type="button" data-query="sharp" aria-pressed="false">Sharp edges</button>
+ </div>
+ <div class="sp">
+  <div class="sp-stage" id="space"></div>
+  <aside class="panel" aria-label="Ranked results">
+   <h2><span class="sw"></span>Top results</h2>
+   <p id="query-status" aria-live="polite"></p>
+   <ol id="result-list"></ol>
+   <div class="legend"><span><i style="background:var(--red-txt)"></i>top three</span><span><i style="background:var(--c1)"></i>other match</span><span><i style="background:var(--txt3)"></i>item</span></div>
+  </aside>
+ </div>
+ <figcaption>Each item is a point; a query pulls its closest forward.</figcaption>
+ <p class="src">Example data: 96 invented items in four clusters. In a report, positions are derived from real similarity data and ranks come from the actual retrieval, each with a source.</p>
+</figure>
+</main>
+<script src="../flow3d.js"></script>
+<script>
+/* Example data, invented and seeded so every load is the same: 96 items in four clusters of 24.
+   In a report, replace POINTS with positions derived from real similarity data (e.g. a documented 3D projection) and QUERIES with ranks from the actual retrieval, each with a source. */
+const rnd = (s => () => (s = s * 16807 % 2147483647) / 2147483647)(9);
+const jit = k => (rnd() + rnd() + rnd() - 1.5) * k;
+const CLUSTERS = [['A', [-4.6, .8, -2.6]], ['B', [3.8, -.9, -3.4]], ['C', [4.2, 1.2, 3.2]], ['D', [-3.4, -1.2, 3.6]]];
+const POINTS = Array.from({ length: 96 }, (_, i) => { const [cluster, c] = CLUSTERS[i % 4], n = String(i + 1).padStart(3, '0');
+  return { id: 'i' + n, label: 'Item ' + n, cluster, p: c.map(v => +(v + jit(2.2)).toFixed(2)) }; });
+/* matches: the 9 nearest items, ranked. A real report takes ranks from its own search, not from these 3D distances */
+const near = (p, n) => POINTS.map(q => [q.id, Math.hypot(q.p[0] - p[0], q.p[1] - p[1], q.p[2] - p[2])]).sort((a, b) => a[1] - b[1])
+  .slice(0, n).map(([id], i) => ({ id, rank: i + 1 }));
+const QUERIES = [{ id: 'soft', label: 'Soft curves', p: [-4.35, 1, -2.1] }, { id: 'sharp', label: 'Sharp edges', p: [3.7, 1.4, 3.2] }]
+  .map(q => Object.assign(q, { matches: near(q.p, 9) }));
+
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SZ = POINTS.map(() => .5 + .25 * rnd()); /* soft size variety, drawn once */
+const N = POINTS.length, IDX = Object.fromEntries(POINTS.map((p, i) => [p.id, i])), $ = s => document.querySelector(s);
+const CFG = {
+  title: 'Items as points, closer means more similar',
+  camera: { az: .6, el: .35, dist: 17 }, fov: 40, height: 460,
+  ground: false, flatRotate: false,
+  hint: 'Pick a query, drag to turn, hover a point.', flatHint: 'Top-down view. Ranks 1 to 3 sit beside the closest items.',
+  cloud: { hue: '--txt3', size: .5, pick: .3, points: POINTS.map(p => ({ id: p.id, p: p.p, label: `${p.label} · Cluster ${p.cluster}` })), query: null },
+  build
+};
+
+/* the staged sequence sets goals; each 3D stage eases toward them every frame (instantly with reduced motion) */
+const goal = { v: 0, q: null, qa: 0, line: 0, lineOp: .7, hi: new Float32Array(N), pull: new Float32Array(N), slot: new Int8Array(N), cam: null };
+let timers = [], fig = null, built = false;
+
+function select(id) {
+  const q = QUERIES.find(x => x.id === id); if (!q) return;
+  timers.forEach(clearTimeout); timers = []; /* cancel the previous run; its links and ranks vanish now */
+  goal.v++; goal.q = q; goal.qa = 1; goal.line = 0; goal.lineOp = .7; goal.hi.fill(0); goal.pull.fill(0); goal.cam = q.p;
+  const later = (ms, f) => timers.push(setTimeout(f, REDUCED ? 0 : ms));
+  later(550, () => { goal.line = 1; q.matches.forEach((m, i) => later(i * 45, () => { goal.hi[IDX[m.id]] = 1; })); });
+  later(1500, () => { goal.lineOp = .18; q.matches.filter(m => m.rank <= 3).forEach((m, i) => later(i * 90, () => { const k = IDX[m.id]; goal.slot[k] = m.rank - 1; goal.pull[k] = 1; })); });
+  document.querySelectorAll('[data-query]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.query === id)));
+  const top = q.matches.filter(m => m.rank <= 3).sort((a, b) => a.rank - b.rank).map(m => POINTS[IDX[m.id]]);
+  $('#result-list').innerHTML = top.map((p, i) => `<li><b>${i + 1}</b><span>${p.label}</span><small>Cluster ${p.cluster}</small></li>`).join('');
+  $('#query-status').textContent = `${q.label}: top 3 of ${q.matches.length} matching items, all from Cluster ${top[0].cluster}.`;
+  CFG.cloud.query = q; if (fig) fig.redraw();
+}
+
+/* 3D extras on top of flow3d's soft point cloud: query glow and ring, match links, top three pulled toward the camera with rank labels */
+function build(S, T) {
+  const g = S.cloudPts.geometry, A = g.attributes, base = POINTS.map(p => new T.Vector3(...p.p));
+  g.boundingSphere.radius *= 1.6; /* pulled points still hover */
+  const cur = { v: -1, q: null, qa: 0, line: 0, lineOp: .7, hi: new Float32Array(goal.hi), pull: new Float32Array(goal.pull) };
+  const cBase = S.color('--txt3'), cM = S.color('--c1'), cTop = S.color('--red-txt'), tmp = new T.Color();
+  const glow = S.points(1), gg = glow.geometry.attributes;
+  const ring = new T.Mesh(new T.RingGeometry(.42, .5, 48), new T.MeshBasicMaterial({ color: cTop, transparent: true, opacity: 0, side: T.DoubleSide, depthWrite: false }));
+  const lineG = new T.BufferGeometry(); lineG.setAttribute('position', new T.BufferAttribute(new Float32Array(12 * 6), 3)); lineG.setAttribute('color', new T.BufferAttribute(new Float32Array(12 * 6), 3));
+  const lines = new T.LineSegments(lineG, new T.LineBasicMaterial({ vertexColors: true, transparent: true, opacity: .7, depthWrite: false }));
+  lines.frustumCulled = false; S.scene.add(ring, lines);
+  const ranks = [1, 2, 3].map(r => S.label(String(r), null, [0, 0, 0], { cls: 'rank', dy: -150 })), qL = S.label('', null, [0, 0, 0], { cls: 'on', hue: '--red', dy: -100 });
+  ranks.concat(qL).forEach(L => { L.show = false; L.e.classList.add('hide'); }); /* hidden until the first frame places them */
+  const qp = new T.Vector3(), f = new T.Vector3(), r = new T.Vector3(), u = new T.Vector3(), up = new T.Vector3(0, 1, 0), p = new T.Vector3(), tgt = new T.Vector3();
+  if (built) { Object.assign(cur, { v: goal.v, q: goal.q, qa: goal.qa, line: goal.line, lineOp: goal.lineOp }); if (goal.q) qL.e.textContent = goal.q.label; } /* theme rebuild: land on the current state */
+  S.ups.push((dt, t) => {
+    const k = REDUCED ? 1 : Math.min(1, dt * .006), go = (a, b) => a + (b - a) * k;
+    if (cur.v !== goal.v) { cur.v = goal.v; cur.q = goal.q; cur.line = 0; cur.qa = 0; qL.e.textContent = goal.q.label; qL.w = 0; } /* new query: old links and ranks drop at once */
+    const q = cur.q; cur.qa = go(cur.qa, goal.qa); cur.line = REDUCED ? goal.line : Math.min(goal.line, cur.line + dt / 700); cur.lineOp = go(cur.lineOp, goal.lineOp);
+    if (q) qp.set(...q.p);
+    if (goal.cam) { const o = S.orb, c = REDUCED ? 1 : Math.min(1, dt * .003); o.tx += (goal.cam[0] * .5 - o.tx) * c; o.ty += (goal.cam[1] * .5 - o.ty) * c; o.tz += (goal.cam[2] * .5 - o.tz) * c; o.dist += (14.5 - o.dist) * c; }
+    f.copy(S.cam.position).sub(qp).normalize(); r.crossVectors(up, f).normalize(); u.crossVectors(f, r);
+    const rk = new Map(q ? q.matches.map(m => [IDX[m.id], m.rank]) : []);
+    for (let i = 0; i < N; i++) {
+      const h = cur.hi[i] = go(cur.hi[i], goal.hi[i]), pu = cur.pull[i] = go(cur.pull[i], goal.pull[i]); p.copy(base[i]);
+      if (pu > .001) p.lerp(tgt.copy(qp).addScaledVector(f, 2.6).addScaledVector(r, (goal.slot[i] - 1) * 1.5).addScaledVector(u, 1), pu);
+      A.position.array.set([p.x, p.y, p.z], i * 3);
+      tmp.copy(cBase).lerp((rk.get(i) || 9) <= 3 ? cTop : cM, h); A.pcolor.array.set([tmp.r, tmp.g, tmp.b], i * 3);
+      A.size.array[i] = (SZ[i] + .3 * h + .35 * pu) * (1 + .06 * Math.sin(t * .002 + i)); A.alpha.array[i] = (S.light ? .6 : .52) + .5 * h;
+    }
+    ['position', 'pcolor', 'size', 'alpha'].forEach(n => { A[n].needsUpdate = true; });
+    gg.position.array.set([qp.x, qp.y, qp.z]); gg.pcolor.array.set([cTop.r, cTop.g, cTop.b]); gg.size.array[0] = 1.5 * cur.qa * (1 + .08 * Math.sin(t * .004)); gg.alpha.array[0] = cur.qa;
+    ['position', 'pcolor', 'size', 'alpha'].forEach(n => { gg[n].needsUpdate = true; });
+    const ph = (t * .0006) % 1; ring.position.copy(qp); ring.quaternion.copy(S.cam.quaternion); ring.scale.setScalar(1 + ph * 2.2); ring.material.opacity = cur.qa * (1 - ph) * (S.light ? .45 : .8);
+    const lp = lineG.attributes.position.array, lc = lineG.attributes.color.array; lp.fill(0);
+    if (q) q.matches.forEach((m, j) => { const i = IDX[m.id], s = Math.max(0, Math.min(1, (cur.line - j / q.matches.length * .5) / .5)), c = m.rank <= 3 ? cTop : cM;
+      lp.set([qp.x, qp.y, qp.z, qp.x + (A.position.array[i * 3] - qp.x) * s, qp.y + (A.position.array[i * 3 + 1] - qp.y) * s, qp.z + (A.position.array[i * 3 + 2] - qp.z) * s], j * 6);
+      lc.set([c.r, c.g, c.b, c.r, c.g, c.b], j * 6); });
+    lineG.attributes.position.needsUpdate = lineG.attributes.color.needsUpdate = true; lines.material.opacity = cur.lineOp * (S.light ? .9 : .7);
+    ranks.forEach((L, j) => { const m = q && q.matches.find(x => x.rank === j + 1), i = m ? IDX[m.id] : -1;
+      L.show = i >= 0 && cur.pull[i] > .6 && goal.pull[i] > 0; if (i >= 0) L.pos.set(A.position.array[i * 3], A.position.array[i * 3 + 1], A.position.array[i * 3 + 2]); });
+    qL.show = cur.qa > .5; qL.pos.copy(qp).addScaledVector(f, 2.6).addScaledVector(u, 2.2); /* above the pulled row */
+  });
+  if (!built) { built = true; if (goal.q) select(goal.q.id); } /* first 3D view: replay the reveal */
+}
+
+document.querySelectorAll('[data-query]').forEach(b => b.addEventListener('click', () => select(b.dataset.query)));
+select('soft');
+fig = Flow3D.mount('#space', CFG);
+</script>
+</body>
+</html>

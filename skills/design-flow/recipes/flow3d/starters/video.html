@@ -1,0 +1,72 @@
+<!doctype html>
+<!-- HyperFrames composition: the data-flow starter as a 1080p video. Copy to <project>/index.html, put flow3d.js next to it
+     and the two fonts in assets/fonts/, paste your figure's config into SCENE, set data-duration (see RECIPE.md, "Render it to video"). -->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1920, height=1080" />
+<title>Flow figure video</title>
+<script>
+  /* hold frame 0 until the scene is built (declared-compute hold) */
+  window.__hf = window.__hf || {}; window.__hf.buildReady = window.__hf.buildReady || {};
+  window.__hf.buildReady.flow = new Promise(r => { window.__flowBuilt = r; });
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="flow3d.js"></script>
+<style>
+  @font-face { font-family: "Manrope"; font-weight: 400 700; font-display: block; src: url("assets/fonts/manrope.woff2") format("woff2"); }
+  @font-face { font-family: "Martian Mono"; font-weight: 400 600; font-display: block; src: url("assets/fonts/martian-mono.woff2") format("woff2"); }
+  :root { --bg: #0A0C11; --s1: #11141B; --s2: #171B24; --s3: #1F2430; --line2: rgba(255,255,255,.16); --txt: #EDEEF2; --txt2: #A6ACB8; --txt3: #838A98;
+    --red: #4C7DFF; --c1: #5DD3FF; --c2: #9BE15D; --c3: #A597FF; --c4: #FFD93D; --c5: #FF6B6B; --f: "Manrope", sans-serif; --mono: "Martian Mono", monospace; }
+  html, body { margin: 0; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: radial-gradient(120% 90% at 50% 0%, #0E1322, var(--bg) 70%); font-family: var(--f); color: var(--txt); }
+  #stage { position: absolute; inset: 0; }
+  #title { position: absolute; left: 96px; top: 72px; font: 700 44px/1.2 var(--f); }
+  #say { position: absolute; left: 96px; bottom: 80px; font: 600 32px/1.3 var(--f); }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-duration="17">
+  <div id="stage"></div>
+  <div id="title">How one clip becomes searchable</div>
+  <div id="say"></div>
+</div>
+<script>
+  /* the registered timeline: overlays only. The 3D scene renders from hf-seek, a pure function of time */
+  const tl = gsap.timeline({ paused: true });
+  tl.fromTo('#title', { opacity: 0 }, { opacity: 1, duration: .8, ease: 'power2.out' }, .2);
+  window.__timelines['main'] = tl;
+
+  const SCENE = { /* paste the page figure's config here, unchanged */
+    camera: { az: .42, el: .52, dist: 23 },
+    zones: [{ x: [-14.6, -7.6], z: [-2.4, 2.4], hue: '--c4', label: 'On your Mac' }, { x: [-7.2, 4.8], z: [-5.2, 5.2], hue: '--c1', label: 'In the cloud' },
+      { x: [5.2, 12.8], z: [-2.4, 2.4], hue: '--c5', label: 'On every machine' }],
+    places: [
+      { id: 'card', at: [-13, 0, 0], shape: 'slab', hue: '--c4', label: 'Your card', sub: 'shot today' },
+      { id: 'mac', at: [-9.3, 0, 0], shape: 'box', hue: '--c4', label: 'Your Mac', sub: 'imports in seconds' },
+      { id: 'storage', at: [-5.4, 0, 0], shape: 'discs', hue: '--c1', label: 'Cloud storage', sub: 'uploads in minutes' },
+      { id: 'server', at: [-1.6, 0, 0], shape: 'box', hue: '--c1', label: 'Cloud server', sub: 'queues two jobs' },
+      { id: 'worker', at: [2.4, 0, -3.3], shape: 'pillar', hue: '--c2', label: 'Fingerprints', sub: 'within the hour', size: .8 },
+      { id: 'gemini', at: [2.4, 0, 3.3], shape: 'gem', hue: '--c3', label: 'Description', sub: 'by morning' },
+      { id: 'index', at: [7, 0, 0], shape: 'orb', hue: '--c5', label: 'Search index', sub: 'merges both' },
+      { id: 'result', at: [11, 0, 0], shape: 'slab', hue: '--c5', label: 'Result at 0:44', sub: 'player opens there' }],
+    paths: [{ from: 'card', to: 'mac' }, { from: 'mac', to: 'storage' }, { from: 'storage', to: 'server' }, { from: 'server', to: 'worker' },
+      { from: 'server', to: 'gemini' }, { from: 'worker', to: 'index' }, { from: 'gemini', to: 'index' }, { from: 'index', to: 'result', weight: .8 }],
+    tour: [{ to: 'card', say: 'The clip sits on your card.' }, { to: 'mac' }, { to: 'storage' }, { to: 'server' },
+      { to: ['worker', 'gemini'], dist: 15, el: .62, hold: 1.4, say: 'Two cloud jobs run side by side.' },
+      { to: 'index', say: 'Search merges both results.' }, { to: 'result', dist: 8.5, hold: 1.4 }],
+    tourEnd: 'Searchable down to the moment.'
+  };
+
+  const say = document.getElementById('say');
+  Flow3D.video('#stage', SCENE, { width: 1920, height: 1080 }).then(v => {
+    v.stage.onSay = t => { say.textContent = t; };
+    addEventListener('hf-seek', e => v.renderAt(e.detail.time));
+    v.renderAt(window.__hfThreeTime || 0);
+    console.log('flow3d tour length', v.duration.toFixed(2), 's: data-duration must be at least this');
+    window.__flowBuilt();
+  });
+</script>
+</body>
+</html>
