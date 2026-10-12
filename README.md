@@ -59,6 +59,7 @@ npx skills update -g
 | **azure-static-publish** | Publish or redeploy a static folder to Azure Static Web Apps behind SSO, with owner-suffixed names, owner tags and a sandbox subscription. Ships with a one-command script; pairs with the `azure-publisher` Claude Code subagent. |
 | **anshul-ui-standards** | Apply Anshul’s Material-grade UI house rules for structure, theming, interaction, data visualization, motion, and screenshot verification. |
 | **apple-design** | Apply Apple’s fluid-interface principles to web UI: interruptible springs, direct manipulation, momentum, materials, typography, and accessibility. |
+| **browse-with-chrome** | Control the user's native Chrome session only when a task requires browser UI interaction or Chrome-specific state. |
 
 > The last several are vendored copies of third-party skills for portability across my machines; they carry their upstream authors' credit and licenses.
 
