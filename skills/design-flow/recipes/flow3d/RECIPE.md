@@ -22,6 +22,14 @@ Use a flat figure instead when:
 
 The test: if the 3D view shows nothing the flat one hides (route, order, branching, distance, gaps in time), ship the flat figure. 3D is never decoration.
 
+### Or a similarity space
+
+A second question: **is the meaning in closeness, with no route?** Items as points, where near means alike, clusters form, and the neighbors change with the query: search results, embeddings, recommendations, "what else is like this". Starter: `starters/similarity-space.html`. Pick a query; its marker lands near its cluster, fine lines link it to its matches, the matches brighten in turn, and the top three pull toward the camera with rank labels 1 to 3. A ranked list sits beside the stage (under it on phones), with query chips above.
+
+- Pick the flow starters when the route, order or timing is the point; pick this when proximity, clusters or changing neighbors are.
+- The starter's 96 items, two queries and ranks are invented and seeded. In a report, positions come from real similarity data through a documented method (for example a 3D projection of embeddings) and the ranks from the actual retrieval or selection, each with a source; when positions are projected, say on the page that visible 3D closeness only approximates the full data.
+- Use a ranked list or table instead when the reader only needs the results, not where they sit among the rest.
+
 ## Anatomy
 
 | Part | What it is | Config |
@@ -35,9 +43,9 @@ The test: if the 3D view shows nothing the flat one hides (route, order, branchi
 | Camera tour | Scripted shots the Play button runs, eased, with a bright comet along each leg; it is a function of time, so the video matches | `tour: [{ to: id or [ids], dist, el, az, move, hold, say }]`, `tourEnd`, `tourHue`, `autoplay` |
 | Labels | HTML in the page font, projected from 3D every frame; overlaps fade (active first, nearer next) | automatic; `declutter: false` turns it off |
 | Map | Lat/long to ground units, a labelled graticule | `map: { center: [lat,lon], scale, grid }` |
-| Point cloud | Real vectors as soft points, hover for a tooltip | `cloud: { points: [{ p: [x,y,z], hue, size, label }] }` |
+| Point cloud | Real vectors as soft points, hover for a tooltip. An active query draws on the flat view too: its marker, links to its matches, badges for ranks 1 to 3 | `cloud: { points: [{ id, p: [x,y,z], hue, size, label }], query: { label, p, matches: [{ id, rank }], hue } }`; after changing `query`, call `redraw()` on the handle `Flow3D.mount` returns |
 | Extras | Anything else, with Three.js in hand | `build: (stage, THREE) => {}` |
-| Status line | One line under the controls that says what the camera is showing or what was clicked (`aria-live`) | `say` per place or tour step, `hint`, `onPick(id, place)` |
+| Status line | One line under the controls that says what the camera is showing or what was clicked (`aria-live`) | `say` per place or tour step, `hint`, `flatHint`, `onPick(id, place)` |
 
 Shapes: `box` (a machine), `discs` (storage), `gem` (a model or AI step), `slab` (a file, a result), `pillar` (a worker), `orb` (an event, a day), `pin` (a city), or a function `(stage, hue) => [object3D, labelHeight]`. Hues are page tokens (`--c1` to `--c5`, `--red`) or any CSS colour.
 
@@ -113,4 +121,5 @@ Checked on 2026-10-11 with `starters/video.html`: lint 0 errors and 0 warnings, 
 | `starters/data-flow.html` | A pipeline with a branch and a merge, zones, a tour (the footage-search plan) |
 | `starters/time-flow.html` | Days as stations spaced by real dates, same-day items fanned out, the camera flying along (the report recipe's dated rules) |
 | `starters/map-flow.html` | Six real cities by latitude and longitude, route arcs, graticule (the route is an example) |
+| `starters/similarity-space.html` | 96 invented items in four clusters, two queries with ranked results: a `cloud` plus `build(stage, THREE)` that stages the reveal and pulls the top three forward, `cloud.query` and `redraw()` for the flat view, `ground: false`, `flatRotate: false` |
 | `starters/video.html` | The HyperFrames composition for the data-flow starter |

@@ -366,7 +366,7 @@
     const lab = (text, sub, x, y, o) => { const e = el(o.tag || 'div', 'f3d-l ' + (o.cls || '')); e.textContent = text;
       if (sub) { const s = el('small'); s.textContent = sub; e.appendChild(s); } if (o.hue) e.style.setProperty('--lc', hueVar(o.hue));
       if (o.w) e.style.maxWidth = o.w + 'px'; layer.appendChild(e);
-      if (!o.tf) { const hw = e.offsetWidth / 2 + 4; x = clamp(x, hw, W - hw); } /* keep place labels inside the figure */
+      if (!o.tf || o.clamp) { const hw = e.offsetWidth / 2 + 4; x = clamp(x, hw, W - hw); } /* keep place labels inside the figure */
       e.style.transform = `translate(${x.toFixed(1)}px,${y.toFixed(1)}px) ${o.tf || 'translate(-50%,12px)'}`; return e; };
     cfg.zones.forEach(z => { const a = map(z.x[0], z.z[0]), b = map(z.x[1], z.z[1]), x = rot ? 6 : Math.min(a[0], b[0]), y = Math.min(a[1], b[1]); /* phones: zones become full-width bands */
       svg.appendChild(sv('rect', { x, y, width: rot ? W - 12 : Math.abs(b[0] - a[0]), height: Math.abs(b[1] - a[1]), rx: 12, fill: `color-mix(in srgb, ${hueVar(z.hue || '--c1')} 7%, transparent)`,
@@ -390,7 +390,18 @@
       const half = len[len.length - 1] / 2, i = Math.max(1, len.findIndex(v => v >= half)), q = s[i], r = s[i - 1], an = Math.atan2(q[1] - r[1], q[0] - r[0]) * 180 / Math.PI;
       svg.appendChild(sv('path', { d: 'M-5,-4.5L5,0L-5,4.5Z', fill: hue, transform: `translate(${((q[0] + r[0]) / 2).toFixed(1)},${((q[1] + r[1]) / 2).toFixed(1)}) rotate(${an.toFixed(1)})` }));
     });
-    if (cfg.cloud) cfg.cloud.points.forEach(p => { const q = map(p.p[0], p.p[2]); svg.appendChild(sv('circle', { cx: q[0], cy: q[1], r: 3, fill: hueVar(p.hue || cfg.cloud.hue || '--c2'), opacity: .7 })); });
+    if (cfg.cloud) { /* an active query (cloud.query) dims the rest and adds its marker, links to its matches and rank badges 1 to 3 */
+      const Q = cfg.cloud.query, rk = new Map(Q ? Q.matches.map(m => [m.id, m.rank]) : []), mh = hueVar(Q && Q.hue || '--c1'), q0 = Q && map(Q.p[0], Q.p[2]);
+      const pts = cfg.cloud.points.map(p => ({ p, q: map(p.p[0], p.p[2]), r: rk.get(p.id) })).sort((a, b) => (a.r ? 1e3 - a.r : 0) - (b.r ? 1e3 - b.r : 0));
+      if (Q) pts.forEach(o => { if (o.r) svg.appendChild(sv('line', { x1: q0[0], y1: q0[1], x2: o.q[0], y2: o.q[1], class: 'ql', stroke: o.r <= 3 ? 'var(--f3-acc)' : mh })); });
+      pts.forEach(o => svg.appendChild(sv('circle', o.r ? { cx: o.q[0], cy: o.q[1], r: o.r <= 3 ? 6 : 4.5, fill: o.r <= 3 ? 'var(--f3-acc)' : mh, stroke: 'var(--f3-bg)', 'stroke-width': 1.5 }
+        : { cx: o.q[0], cy: o.q[1], r: 3, fill: hueVar(o.p.hue || cfg.cloud.hue || '--c2'), opacity: Q ? .45 : .7 })));
+      if (Q) { svg.appendChild(sv('circle', { cx: q0[0], cy: q0[1], r: 9, fill: 'none', stroke: 'var(--f3-txt)', 'stroke-width': 2.5, 'data-query-marker': '' }));
+        let top = q0[1] - 10; pts.filter(o => o.r <= 3).forEach(o => { const dx = o.q[0] - q0[0], dy = o.q[1] - q0[1], L = Math.hypot(dx, dy), u = L > .5 ? [dx / L, dy / L] : [0, -1]; /* badge sits just past the point, away from the query */
+          const bx = o.q[0] + u[0] * 16, by = o.q[1] + u[1] * 16, g = sv('g', { 'data-rank': o.r, transform: `translate(${bx.toFixed(1)},${by.toFixed(1)})` }); top = Math.min(top, by - 9, o.q[1] - 6);
+          g.append(sv('rect', { x: -9, y: -9, width: 18, height: 18, rx: 6 }), Object.assign(sv('text', { y: 4, 'text-anchor': 'middle' }), { textContent: o.r })); svg.appendChild(g); });
+        lab(Q.label, null, q0[0], top - 4, { cls: 'on', hue: '--red', tf: 'translate(-50%,-100%)', clamp: true }); /* above the marker and its badges */
+        svg.setAttribute('aria-label', `${cfg.title || 'Flat view of the figure'}. ${Q.label}: ` + pts.filter(o => o.r <= 3).sort((a, b) => a.r - b.r).map(o => `${o.r}, ${o.p.label || o.p.id}`).join('; ')); } }
     cfg.marks.forEach(m => { const q = map(m.at[0], m.at[2]); lab(m.text, m.sub, q[0], q[1], { cls: 'zone', tf: 'translate(-50%,6px)' }); });
     cfg.places.forEach(p => { const q = pos[p.id] || map(p.at[0], p.at[2]);
       svg.appendChild(sv('circle', { cx: q[0], cy: q[1], r: 8, fill: hueVar(p.hue), stroke: 'var(--f3-bg)', 'stroke-width': 2.5 }));
@@ -432,7 +443,11 @@
 .f3d-flat path.base{fill:none;opacity:.35}.f3d-flat path.fl{fill:none;stroke-width:2;stroke-dasharray:3 9;animation:f3dDash 1.2s linear infinite}
 .f3d-flat line.grat{stroke:var(--f3-txt2);stroke-opacity:.18}
 @keyframes f3dDash{to{stroke-dashoffset:-24}}
-@media (prefers-reduced-motion:reduce){.f3d-flat path.fl{animation:none}.f3d-stage::after{animation:none}}
+.f3d-flat line.ql{stroke-width:1.2;opacity:.55;animation:f3dIn .5s both}
+.f3d-flat [data-rank]{animation:f3dIn .4s .45s both}.f3d-flat [data-rank] rect{fill:var(--f3-s1);stroke:var(--f3-acc);stroke-width:1.5}
+.f3d-flat [data-rank] text{font:700 11px var(--f3-mono);fill:var(--f3-txt)}
+@keyframes f3dIn{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){.f3d-flat path.fl,.f3d-flat line.ql,.f3d-flat [data-rank]{animation:none}.f3d-stage::after{animation:none}}
 .f3d[data-video] .f3d-stage{border:0;border-radius:0;background:transparent}
 .f3d[data-video] .f3d-l{font-size:22px;padding:8px 16px 9px;border-radius:14px}.f3d[data-video] .f3d-l small{font-size:19px}
 .f3d[data-video] .f3d-l.zone{font-size:19px;padding:0}`;
@@ -471,7 +486,7 @@
     }
     const HINTS = ['', 'Press play, drag to turn, or click a place.', 'Drag to turn, or click a place.', 'Click a place to read about it.'];
     function setMode(m) {
-      say.textContent = m === 'flat' ? HINTS[3] : cfg.hint || (cfg.tour ? HINTS[1] : HINTS[2]);
+      say.textContent = m === 'flat' ? cfg.flatHint || HINTS[3] : cfg.hint || (cfg.tour ? HINTS[1] : HINTS[2]);
       C.mode = m; stage.hidden = m !== '3d'; flat.hidden = m !== 'flat'; seg.hidden = !can(); play.hidden = m !== '3d' || !cfg.tour;
       b3.setAttribute('aria-pressed', String(m === '3d')); bF.setAttribute('aria-pressed', String(m === 'flat'));
       if (m === 'flat') { stop3d(); drawFlat(flat, cfg, pick); C.w = host.clientWidth; } else start3d();
@@ -496,6 +511,7 @@
     document.addEventListener('visibilitychange', () => { if (C.S) C.S.kick(); });
     setMode(can() ? '3d' : 'flat');
     C.play = () => C.S && C.S.play(); C.flat = on => { C.userFlat = !!on; setMode(on ? 'flat' : '3d'); };
+    C.redraw = () => { if (C.mode === 'flat') drawFlat(flat, cfg, pick); }; /* after the page changes cfg (e.g. cloud.query) */
     return C;
   }
 
