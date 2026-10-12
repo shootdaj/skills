@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brutalist Skill"
+  short_description: "Industrial and tactical terminal UI"
+  default_prompt: "Use $brutalist-skill to build a tactical telemetry dashboard."

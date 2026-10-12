@@ -1,0 +1,4 @@
+interface:
+  display_name: "Minimalist Skill"
+  short_description: "Editorial monochrome typographic UI"
+  default_prompt: "Use $minimalist-skill to build an editorial monochrome page."

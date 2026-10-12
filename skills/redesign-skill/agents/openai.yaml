@@ -1,0 +1,4 @@
+interface:
+  display_name: "Redesign Skill"
+  short_description: "Audit and upgrade an existing interface"
+  default_prompt: "Use $redesign-skill to audit and upgrade this existing page."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Taste Skill"
+  short_description: "Anti-slop landing pages and portfolios"
+  default_prompt: "Use $taste-skill to build a landing page that does not look templated."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Soft Skill"
+  short_description: "Agency-tier polish, depth, and motion"
+  default_prompt: "Use $soft-skill to build a portfolio with agency-tier depth and motion."
