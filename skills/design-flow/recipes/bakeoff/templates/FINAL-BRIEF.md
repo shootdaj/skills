@@ -37,7 +37,7 @@ Scroll: `inView` reveals; strokes draw in; lights start when their section enter
 Lights animate only on the active tab count and missing cells. Reduced motion respected; page works if Motion fails.
 
 ## Rules
-- No vote widget on the final. No Material, no emoji. Icons: Lucide inline SVG.
+- No vote widget on the final. Material only when it is the chosen look. No emoji. Icons: Lucide inline SVG.
 - 12 px floor, 44 px targets, no horizontal scroll at 1440 and 800, zero console errors, 2D fallback for any 3D.
 - Plain English everywhere (humanizer): no em or en dashes, straight quotes, no stock AI words, active voice, keep every fact.
 - Background patterns on `body::before`; body background solid.

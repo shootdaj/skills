@@ -9,7 +9,9 @@ description: Validated Material 3 shopping-report design decisions, CSS patterns
 All Lazada and shopping shortlists use the validated Material 3 Standard Feed
 (Template A): a real app bar, useful filter chips, and an image-led ranked card
 grid. The design was selected from three fresh Material directions and is the
-required shopping default.
+required shopping default. Since 2026-10-17 it lives in the design library as
+`skills/design-flow/recipes/product-shortlist/` (starter `assets/starter/index.html`)
+with the `material-feed` look (`skills/design-flow/directions/material-feed.md`).
 
 Sketch session wrapped: 2026-08-06
 </context>
@@ -20,7 +22,7 @@ Sketch session wrapped: 2026-08-06
 Use authentic Google Material 3 structure with Roboto Flex, semantic tonal
 surfaces, a 4/8dp spacing rhythm, consistent shape/elevation roles, large real
 product photos, and concise decision content. Default to dark mode and retain a
-deliberate persistent light-theme toggle. Claude Fable owns frontend design.
+deliberate persistent light-theme toggle. Claude Opus 5.5 owns frontend design.
 </design_direction>
 
 <findings_index>
@@ -28,7 +30,7 @@ deliberate persistent light-theme toggle. Claude Fable owns frontend design.
 
 | Area | Reference | Key Decision |
 |------|-----------|--------------|
-| Visual Shopping Shortlists | `references/visual-shopping-shortlists.md` | Use Template A's Material app bar, filters, and responsive ranked card grid for every Lazada report. |
+| Visual Shopping Shortlists | `references/visual-shopping-shortlists.md` | Use Template A's Material app bar, filters, and responsive ranked card grid for every Lazada report, through design-flow's product-shortlist recipe. |
 
 ## Theme
 

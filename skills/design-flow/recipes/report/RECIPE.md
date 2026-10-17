@@ -16,7 +16,7 @@ Usually run by `design-flow` through a door (`anshul-design`, or a work door) wi
    Why: on 2026-10-08 Anshul said "humanize the entire report. i dont understand it."
    No vendor benchmark numbers (model-card scores, launch-post charts) as evidence anywhere in the report. Use only numbers measured on Anshul's own data, or numbers that bear directly on him: cost, size, time, quota.
    Why: on 2026-10-08 Anshul said "never use any measures that we haven't either measured or is directly relevant to us".
-3. Use the look design-flow chose. Without one, the default is this recipe's Plum theme with the palette picker. Do not fall back to Material or any other house palette. When the look's forms include stat tiles or a headline-number block (for example `instrument-hud`, `toy-blocks`), drop those forms for a report and keep the rest of the look; they stay valid for dashboards. Why: on 2026-10-08 Anshul, shown a row of stat cards, said "never put these in the report."
+3. Use the look design-flow chose. Without one, the default is this recipe's Plum theme with the palette picker. No house palette by default; Material (`material-report`) only when picked. When the look's forms include stat tiles or a headline-number block (for example `instrument-hud`, `toy-blocks`), drop those forms for a report and keep the rest of the look; they stay valid for dashboards. Why: on 2026-10-08 Anshul, shown a row of stat cards, said "never put these in the report."
 
 ## Recipe
 
@@ -88,7 +88,7 @@ Why: on 2026-10-08 Anshul said "if i hover over anything that's in the glossary,
 - Body background is a solid colour. Patterns and gradients live on `body::before`.
 - Theme and palette keys in `localStorage` are namespaced per report: `<slug>-theme`, `<slug>-palette`.
 - No emoji as icons. Icons are inline SVG symbols with Lucide shapes.
-- No vote widget on a final, no Material chassis, no Claude Artifact copies.
+- No vote widget on a final, no Claude Artifact copies.
 - No key in the page, ever. The Ask panel reaches Claude only through the site's here.now proxy routes, which inject `ANTHROPIC_API_KEY` from the owner's account variables. The owner sets that variable; never set it, print it or write it to a file. Why: on 2026-10-08 Anshul asked for a chat in every report that "should just use like a claude session underneath"; the key stays his.
 - Every number on the page traces to a source named in the appendix or the sources chapter, and was measured on Anshul's own data or bears directly on him (cost, size, time, quota). Never a vendor benchmark. Why: on 2026-10-08 Anshul said "never use any measures that we haven't either measured or is directly relevant to us".
 
