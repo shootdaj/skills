@@ -290,6 +290,7 @@ V.look = {
       if (e.target.closest('[data-demo]') && demo) openDemo(L);
     };
     swipe(Q('[data-hero]', root), { onCommit: d => { const n = step(this.id, d); go({ look: n.id }, { replace: true }); } });
+    const tf = Q('.demo-thumb iframe', root); if (tf) tf.addEventListener('load', () => { try { tf.contentDocument.documentElement.setAttribute('data-theme', S.theme); } catch (e) {} });
     fitThumb(); if (S.demo && demo) openDemo(L);
   },
   update(prev) { if (prev.look !== S.look || prev.theme !== S.theme) this.mount(this.root); },
