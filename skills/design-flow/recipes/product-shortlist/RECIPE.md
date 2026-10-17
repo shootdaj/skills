@@ -34,7 +34,7 @@ Every time the page is a shortlist of discrete things to choose between, with re
 
 1. Collect verified data first: name, exact product URL, a clear product image URL, delivered total (item price plus shown shipping; label it when shipping is unknown), score, up to three facts, verdict, decision and cart state. Invent nothing; replace every sample value, photo and link in the starter.
 2. Copy `assets/starter/index.html` next to your work. Edit the title, app bar, `PRODUCTS` array, `DEC` map (when the verdict values differ) and the price formatter (the starter formats Thai baht).
-3. Add the checked date to the app bar and the Top pick state on the #1 card, and set `.img-link img` to `object-fit: contain` so photos that are not 4:3 stay uncropped; the starter predates all three rules.
+3. Add the checked date to the app bar and the Top pick state on the #1 card; the starter predates both rules. (Its photos already sit in a fixed 4:3 box with `object-fit: contain`, so portrait or square shots are neither cropped nor stretched.)
 4. For a look other than `material-feed`, map its tokens onto the starter's roles: `--surface` = `bg`, `--surface-container` = `s1`, `--surface-container-high` = `s2`, `--outline-variant` = `line`, `--on-surface` = `txt`, `--on-surface-variant` = `txt2`, `--primary` = `accent`, `--on-primary` = `onAccent`, `--success` / `--warning` / `--error` = `ok` / `part` / `miss`, card radius = `radius`, fonts from the look. Fill the remaining Material roles from the same hues. When the look has a folder (its `files` key), start from its `tokens.css`.
 
 ## Verify
