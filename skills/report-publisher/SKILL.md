@@ -169,7 +169,9 @@ must make the top recommendation obvious without adding an editorial preamble.
 
 5. **Publish permanently and verify.** Read `references/publishing.md` and follow
    it exactly — permanence requires a saved here.now API key, so a plain publish
-   is not enough. Confirm the returned URL resolves before reporting done.
+   is not enough. Confirm the returned URL resolves, then make it Only you
+   (Step 5b) and prove the gate from outside before reporting done. Public only
+   when the user says so for that page.
 
 6. **Report the outcome.** Give the user the live URL, state plainly that it's
    permanent (or flag if you could only get an anonymous 24h link), and briefly

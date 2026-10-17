@@ -11,7 +11,7 @@ Load the `design-flow` skill and run it with this profile. Do not re-ask anythin
 name: personal
 publish:
   target: here.now by default; ask once per project if another host is wanted
-  access: public
+  access: only-you                # restricted with empty allowlists: only Anshul, signed in to here.now, can open the page or call its /api routes. Public only when he says so for that page
   post_to: none
   room: personal host when the user wants a link, else local only (open index.html in Chrome)
 ui_kit: none                      # a personal design system comes later; until then the look plus core mechanics
