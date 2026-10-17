@@ -17,19 +17,19 @@ Skip it when the user already named a direction; go straight to the report recip
 3. Ask how many variants with AskUserQuestion (header Variants: 3 · 5 (Recommended) · 8; Other for any number), unless the request already says. Then pick that many directions. Each has a name, a palette, a type pairing, a signature motion and a list of component forms. Vary them a lot. Start from `references/directions.md`; reuse a direction only if the user liked it.
 4. Write the brief. Copy `templates/BRIEF.md`, fill the placeholders (`{{DESIGN_FLOW}}` is this skill's folder), and point at the v1 page, the data blocks and the humanizer skill when installed (else the plain-English rules in the template). Playwright needs no setup: the brief's snippet loads it through `assets/lib/playwright.mjs`. One brief for all builders, plus a short direction message per builder.
 5. Start the vote server. `python3 assets/vote/server.py &` serves picks on 127.0.0.1:7331; a copy already running is reused, and if another program holds the port it moves to a free one and prints the `data-api` / `?api=` values to pass on. Copy `assets/vote/` to `<designs>/_vote/` so the widget path `../_vote/vote.js` resolves from every variant folder.
-6. Build in parallel. One Fable subagent per variant with the prompt in `references/builder-prompt.md`. Each writes `<designs>/<id>-<name>/index.html` plus `shots/`, verifies with Playwright and reports back in the brief's format.
+6. Build in parallel. One Opus 5.5 subagent per variant with the prompt in `references/builder-prompt.md`. Each writes `<designs>/<id>-<name>/index.html` plus `shots/`, verifies with Playwright and reports back in the brief's format.
 7. Show each variant as it lands. Open it in Chrome (`open -a "Google Chrome" <path>`) and tell the user what is distinctive in one line. Do not wait for all of them.
 8. Build the ballot. Copy `assets/vote/ballot.html` next to the variants, fill its `DESIGNS` array with ids, labels, paths and hero shots, and open it. It tallies the picks live.
 9. Round two. When the user wants more, ask how many again and copy `templates/BRIEF-2.md`. It lists every component form and motion signature round one used and forbids repeating them, so the user sees different presentations of the same content.
 10. Collect the picks. Read `votes.json` and the user's comments. Note which whole design they liked for boldness, approachability and simplicity, and which elements they picked per content block.
-11. Write the final brief. Copy `templates/FINAL-BRIEF.md`. Name the elements to carry over with their source variant and figure id, and the theme the finals will use. Build one or two finals (A and B differ in navigation and palette warmth), each with a Fable subagent.
+11. Write the final brief. Copy `templates/FINAL-BRIEF.md`. Name the elements to carry over with their source variant and figure id, and the theme the finals will use. Build one or two finals (A and B differ in navigation and palette warmth), each with an Opus 5.5 subagent.
 12. Iterate on feedback with `references/feedback-lessons.md` open. Palette, colour strength, light budget and contrast all took two or three rounds on the reference.
 13. Hand off. The chosen final goes through the report recipe (`../report/RECIPE.md`) for the lean edition, verification and publishing. Remove the vote widget from the final.
 
 ## Roles and budget
 
 - You orchestrate: briefs, direction messages, vote infrastructure, showing work, synthesis.
-- Builders are Fable subagents (the house mechanics, `anshul-ui-standards-v2`, require Fable for frontend design; if Fable is unavailable, stop and say so) with the full brief in their prompt and a folder each. All of a round runs at once.
+- Builders are Opus 5.5 subagents (the house mechanics, `anshul-ui-standards-v2`, require Opus 5.5 for frontend design; if Opus 5.5 is unavailable, stop and say so) with the full brief in their prompt and a folder each. All of a round runs at once.
 - Expect about 30 to 40 minutes per round of builds and 10 minutes of user review per round. Tell the user the ETA when they ask.
 
 ## Rules

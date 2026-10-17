@@ -7,12 +7,12 @@ description: Anshul's UI house mechanics, version 2, used by the design-flow eng
 
 Version 2 of `anshul-ui-standards`, for pages built through `design-flow`. The look (palette, type, shape, motion signature, component forms) comes from the chosen direction; these rules govern how the page behaves. Binding rules for every page, mock, dashboard, and report. Load `frontend-design` for aesthetic boldness, `ui-ux-pro-max` for UX/a11y depth, and `apple-design` for fluid, physical interaction and motion. When rules conflict: **this file wins**.
 
-## Claude Fable owns frontend design
+## Claude Opus 5.5 owns frontend design
 
-- For every frontend design or implementation task, use real Claude Code with the `fable` model and load `frontend-design` alongside this skill.
-- In Codex or another orchestrating harness, invoke Claude Code explicitly with `--model fable`; the orchestrator may prepare inputs, review, test, and integrate, but must not substitute another model for the frontend design work.
-- In Claude Code, keep the task on Fable. If Fable is unavailable, stop and report the blocker instead of silently falling back to Sonnet, Opus, or another model.
-- A user may explicitly override the model for a specific task; otherwise Fable is mandatory.
+- For every frontend design or implementation task, use real Claude Code with the Opus 5.5 model (`claude-opus-5-5`) and load `frontend-design` alongside this skill.
+- In Codex or another orchestrating harness, invoke Claude Code explicitly with `--model claude-opus-5-5`; the orchestrator may prepare inputs, review, test, and integrate, but must not substitute another model for the frontend design work.
+- In Claude Code, keep the task on Opus 5.5; subagents use `model: opus`. If Opus 5.5 is unavailable, stop and report the blocker instead of silently falling back to another model.
+- A user may explicitly override the model for a specific task; otherwise Opus 5.5 is mandatory.
 
 ## 1. Visible structure — always
 
