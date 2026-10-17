@@ -1,7 +1,9 @@
 # Report templates and style references
 
-Both templates moved into the `design-flow` skill on 2026-10-17, so the design
-knowledge lives in one library. This skill still chooses between them and
+All three live in the `design-flow` skill (the two Material templates moved there
+on 2026-10-17), so the design knowledge lives in one library. The default for
+analytical and general reports is the **Plum report**; Standard Pyramid is used
+only when the user picks it (Anshul, 2026-10-17: "report publisher default use plum"). This skill still chooses between them and
 publishes the result. Paths below are inside the `design-flow` skill.
 
 - A look supplies the visual system; design the report structure for the content
@@ -16,5 +18,6 @@ hold no matter the structure (see `../../references/design-system.md`).
 
 | Template | Now lives at | Type | Look | Best for |
 |----------|--------------|------|------|----------|
-| **Standard Pyramid** | `directions/material-report.md` + `directions/material-report/` (`tokens.css`, `look.css`, `ripple.js`, `demo.html`, formerly `material-dark.html`) | Look: `material-report` | Material 3 dark: tonal surfaces, elevation, pill buttons, stat tiles, collapsible panels, persistent side-nav, optional D3. | Security reviews, audits, research, benchmarks, status reports, post-mortems, and other evidence-heavy reports. Adapt the body structure to the content. |
+| **Plum report** | `recipes/report/RECIPE.md` + `recipes/report/assets/starter/` | Recipe · **default for analytical and general reports**, look `plum-report` with the palette picker | Plum dark-first theme, lead bullets with bold key words, Your call strip, How we checked card, collapsible chapters of figures, Ask panel. | Audits, research, benchmarks, status reports, post-mortems, proof reports, and other evidence-heavy reports. |
+| **Standard Pyramid** | `directions/material-report.md` + `directions/material-report/` (`tokens.css`, `look.css`, `ripple.js`, `demo.html`, formerly `material-dark.html`) | Look: `material-report` · only when picked | Material 3 dark: tonal surfaces, elevation, pill buttons, stat tiles, collapsible panels, persistent side-nav, optional D3. | Security reviews, audits, research, benchmarks, status reports, post-mortems, and other evidence-heavy reports. Adapt the body structure to the content. |
 | **Visual Product Shortlist** | `recipes/product-shortlist/RECIPE.md` + `recipes/product-shortlist/assets/starter/index.html` (formerly `visual-product-shortlist.html`) | Recipe · **shopping/Lazada default**, look `material-feed` | Validated Material 3 Standard Feed (Template A): top app bar, working filter chips, responsive ranked card grid, large uncropped photos, score and decision/cart chips, price, concise facts, verdict, direct CTA, dark-first theme toggle. | All Lazada and shopping research, product comparisons, cart/wishlist reviews, recommendations, vendor or venue shortlists, and image-led comparisons of discrete choices. Preserve the Material feed/card structure; replace every sample value, photo, and link. |

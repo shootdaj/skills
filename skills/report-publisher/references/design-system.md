@@ -61,7 +61,9 @@ the user asked. Otherwise commit to dark and make it excellent.
 The whole point of the report is that the answer comes first. Structure the page
 in this order, top to bottom:
 
-This section defines the **Standard Pyramid** template. When **Visual Product
+This section defines the **Standard Pyramid** template, used only when the user
+picks it; the default analytical report is the `design-flow` report recipe in the
+`plum-report` look (see `../assets/templates/INDEX.md`). When **Visual Product
 Shortlist** is selected, use the alternate profile in §2b instead; its explicit
 exceptions override the navigation and collapsible-section requirements below.
 

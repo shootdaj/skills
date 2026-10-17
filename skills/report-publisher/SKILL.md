@@ -31,11 +31,16 @@ Read `assets/templates/INDEX.md` before structuring the report. Offer the user a
 short template choice unless they already named a template or their requested
 format makes the choice explicit:
 
+- **Plum report** — the default for analytical and general reports: the
+  `design-flow` skill's **report recipe** (`recipes/report/RECIPE.md`, built from
+  its `assets/starter/`) in the **`plum-report`** look with its palette picker.
+  Best for audits, research, benchmarks, status reports, post-mortems, and
+  findings-heavy work. Build it from there (through `anshul-design` in personal
+  projects) and publish it with this skill.
 - **Standard Pyramid** — verdict, headline metrics, takeaways, persistent
-  navigation, and collapsible evidence. Best for audits, research, benchmarks,
-  status reports, post-mortems, and findings-heavy work. Its look is the
-  `design-flow` skill's **`material-report`** look (`directions/material-report.md`
-  plus the `directions/material-report/` folder).
+  navigation, and collapsible evidence, in the `design-flow` skill's
+  **`material-report`** look (`directions/material-report.md` plus the
+  `directions/material-report/` folder). Use it only when the user picks it.
 - **Visual Product Shortlist** — the default for shopping and product-comparison
   reports; the validated **Material 3 Standard Feed (Template A)** with a real app
   bar, functional filter chips, and a responsive ranked, image-led card grid.
@@ -59,8 +64,10 @@ Choose the default from the content:
   comparisons, wishlists/cart reviews, and recommendation reports. Also use it
   when there are 4–12 comparable items with real images and direct action links,
   or when the user asks for a highly visual report with minimal text.
-- Default to **Standard Pyramid** for analytical or evidence-heavy reports.
-- If the fit is ambiguous, use **Standard Pyramid** as the fallback default.
+- Default to **Plum report** for analytical, evidence-heavy and general reports.
+- If the fit is ambiguous, use **Plum report** as the fallback default.
+- Use **Standard Pyramid** only when the user picks it. Why: on 2026-10-17 Anshul
+  said "report publisher default use plum".
 
 ## Required frontend ownership
 
@@ -130,8 +137,9 @@ must make the top recommendation obvious without adding an editorial preamble.
 
 4. **Have Claude build the HTML through the `frontend-design` skill, using the
    selected template correctly.** Check `assets/templates/INDEX.md` for where each
-   template lives and whether it is a look or a layout. For the Standard Pyramid
-   look, `material-report` (`design-flow`'s `directions/material-report/`:
+   template lives and whether it is a look, a layout or a recipe. For the default
+   Plum report, follow `design-flow`'s report recipe and its starter as written.
+   For the Standard Pyramid look (only when picked), `material-report` (`design-flow`'s `directions/material-report/`:
    `tokens.css`, `look.css`, `ripple.js`, and `demo.html` showing every component),
    **lift its visual system** — theme tokens, tonal
    surfaces, Material components (pill buttons, tiles, collapsible panels with the

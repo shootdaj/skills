@@ -19,8 +19,8 @@ function boot(){
  anim($$('.tab'),{opacity:[0,1],transform:['translateY(-6px)','none']},{duration:.3,delay:ST(.03,{start:.1})});
  anim($$('.rv0'),{opacity:[0,1],transform:['translateY(12px)','none']},{duration:.45,delay:ST(.12,{start:.15})});
  countUp();
- anim($$('.opening li'),{opacity:[0,1],y:[10,0]},{type:'spring',stiffness:300,damping:22,delay:ST(.08,{start:.8})});
- setTimeout(()=>{$$('#top, .rv0, .opening li').forEach(e=>{if(getComputedStyle(e).opacity==='0')e.style.opacity=1});root.classList.remove('anim')},3200)}
+ anim($$('.lead-lines li'),{opacity:[0,1],y:[10,0]},{type:'spring',stiffness:300,damping:22,delay:ST(.08,{start:.8})});
+ setTimeout(()=>{$$('#top, .rv0, .lead-lines li').forEach(e=>{if(getComputedStyle(e).opacity==='0')e.style.opacity=1});root.classList.remove('anim')},3200)}
 if(document.readyState==='complete')boot();else addEventListener('load',boot);
 </script>
 </body>
