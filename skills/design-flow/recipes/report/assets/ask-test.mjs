@@ -218,12 +218,12 @@ await step('streamed answer', async () => { await page.click('.ask-sugg'); if (!
 await step('lead reaches Claude, before the sections', async () => { const dom = await page.evaluate(() => { const ld = document.querySelector('#overview .lead'); if (!ld) return null;
     const t = e => { const c = e.cloneNode(true); c.querySelectorAll('.hn,svg').forEach(x => x.remove()); return c.textContent.replace(/\s+/g, ' ').trim(); }; const card = ld.querySelector('.how-card');
     const parts = [...ld.querySelectorAll('.lead-lines li'), ld.querySelector('.ask'), ...(card ? card.querySelectorAll('h1,h2,h3,h4,li,p') : [])].filter(Boolean).map(t).filter(Boolean);
-    return { parts, next: t(document.querySelector('.panels .ph h2') || document.createElement('i')) }; });
+    return { parts }; });
   if (!dom) return { skipped: 'this page has no div.lead' };
   const sys = MOCK.lastSystem || []; const rep = ((sys[sys.length - 1] || {}).text || '').replace(/^<report>\n/, '').replace(/\n<\/report>$/, ''); const ctx = JSON.parse(rep); const enc = x => JSON.stringify(x).slice(1, -1);
   const lead = JSON.stringify(ctx.lead || ''); const missing = dom.parts.filter(x => !lead.includes(enc(x))); const keys = Object.keys(ctx);
   const keyOrder = keys.indexOf('headline') < keys.indexOf('lead') && keys.indexOf('lead') < keys.indexOf('sections');
-  const readingOrder = dom.next ? rep.indexOf(enc(dom.parts[0])) > -1 && rep.indexOf(enc(dom.parts[0])) < rep.indexOf(enc(dom.next)) : true;
+  const at = rep.indexOf(enc(dom.parts[0])), sec = rep.indexOf('"sections":'); const readingOrder = at > -1 && (sec < 0 || at < sec);
   const named = /\blead\b/i.test((sys[0] || {}).text || '');
   return { leadParts: dom.parts.length, missing: missing.map(x => x.slice(0, 60)), keys: keys.join(','), keyOrder, readingOrder, instructionsNameIt: named, ok: !!ctx.lead && !missing.length && keyOrder && readingOrder && named }; });
 // The context brief (2026-10-10): every report carries CONTEXT in d-data.js, with every required field filled ("not recorded" counts).
