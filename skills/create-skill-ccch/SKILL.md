@@ -19,7 +19,7 @@ creating or installing a skill.
 - Put the primary package at `skills/<skill-name>/` in a local checkout whose
   `origin` points to `shootdaj/skills`.
 - Install the same package globally with Vercel's skills CLI from GitHub
-  (`npx skills add shootdaj/skills -g --skill <skill-name>`), on every machine.
+  (`npx -y skills add shootdaj/skills -g --skill <skill-name>`), on every machine.
   Never hand-link a local checkout into a harness root; the checkout is only for
   editing and pull requests.
 - Keep only `name` and `description` in shared `SKILL.md` frontmatter.
@@ -162,8 +162,8 @@ The skills CLI installs from GitHub's default branch, so install once the pull
 request is merged, on every machine (the MacBook and the Mac Ultra). Follow
 "Install with the skills CLI" in the harness reference:
 
-- new skill: `npx skills add shootdaj/skills -g -y -a claude-code codex cursor hermes-agent --skill <skill-name>`;
-- updated skill: `npx skills update -g -y <skill-name>`;
+- new skill: `npx -y skills add shootdaj/skills -g -y -a claude-code codex cursor hermes-agent --skill <skill-name>`;
+- updated skill: `npx -y skills update -g -y <skill-name>`;
 - always with telemetry off (`DISABLE_TELEMETRY=1 DO_NOT_TRACK=1`).
 
 Forward-test before merge from the branch checkout path; never install from a
@@ -173,7 +173,9 @@ After installation, verify on each machine that every destination:
 
 - exists and resolves to `~/.agents/skills/<skill-name>`;
 - exposes a readable `SKILL.md` identical to `origin/master`;
-- shows source `shootdaj/skills` in `npx skills ls -g --json`;
+- shows source `shootdaj/skills` in `npx -y skills ls -g --json` (its agent list
+  names only Claude Code and Hermes Agent; Codex and Cursor read
+  `~/.agents/skills` directly, so their absence there is expected);
 - has no dangling links and no duplicate copy in `~/.codex/skills/`.
 
 Do not replace an existing non-matching destination without explicit approval.

@@ -114,8 +114,9 @@ installs are skipped by `update`, so they drift.
 Verify on each machine: the destination resolves to
 `~/.agents/skills/<skill-name>`; `test -r <destination>/SKILL.md`; the
 installed `SKILL.md` matches `git show origin/master:skills/<skill-name>/SKILL.md`;
-`npx skills ls -g --json` shows source `shootdaj/skills`; and there are no
-dangling links.
+`npx -y skills ls -g --json` shows source `shootdaj/skills` (it lists only Claude
+Code and Hermes Agent as agents; Codex and Cursor read `~/.agents/skills`
+directly, so that is expected); and there are no dangling links.
 
 ## Validation checklist
 
