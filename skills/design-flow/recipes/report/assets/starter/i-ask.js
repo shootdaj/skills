@@ -139,7 +139,7 @@ let saveWarned=false;
 function persist(){if(!T)return;if(!store.set('thread',JSON.stringify(T))&&!saveWarned){saveWarned=true;note('This thread is too big for the browser to keep. Export it with the menu before you close the page.','bad')}}
 
 /* ───────── UI ───────── */
-let fab,sheet,log,ta,sendBtn,pend,meter,statusEl,modelSel,chip,busy,menu;
+let fab,topBtn,sheet,log,ta,sendBtn,pend,meter,statusEl,modelSel,chip,busy,menu;
 let pending=[];          // attachments for the next question: {kind:'snap',img,mt,w,h,label,where} | {kind:'sel',text,where}
 let running=null;        // AbortController while a question is in flight
 let lastSel=null;        // most recent text selection on the page
@@ -170,6 +170,10 @@ function build(){
  D.body.append(fab,sheet,chip,busy);
  log=Q('.ask-log',sheet);ta=Q('.ask-ta',sheet);sendBtn=Q('.ask-send',sheet);pend=Q('.ask-pend',sheet);meter=Q('.ask-meter',sheet);statusEl=Q('.ask-status',sheet);modelSel=Q('.ask-model',sheet);menu=Q('.ask-menu',sheet);
  fab.addEventListener('click',()=>open(true));
+ // Below 1440 px the floating button would sit on the content column, so Ask also lives in the top bar (h-ask.css shows one or the other).
+ const row=Q('.top-row');
+ if(row){topBtn=H(`<button class="btn ask-top ask-ui" type="button" aria-haspopup="dialog" aria-controls="askSheet" aria-expanded="false" aria-label="Ask about this report">${ic('spark')}<span class="lbl">Ask</span></button>`);
+  row.append(topBtn);D.body.classList.add('ask-in-top');topBtn.addEventListener('click',()=>open(!sheet.classList.contains('open')))}
  Q('.ask-close',sheet).addEventListener('click',()=>open(false));
  sheet.addEventListener('keydown',e=>{if(e.key==='Escape'){if(menu.classList.contains('open')){menuOpen(false);Q('button',menu).focus();return}e.stopPropagation();open(false)}});
  Q('form',sheet).addEventListener('submit',e=>{e.preventDefault();running?stop():send()});
@@ -211,10 +215,10 @@ function dock(v){const sw=sheet.getBoundingClientRect().width;const want=v&&inne
  D.body.style.paddingRight=want?sw+'px':'';D.body.classList.toggle('ask-dock',want);emulate(want?w:0);redraw()}
 let firstOpen=true;
 function open(v){const isOpen=sheet.classList.contains('open');if(v===isOpen)return;
- sheet.classList.toggle('open',v);sheet.inert=!v;D.body.classList.toggle('ask-open',v);fab.setAttribute('aria-expanded',v);
+ sheet.classList.toggle('open',v);sheet.inert=!v;D.body.classList.toggle('ask-open',v);fab.setAttribute('aria-expanded',v);if(topBtn)topBtn.setAttribute('aria-expanded',v);
  if(typeof hideTip==='function')hideTip();
  if(v){dock(true);if(firstOpen){firstOpen=false;renderAll();lib('marked').then(()=>{if(!running)renderAll()}).catch(()=>{});if(HTTP)probe();else setStatus('local')}setTimeout(()=>ta.focus(),RM?0:120);renderMeter()}
- else{dock(false);menuOpen(false);fab.focus()}}
+ else{dock(false);menuOpen(false);(topBtn&&topBtn.offsetParent?topBtn:fab).focus()}}
 function addPending(a){if(pending.length>=CFG.maxAtts)pending.shift();pending.push(a);renderPending()}
 function renderPending(){pend.replaceChildren(...pending.map((a,i)=>{const p=H(`<div class="ask-pill">${a.kind==='snap'?`<img alt="" src="data:${E(a.mt)};base64,${E(a.img)}">`:ic('quote')}<span>${E(a.kind==='snap'?a.label:'"'+a.text.slice(0,80)+'"')}</span><button class="ask-ib" type="button" aria-label="Remove ${a.kind==='snap'?'snapshot':'quote'}">${ic('x')}</button></div>`);
  Q('button',p).addEventListener('click',()=>{pending.splice(i,1);renderPending();ta.focus()});return p}))}

@@ -142,6 +142,17 @@ figure.fg.ask-has{position:relative}
  .ask-bubble{max-width:94%}
  .ask-pick-bar{top:auto;bottom:14px;left:12px;right:12px;transform:none;border-radius:16px}
 }
+/* Ask in the top bar wherever the floating button would cover the content column: below 1440 px it overlapped text,
+   cards or figures at every scroll position (measured 2026-10-17 at 320 to 1280). At 1440 and up it floats in the margin
+   as before. i-ask.js adds .ask-top to .top-row and body.ask-in-top; a page without .top-row keeps the floating button. */
+.btn.ask-top{display:none;background:var(--fill);border-color:var(--fill);color:var(--on-fill)}
+@media (max-width:1439px){
+ body.ask-in-top .ask-fab{display:none}
+ body.ask-in-top .btn.ask-top{display:inline-flex}
+ body.ask-in-top .totop{bottom:18px}
+}
+@media (max-width:560px){body.ask-in-top .totop{bottom:14px}}
+@media (max-width:380px){body.ask-in-top .top-row{gap:6px}}
 @media (prefers-reduced-motion: reduce){
  .ask-sheet,.ask-sheet.open{transition:none}
  .ask-pulse{animation:none}

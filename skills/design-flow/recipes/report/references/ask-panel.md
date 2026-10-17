@@ -1,6 +1,6 @@
 # Ask panel
 
-Every report built from the starter has an "Ask about this report" panel: a floating Ask button opens a side sheet where the reader asks Claude about the page. Claude answers from the report's own text and data, points at figures on the page, and can look at what the reader is looking at.
+Every report built from the starter has an "Ask about this report" panel: an Ask button opens a side sheet (it floats bottom right at 1440 px and wider, where it sits in the margin; below that it is in the top bar, because floating it covered the content: Anshul, 2026-10-17) where the reader asks Claude about the page. Claude answers from the report's own text and data, points at figures on the page, and can look at what the reader is looking at.
 
 Why: on 2026-10-08 Anshul said "add an AI chat in the report, where i can ask questions about the report, with like rich tools, things like snapshot of part of page, etc, other useful tools for interactivity with the report in the ai chat… it should just use like a claude session underneath".
 
