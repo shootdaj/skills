@@ -215,7 +215,7 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 | Path | Holds |
 | --- | --- |
 | `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle. `anshul-ui-standards` (v1) stays untouched for older work |
-| `directions/` | one file per look, eleven to start, plus `_template.md` |
+| `directions/` | one file per look, eleven to start, plus `_template.md`; a look whose JSON has a `files` key also has a folder of exact CSS and JS that builders copy in |
 | `assets/room/` | the design room template: `index.html` (preview in device frames, compare as grid, pair or duel, blind mode, per-element votes, pins, notes, export, Expand and Full screen, New design with progress and ETA), `_vote/` (`hub-bridge.js`, `vote.js`, `server.py`, README), `make-room.py` (scaffolds a room, `room.js`, `_requests/designs.js` and a `BRIEF.md` skeleton) |
 | `assets/lib/` | `playwright.mjs`: the shared loader every script here uses (find or install `@playwright/test`, Chrome or Chromium, `launch` and `launchPersistent`); import it from any new script instead of `createRequire` |
 | `assets/requests/` | `request-form.js` (New design form, localStorage only; `make-room.py` copies it into a room's `_vote/`), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` (the request queue the room's `server.py` imports), `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |

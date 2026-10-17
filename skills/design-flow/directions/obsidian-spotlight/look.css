@@ -1,0 +1,66 @@
+/* Obsidian spotlight: the helpers that make the look. Load after tokens.css; pair with spotlight.js.
+   Classes carry an os- prefix so they never collide with a recipe's own (the report starter has .btn, .chip, .mono).
+   Set --hue on any element to give it its own colour (a card, row, chip or stat); it falls back to the accent. */
+
+/* ---- page base (skip this block in a report: the starter sets its own) ---- */
+body { margin: 0; background: var(--bg); color: var(--text); font: 400 15px/1.5 var(--font); font-feature-settings: "ss01", "cv11"; -webkit-font-smoothing: antialiased; transition: background-color var(--t) var(--ease), color var(--t) var(--ease); }
+h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -.015em; }
+h1 { letter-spacing: -.035em; } h2 { letter-spacing: -.025em; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+mark { background: var(--mark); color: inherit; border-radius: 3px; padding: 0 1px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent); }
+::selection { background: color-mix(in srgb, var(--accent) 45%, transparent); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ---- type helpers ---- */
+.os-num { font-variant-numeric: tabular-nums; }
+.os-label { font: 600 12px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+
+/* ---- frosted glass: sticky bars, floating trays, the sign-in card ---- */
+.os-glass { background: var(--glass); backdrop-filter: blur(14px) saturate(1.2); -webkit-backdrop-filter: blur(14px) saturate(1.2); }
+
+/* ---- buttons: hairline secondary, glowing primary, quiet ghost; press shrinks ---- */
+.os-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; padding: 0 16px; border: 1px solid var(--line-2); border-radius: var(--r); background: var(--s2); color: var(--text); font: 500 14px var(--font); white-space: nowrap; cursor: pointer; transition: transform var(--t-fast) var(--ease), background-color var(--t) var(--ease), border-color var(--t) var(--ease), box-shadow var(--t) var(--ease); }
+.os-btn:hover { border-color: var(--hue, var(--outline)); text-decoration: none; }
+.os-btn:active { transform: scale(.97); }
+.os-btn.primary { background: var(--accent); color: var(--accent-ink); border-color: transparent; font-weight: 600; }
+.os-btn.primary:hover { box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 35%, transparent); }
+.os-btn.ghost { background: transparent; border-color: transparent; color: var(--text-2); }
+.os-btn.ghost:hover { background: var(--s2); }
+.os-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+/* ---- chips: a glowing dot in the chip's hue; pressed fills with the hue ---- */
+.os-chip { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 0 11px 0 10px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--s1); color: var(--text-2); font: 500 13px var(--font); white-space: nowrap; }
+.os-chip .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; background: var(--hue, var(--muted)); box-shadow: 0 0 10px color-mix(in srgb, var(--hue, var(--muted)) 70%, transparent); }
+.os-chip[aria-pressed="true"], .os-chip.on { border-color: var(--hue, var(--text)); color: var(--text); background: color-mix(in srgb, var(--hue, var(--text)) 14%, var(--s1)); }
+
+/* ---- spotlight card and hairline row: the cursor throws a glow in the item's own hue ---- */
+.os-card, .os-row { position: relative; isolation: isolate; }
+.os-card { background: var(--s1); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; transition: border-color var(--t) var(--ease), transform var(--t) var(--ease-out); }
+.os-card:hover { border-color: color-mix(in srgb, var(--hue, var(--accent)) 45%, var(--line)); }
+.os-row { border-bottom: 1px solid var(--line); padding: 14px 12px 14px 16px; }
+.os-card::before, .os-row::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .25s var(--ease); background: radial-gradient(380px circle at var(--mx, 30%) var(--my, 40%), color-mix(in srgb, var(--hue, var(--accent)) var(--glow-a), transparent), transparent 72%); }
+.os-card:hover::before, .os-card:focus-within::before, .os-row:hover::before, .os-row:focus-within::before, .os-row.on::before { opacity: 1; }
+/* the hue edge: a 3 px bar that glows and widens on hover */
+.os-row::after, .os-card.edge::after { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--hue, var(--accent)); box-shadow: 0 0 14px color-mix(in srgb, var(--hue, var(--accent)) 60%, transparent); transition: width .18s var(--ease); }
+.os-row:hover::after, .os-row.on::after, .os-card.edge:hover::after { width: 5px; }
+
+/* ---- number block: big mono figure over a glowing hue underline (dashboards; reports drop stat tiles) ---- */
+.os-stat { position: relative; overflow: hidden; padding: 14px 16px 16px; border: 1px solid var(--line); border-radius: var(--r-l); background: radial-gradient(260px 120px at 0% 100%, color-mix(in srgb, var(--hue, var(--accent)) 10%, transparent), transparent), var(--s1); }
+.os-stat::after { content: ""; position: absolute; left: 16px; right: 16px; bottom: 0; height: 2px; border-radius: 2px; background: var(--hue, var(--accent)); box-shadow: 0 0 12px var(--hue, var(--accent)); }
+.os-stat .v { font: 800 32px/1 var(--mono); letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--text); }
+
+/* ---- drifting colour glow: put .os-glow as the first child of a position:relative; overflow:hidden host ---- */
+.os-glow { position: absolute; inset: -20%; z-index: 0; pointer-events: none; background: radial-gradient(600px 420px at 30% 20%, color-mix(in srgb, var(--h-blue) 18%, transparent), transparent 70%), radial-gradient(520px 380px at 75% 80%, color-mix(in srgb, var(--h-pink) 13%, transparent), transparent 70%), radial-gradient(420px 320px at 80% 15%, color-mix(in srgb, var(--h-violet) 12%, transparent), transparent 70%); animation: os-drift 18s ease-in-out infinite alternate; }
+@keyframes os-drift { to { transform: translate(-3%, 2%) rotate(4deg); } }
+
+/* ---- entrances: fade up 8 px; stagger with style="--i: n" (22 ms apart, capped by you) ---- */
+.os-rise { animation: os-rise 280ms var(--ease-out) both; animation-delay: calc(var(--i, 0) * 22ms); }
+@keyframes os-rise { from { opacity: 0; transform: translateY(var(--rise)); } }
+
+/* ---- reduced motion and transparency ---- */
+@media (prefers-reduced-motion: reduce) {
+  .os-glow, .os-rise { animation: none; }
+  .os-btn, .os-card, .os-card::before, .os-row::before, .os-row::after { transition: none; }
+  .os-btn:active { transform: none; }
+}
+@media (prefers-reduced-transparency: reduce) { .os-glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--bg); } }

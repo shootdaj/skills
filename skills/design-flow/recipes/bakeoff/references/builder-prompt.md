@@ -19,6 +19,7 @@ Your direction:
 - Signature motion: {{MOTION}}
 - Component forms: {{FORMS}}
 - 3D: {{THREE_D}}
+- Look files: {{LOOK_FILES}} (the look's folder from its `files` key, for example design-flow/directions/obsidian-spotlight/; copy its CSS and JS in as the base instead of retyping values. "none" when the look has no folder)
 - Do not use: {{EXCLUSIONS}}
 
 Output: {{DESIGNS_DIR}}/{{ID}}-{{SLUG}}/index.html plus shots/. Verify exactly as BRIEF.md says and look at your own PNGs before you report.
