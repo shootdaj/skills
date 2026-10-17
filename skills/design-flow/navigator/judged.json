@@ -1,0 +1,112 @@
+{
+ "about": "Judged attributes for the look navigator's star graph, 0 to 10. Measured attributes (darkness, contrast, colourfulness, warmth, roundness, density) are computed from each look file at load time and are not stored here. A look missing from this file still shows its measured attributes.",
+ "scoredBy": "Claude (Opus 5.5), from each look's mood, motion signature, forms and 3D lines, plus the demo pages that existed on 2026-10-17",
+ "scoredOn": "2026-10-17",
+ "attributes": {
+  "boldness": "How loud it reads: display type weight, accent strength, size of the moves.",
+  "playfulness": "How much fun and give it has: toys, bounce, hand-drawn touches.",
+  "formality": "How buttoned-up it feels: fit for an executive or an engineering doc.",
+  "motion": "How much moves, from its motion signature: count and size of the moments."
+ },
+ "looks": {
+  "aurora-editorial": {
+   "boldness": 5.5, "playfulness": 4.5, "formality": 6, "motion": 8,
+   "why": {
+    "boldness": "a big upright serif and a glowing aurora, kept airy",
+    "playfulness": "spring cursor blob and scramble text add some fun",
+    "formality": "editorial serif voice for launches and narrative reports",
+    "motion": "six moving moments: aurora, cursor blob, scramble, parallax, toasts, diagonal wipe"
+   }
+  },
+  "cinematic-scrollstory": {
+   "boldness": 8, "playfulness": 4, "formality": 5.5, "motion": 9.5,
+   "why": {
+    "boldness": "filmic dark ground, ember accent, full-screen pinned scenes",
+    "playfulness": "storytelling rather than toy-like",
+    "formality": "keynote and vision-doc register",
+    "motion": "everything is scroll-driven: pinned scenes, scrubbed reveals, exploded stack, radial sweep"
+   }
+  },
+  "fierce-waffle": {
+   "boldness": 4, "playfulness": 2.5, "formality": 6, "motion": 2.5,
+   "why": {
+    "boldness": "standard cards and a cyan accent on navy, nothing shouts",
+    "playfulness": "plain test-report furniture",
+    "formality": "left rail and collapsible sections, a working report",
+    "motion": "only entrance staggers and number tweens"
+   }
+  },
+  "ink": {
+   "boldness": 7.5, "playfulness": 1.5, "formality": 7.5, "motion": 4,
+   "why": {
+    "boldness": "maximum contrast and one red",
+    "playfulness": "stark, no toys",
+    "formality": "a sober report and status-page look",
+    "motion": "the report load choreography and calm scroll reveals"
+   }
+  },
+  "instrument-hud": {
+   "boldness": 7, "playfulness": 3, "formality": 6.5, "motion": 7.5,
+   "why": {
+    "boldness": "phosphor green on graphite, corner brackets, blueprint grid",
+    "playfulness": "blinking status lights have a little fun",
+    "formality": "control-room serious",
+    "motion": "breathing and blinking lights, typewriter headline, shutter blades, gauge sweeps, ticker"
+   }
+  },
+  "liquid-chrome": {
+   "boldness": 5, "playfulness": 6, "formality": 4.5, "motion": 7.5,
+   "why": {
+    "boldness": "soft graphite glass and a muted teal",
+    "playfulness": "draggable tiles, rolling-text buttons, morphing blobs",
+    "formality": "product marketing, not a boardroom",
+    "motion": "morphing blobs, before-and-after slider, draggable tiles, hue shift on scroll, lightbox"
+   }
+  },
+  "obsidian-spotlight": {
+   "boldness": 6.5, "playfulness": 3.5, "formality": 6, "motion": 7,
+   "why": {
+    "boldness": "electric blue and neon hues on near black, glowing edges",
+    "playfulness": "cursor glow is lively but the look stays a tool",
+    "formality": "developer-tool and workbench register",
+    "motion": "spring curves, fade-up stagger, cursor glow, drifting three-colour glow, FLIP reorders"
+   }
+  },
+  "paper-and-ink": {
+   "boldness": 7.5, "playfulness": 8, "formality": 2.5, "motion": 7,
+   "why": {
+    "boldness": "International Orange and hard offset shadows",
+    "playfulness": "hand-drawn sketch charts, confetti, receipts and index cards",
+    "formality": "workshop and personal-project register; avoid for executives",
+    "motion": "3D tilt, rolling digits, drag to reorder, confetti, fly to tray, page flip"
+   }
+  },
+  "plum-report": {
+   "boldness": 4.5, "playfulness": 4, "formality": 6, "motion": 5,
+   "why": {
+    "boldness": "calm plum ground; only the numbers are bold",
+    "playfulness": "approachable, rounded and warm",
+    "formality": "the report recipe's default: readable, not stiff",
+    "motion": "a load choreography, draw-in strokes, door curtain, sliding pill"
+   }
+  },
+  "swiss-broadsheet": {
+   "boldness": 8, "playfulness": 1.5, "formality": 9, "motion": 3.5,
+   "why": {
+    "boldness": "heavy condensed display type and one red",
+    "playfulness": "print precision, nothing playful",
+    "formality": "engineering doc and broadsheet grid",
+    "motion": "short and mechanical: page-style tab turns, edges drawing in, door curtain"
+   }
+  },
+  "toy-blocks": {
+   "boldness": 7, "playfulness": 9.5, "formality": 1.5, "motion": 7,
+   "why": {
+    "boldness": "candy colours and chunky rounded type",
+    "playfulness": "clay blocks, bubbles, sticky notes, a magnifying dock",
+    "formality": "onboarding and internal tools; avoid for legal or executives",
+    "motion": "bobble on hover, settling bubble numbers, dock magnification, draggable notes"
+   }
+  }
+ }
+}
