@@ -28,10 +28,11 @@ Before acting:
 2. For a multi-product report, read and follow `report-publisher`. Use its
    **Visual Product Shortlist — Material 3 Standard Feed (Template A)** as the
    mandatory Lazada default.
-3. Real Claude Code on the **Fable model** owns the report frontend and must use
-   `frontend-design`. In Claude Code, stay on Fable and use `frontend-design`
+3. Real Claude Code on the **Opus 5.5 model** owns the report frontend and must use
+   `frontend-design`. In Claude Code, stay on Opus 5.5 and use `frontend-design`
    directly. In Codex, read and follow `use-claude` and invoke Claude Code with
-   `--model fable`. In Cursor or Hermes, use the configured Claude Fable route.
+   `--model claude-opus-5-5`. In Cursor or Hermes, use the configured Claude
+   Opus 5.5 route.
    If no Claude route is available, report the blocker rather than silently
    building the report frontend with another model. Codex may prepare verified
    data, orchestrate, publish, and inspect the result.
@@ -167,7 +168,7 @@ The report should normally contain 4–8 strong candidates and must be image-led
 - minimal prose: no duplicate table, methodology section, chart, navigation, or
   long explanation unless the user explicitly asks for detail.
 
-Delegate the frontend to Claude Fable with the verified product dataset and exact URLs.
+Delegate the frontend to Claude Opus 5.5 with the verified product dataset and exact URLs.
 Publish permanently through here.now, then open the live URL in Chrome.
 
 ### 8. Verify from the user's perspective

@@ -1,6 +1,6 @@
 # Builder prompt
 
-One Fable subagent per variant. Run them in parallel with the Agent tool, `subagent_type: general-purpose`, `model: fable`. Give each the full text below with the placeholders filled. Keep the brief in a file and point at it, so every builder reads the same words.
+One Opus 5.5 subagent per variant. Run them in parallel with the Agent tool, `subagent_type: general-purpose`, `model: opus`. Give each the full text below with the placeholders filled. Keep the brief in a file and point at it, so every builder reads the same words.
 
 ```
 You are building design variant {{ID}} "{{NAME}}" of the {{PROJECT}} page.

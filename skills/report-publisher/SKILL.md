@@ -58,12 +58,13 @@ Choose the default from the content:
 
 ## Required frontend ownership
 
-Real Claude Code using the **Fable model** owns report creation and frontend
-design, and must use the `frontend-design` skill for the visual build.
+Real Claude Code using the **Opus 5.5 model** (`claude-opus-5-5`) owns report
+creation and frontend design, and must use the `frontend-design` skill for the
+visual build.
 
-- In Claude Code, stay on Fable and read and follow `frontend-design` directly.
+- In Claude Code, stay on Opus 5.5 and read and follow `frontend-design` directly.
 - In Codex, read and follow `use-claude`; invoke real Claude Code explicitly with
-  `--model fable`, send it the verified report data, selected template, and exact
+  `--model claude-opus-5-5`, send it the verified report data, selected template, and exact
   links, and instruct it to use `frontend-design`.
 - In Cursor or Hermes, use the configured Claude delegation route. If none is
   available, report the blocker instead of silently designing the frontend with
