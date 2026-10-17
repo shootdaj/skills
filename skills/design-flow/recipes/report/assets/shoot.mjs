@@ -36,22 +36,23 @@ const audit = (page, tag) => page.evaluate((tag) => {
   const dash = /[–—“”‘’]/.test(document.body.innerText);
   return { tag, hscroll: d.scrollWidth > d.clientWidth, small: [...new Set(small)].slice(0, 15), smallTargets: smallT, dashesOrCurlyQuotes: dash };
 }, tag);
-// The opening rule (2026-10-10, replaces the 2026-10-08 purpose line): the overview is an h1 title (the question the report answers or
-// the decision it supports, 14 words or fewer, 32 px at most), then div.lead: the lead statement (two or three plain paragraphs at 18 px
-// or more, no wider than 70ch, three to five span.hl highlights), the Your call strip (.ask) and the side card (.how-card), then
-// ul.opening: four to six one-line bullets, each led by a bold key number or phrase. No highlight or bullet lead has a background fill.
-// Every text in the overview outside its figures reaches 10:1 contrast against what is behind it (the page, or the strip or card surface).
-// Title, lead, strip and card fit the first screen at 1440 by 900 and the first bullet is on it. No other paragraph, verdict label,
-// eyebrow or stat tiles; no text above 48 px anywhere, no italic text in any heading or hero element. Run at 1440 wide.
+// The opening rule (2026-10-17, replaces the 2026-10-10 lead paragraphs and opening bullets): the overview is an h1 title (the question
+// the report answers or the decision it supports, 14 words or fewer, 32 px at most), then div.lead: three or four bullets in
+// ul.lead-lines at 18 px or more, each one line (a single wrap at 1440 is the limit) with at least one bold key word, bold never
+// underlined or filled; no lead paragraphs; the Your call strip (.ask) and the side card (.how-card). Nothing follows the lead in the
+// overview: no ul.opening, recap list or summary box repeating it. Every text in the overview outside its figures reaches 10:1 contrast
+// against what is behind it (the page, or the strip or card surface). Title, bullets, strip and card fit the first screen at 1440 by 900.
+// No other paragraph, verdict label, eyebrow or stat tiles; no text above 48 px anywhere, no italic text in any heading or hero element.
+// Run at 1440 wide.
 const opening = page => page.evaluate(() => {
   const ov = document.getElementById('overview'); if (!ov) return { tag: 'opening', missing: '#overview' };
   const kids = [...ov.children]; const h1 = ov.querySelector('h1');
   const lead = ov.querySelector('.lead'); const ask = lead && lead.querySelector('.ask'); const card = lead && lead.querySelector('.how-card');
   const paras = lead ? [...lead.querySelectorAll('p')].filter(p => !p.closest('.ask,.how-card')) : [];
-  const hls = paras.flatMap(p => [...p.querySelectorAll('.hl')]);
-  const ul = ov.querySelector('ul.opening'); const after = lead ? lead.nextElementSibling : null;
-  const lis = ul ? [...ul.children].filter(e => e.tagName === 'LI') : [];
-  const lines = el => { const t = el.querySelector('.ot') || el; const lh = parseFloat(getComputedStyle(t).lineHeight) || 24; return Math.round(t.getBoundingClientRect().height / lh); };
+  const lis = lead ? [...lead.querySelectorAll('ul.lead-lines > li')] : [];
+  const bolds = lis.flatMap(li => [...li.querySelectorAll('b,strong')]);
+  const recap = [...ov.querySelectorAll('ul,ol,.ov-grid')].filter(e => !e.closest('.lead,figure')).concat(lead ? [...lead.parentElement.children].filter(e => e !== lead && kids.indexOf(e) > kids.indexOf(lead)) : []);
+  const lines = el => { const lh = parseFloat(getComputedStyle(el).lineHeight) || 24; return Math.round(el.getBoundingClientRect().height / lh); };
   const H = innerHeight, inFold = e => { if (!e) return false; const r = e.getBoundingClientRect(); return r.height > 0 && r.top >= 0 && r.bottom <= H; };
   const shown = e => { const cs = getComputedStyle(e); return e.getClientRects().length && cs.display !== 'none' && cs.visibility !== 'hidden' && !e.closest('.doors,.sr,[inert]'); };
   const label = e => e.tagName.toLowerCase() + (e.className && typeof e.className === 'string' ? '.' + e.className.split(' ')[0] : '');
@@ -67,18 +68,17 @@ const opening = page => page.evaluate(() => {
   const ratio = el => { const bg = behind(el); const fg = over(rgba(getComputedStyle(el).color), bg); const a = lum(fg), b = lum(bg); return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05); };
   const openingText = textEls.filter(e => ov.contains(e) && !e.closest('.fg,figure,svg'));
   const filled = e => { const cs = getComputedStyle(e); return rgba(cs.backgroundColor)[3] > 0.01 || cs.backgroundImage !== 'none'; };
-  const chOf = p => { const probe = document.createElement('span'); probe.style.cssText = 'position:absolute;visibility:hidden;width:70ch;font:inherit;letter-spacing:inherit'; p.appendChild(probe); const w = probe.getBoundingClientRect().width / 70; probe.remove(); return p.getBoundingClientRect().width / w; };
   return { tag: 'opening',
     titleFirst: !!h1 && kids[0] === h1, titleWords: h1 ? h1.textContent.trim().split(/\s+/).length : 0, titlePx: h1 ? parseFloat(getComputedStyle(h1).fontSize) : 0,
-    lead: !!lead && paras.length > 0, leadAfterTitle: !!lead && kids[1] === lead, leadParagraphs: paras.length,
-    leadPx: paras.length ? Math.min(...paras.map(p => parseFloat(getComputedStyle(p).fontSize))) : 0,
-    leadCh: paras.length ? Math.round(Math.max(...paras.map(chOf))) : 0,
-    highlights: hls.length, filled: [...hls, ...lis.map(li => li.querySelector('b,strong')).filter(Boolean)].filter(filled).map(e => label(e) + snip(e)).slice(0, 6),
+    lead: !!lead && lis.length > 0, leadAfterTitle: !!lead && kids[1] === lead, leadParagraphs: paras.length, bullets: lis.length,
+    leadPx: lis.length ? Math.min(...lis.map(li => parseFloat(getComputedStyle(li).fontSize))) : 0,
+    unbold: lis.filter(li => !li.querySelector('b,strong')).length, wrapped: lis.filter(li => lines(li) > 2).length,
+    underlined: bolds.filter(b => /underline/.test(getComputedStyle(b).textDecorationLine)).map(e => label(e) + snip(e)).slice(0, 6),
+    recap: [...new Set(recap)].map(e => label(e) + snip(e)).slice(0, 4),
+    filled: bolds.filter(filled).map(e => label(e) + snip(e)).slice(0, 6),
     lowContrast: openingText.map(e => [e, ratio(e)]).filter(([, r]) => r < 10).map(([e, r]) => r.toFixed(1) + ':1 ' + label(e) + snip(e)).slice(0, 8),
     ask: !!ask && shown(ask) && !!ask.textContent.trim(), card: !!card && shown(card) && !!card.textContent.trim(),
-    bulletsFirst: !!ul && !!after && (after === ul || after.firstElementChild === ul), bullets: lis.length,
-    firstScreen: !!lead && [h1, ...paras, ask, card].every(inFold) && inFold(lis[0]),
-    unled: lis.filter(li => !li.querySelector('b,strong')).length, wrapped: lis.filter(li => lines(li) > 1).length,
+    firstScreen: !!lead && [h1, ...lis, ask, card].every(inFold),
     display: textEls.filter(e => parseFloat(getComputedStyle(e).fontSize) > 48).map(e => label(e) + ' ' + getComputedStyle(e).fontSize).slice(0, 5),
     italic: [...document.querySelectorAll('h1,h2,h3,h4,h5,h6,h1 *,h2 *,h3 *,h4 *,h5 *,h6 *,#overview,#overview *,.top *,.ph *,.fg-h *')].filter(e => textEls.includes(e) && /italic|oblique/.test(getComputedStyle(e).fontStyle)).map(label).slice(0, 5),
     banned: [...document.querySelectorAll('.verdict,.eyebrow,.tiles,.tile,.stat-tile'), ...ov.querySelectorAll('p')].filter(e => !e.closest('.lead,figure')).map(label).slice(0, 5) };
@@ -90,22 +90,22 @@ const openingFails = l => {
   if (!l.titleFirst) f.push('the h1 title is not the first thing in #overview');
   if (l.titleWords > 14) f.push(`title is ${l.titleWords} words, over 14`);
   if (l.titlePx > 32) f.push(`title is ${l.titlePx} px, over 32`);
-  if (!l.lead) f.push('lead statement missing: div.lead with two or three plain paragraphs right under the title');
+  if (!l.lead) f.push(l.leadParagraphs ? `lead is ${l.leadParagraphs} paragraphs; use three or four bullets in ul.lead-lines` : 'lead missing: div.lead with three or four bullets in ul.lead-lines right under the title');
   else {
-    if (!l.leadAfterTitle) f.push('lead statement is not directly under the title');
+    if (!l.leadAfterTitle) f.push('lead is not directly under the title');
+    if (l.bullets < 3 || l.bullets > 4) f.push(`${l.bullets} lead bullets, needs 3 or 4`);
+    if (l.leadParagraphs) f.push(`${l.leadParagraphs} paragraphs in the lead; use bullets only`);
     if (l.leadPx < 18) f.push(`lead text is ${l.leadPx} px, under 18`);
-    if (l.leadCh > 70) f.push(`lead is ${l.leadCh}ch wide, over 70`);
-    if (l.highlights < 3 || l.highlights > 5) f.push(`${l.highlights} highlights (span.hl) in the lead, needs 3 to 5`);
+    if (l.unbold) f.push(`${l.unbold} lead bullets without a bold key word`);
+    if (l.wrapped) f.push(`${l.wrapped} lead bullets run past two lines at 1440; cut them to one line`);
   }
-  if (l.filled.length) f.push('highlight or bullet lead with a background fill: ' + l.filled.join('; '));
+  if (l.underlined.length) f.push('underlined emphasis, use bold only: ' + l.underlined.join('; '));
+  if (l.recap.length) f.push('recap list or box after the lead repeats it: ' + l.recap.join('; '));
+  if (l.filled.length) f.push('bold key word with a background fill: ' + l.filled.join('; '));
   if (l.lowContrast.length) f.push('opening text under 10:1 contrast: ' + l.lowContrast.join('; '));
   if (!l.ask) f.push('Your call strip missing (.lead .ask)');
   if (!l.card) f.push('side card missing (.lead .how-card)');
-  if (!l.firstScreen) f.push('title, lead, Your call strip and side card are not all on the first screen at 1440 by 900 with the first bullet on it');
-  if (!l.bulletsFirst) f.push('ul.opening does not follow the lead');
-  if (l.bullets < 4 || l.bullets > 6) f.push(`${l.bullets} opening bullets, needs 4 to 6`);
-  if (l.unled) f.push(`${l.unled} bullets without a bold lead`);
-  if (l.wrapped) f.push(`${l.wrapped} bullets wrap past one line`);
+  if (!l.firstScreen) f.push('title, lead bullets, Your call strip and side card are not all on the first screen at 1440 by 900');
   if (l.display.length) f.push('text over 48 px: ' + l.display.join('; '));
   if (l.italic.length) f.push('italic text: ' + l.italic.join('; '));
   if (l.banned.length) f.push('label, eyebrow, stat tile or paragraph outside the lead: ' + l.banned.join('; '));
@@ -224,7 +224,7 @@ if (only === 'all' || only === '800') {
   for (const theme of ['dark', 'light']) {
     const { ctx, page } = await open({ width: 800, height: 1000 }, theme);
     await page.screenshot({ path: S + `04-800-${theme}-top.png` });
-    log.push({ tag: 'lead-800-' + theme, leadPx: await page.evaluate(() => { const ps = [...document.querySelectorAll('#overview .lead p')].filter(p => !p.closest('.ask,.how-card')); return ps.length ? Math.min(...ps.map(p => parseFloat(getComputedStyle(p).fontSize))) : 0; }) });
+    log.push({ tag: 'lead-800-' + theme, leadPx: await page.evaluate(() => { const ps = [...document.querySelectorAll('#overview .lead .lead-lines li')]; return ps.length ? Math.min(...ps.map(p => parseFloat(getComputedStyle(p).fontSize))) : 0; }) });
     await expandAll(page); await sweep(page);
     log.push(await audit(page, theme + '800-expanded'));
     if (theme === 'dark') { await page.addStyleTag({ content: '#top{position:relative!important}.totop{display:none!important}' }); for (const id of sections.slice(0, 2)) { const el = page.locator('#' + id); await el.scrollIntoViewIfNeeded(); await page.waitForTimeout(800); await el.screenshot({ path: S + `04-800-dark-${id}.png` }); } }
@@ -246,7 +246,7 @@ if (only === 'all' || only === 'fallback') {
   p2.on('pageerror', e => e2.push(e.message)); p2.on('console', m => { if (m.type() === 'error' && !/ERR_FAILED/.test(m.text())) errs.push('[no-motion] ' + m.text()); }); // the aborted Motion request itself logs ERR_FAILED
   await p2.goto(URL_); await p2.waitForTimeout(2500);
   await p2.screenshot({ path: S + '07-1440-no-motion-top.png' });
-  log.push({ tag: 'no-motion', pageErrors: e2, ...(await p2.evaluate(() => { const els = [...document.querySelectorAll('#overview .opening li')]; return { visibleOpening: els.filter(t => getComputedStyle(t).opacity === '1').length, opening: els.length }; })) });
+  log.push({ tag: 'no-motion', pageErrors: e2, ...(await p2.evaluate(() => { const els = [...document.querySelectorAll('#overview .lead-lines li')]; return { visibleOpening: els.filter(t => getComputedStyle(t).opacity === '1').length, opening: els.length }; })) });
   await ctx2.close();
 }
 await browser.close();

@@ -59,11 +59,11 @@ Five candy hues for layers, domains or teams. They come from the Toy Blocks vari
 
 `--ink` is `#2B2240`, the text colour on a full-strength hue. Slate, Forest and Sand shift one or two slots so the hues do not fight the accent (see the CSS).
 
-Where hues appear at full strength: the dot beside an opening bullet, chip outlines, the pressed chip fill, outlines and labels of grouped figures. Where hues appear blended: any surface larger than a chip, at 30 to 35 percent into `--s1`, plus the icon chip beside each opening bullet (30 percent); the text on them stays a text token. The lead statement highlights and the opening bullets' bold leads carry their hue only as a thin 2 px underline at about 70 percent, never a fill (2026-10-10). Stat tiles and their coloured numbers left the report on 2026-10-08 (Why: "never put these in the report").
+Where hues appear at full strength: the dot beside a lead bullet, chip outlines, the pressed chip fill, outlines and labels of grouped figures. Where hues appear blended: any surface larger than a chip, at 30 to 35 percent into `--s1`; the text on them stays a text token. Bold key words in the lead stay in the full text colour, never underlined or filled (2026-10-17). Stat tiles and their coloured numbers left the report on 2026-10-08 (Why: "never put these in the report").
 
 ## Type and shape
 
-- Manrope 700 for the title, chapter titles and figure titles, 600 for highlights and bullet leads, 500 for labels and buttons, 400 for body. Load it as `Manrope:wght@400..700` so 600 and 650 are real weights, never rounded up to bold. Body is 15.5 px on 1.55, the lead 19 px on 1.7, the opening bullets 16 px on 1.45.
+- Manrope 700 for the title, chapter titles and figure titles, 700 for the bold key words in the lead, 500 for labels and buttons, 400 for body. Load it as `Manrope:wght@400..700` so 600 and 650 are real weights, never rounded up to bold. Body is 15.5 px on 1.55, the lead bullets 19 px on 1.55.
 - Letter spacing `--track` (`.015em`) and word spacing `--word` (`.05em`) on the body, the lead and the bullets. Manrope sets letters and words close together, and light text on a dark page blooms, so without them long text looks cramped. Headings keep their own slight negative tracking.
 - The bullets are 16 px because Manrope's small letters are taller than the old font's: 16 px Manrope looks as big as the old 17 px and keeps each bullet on one line at 1440.
   Why: on 2026-10-10 Anshul, reading a report in the Plum dark theme, said of Familjen Grotesk "this font looks terrible in this theme. find something better, more modern, better fit with the style". Shown five fonts on the same report screen, he picked Manrope: "go with manrope as the font. bake this into the skill too".

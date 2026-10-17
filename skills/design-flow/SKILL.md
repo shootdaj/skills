@@ -96,10 +96,10 @@ Detailed, two more screens:
 | Density | Airy · Regular · Dense |
 | Lights | Tab count and gaps only · Every status · None |
 | 3D | Isometric SVG · WebGL flow figure with flat fallback (`recipes/flow3d/`) · None |
-| Forms (multi, one question per block that matters: navigation, opening bullets, main diagram, status view, sections) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
+| Forms (multi, one question per block that matters: navigation, main diagram, status view, sections; a report's lead is fixed by the report recipe) | options from the bake-off recipe's `templates/BRIEF-2.md` (`recipes/bakeoff/`) |
 | Sources (multi) | Dribbble, Behance, 21st.dev, Awwwards · SaaS Landing Page, Lapa Ninja · Browse links only (Godly, Land-book, Dark Mode Design, SiteInspire) · Login sites (Mobbin, Refero, Page Flows) |
 
-No form or light option offers stat tiles or a headline-number row: reports open with four to six highlighted bullets instead (`recipes/report/RECIPE.md`). Why: on 2026-10-08 Anshul, shown a row of stat cards, said "never put these in the report."
+No form or light option offers stat tiles or a headline-number row: reports open with three or four bold-keyword bullets, the Your call strip and the How we checked card instead, with no recap blocks (`recipes/report/RECIPE.md`). Why: on 2026-10-08 Anshul, shown a row of stat cards, said "never put these in the report"; on 2026-10-17 he asked for a lead he can scan, "bolden the main words so its easy to scan".
 
 Only the first six sources return search results; the rest open in Chrome. Default without asking: every source that fits the page kind in `assets/inspire/sources.json`.
 

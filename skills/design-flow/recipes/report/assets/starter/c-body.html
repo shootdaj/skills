@@ -47,17 +47,20 @@
  <!-- The title is the question this report answers or the decision it supports, in plain words, 14 words or fewer, at a normal heading
       size. No display type, no italic or coloured accent words, no slogan. -->
  <h1 class="title rv0" id="title">Should we switch the photo search to the new model this month?</h1>
- <!-- The lead statement (2026-10-10): two or three short paragraphs in plain English for a reader with no context. Say what the situation is
-      today; what was done and how (a real run, a check against old records, or a calculation); what was found, with the key numbers, each
-      clear about whether it was measured or worked out. Gloss every term the first time; no codes, ticket numbers, model or job names unless
-      glossed. Three to five span.hl phrases that carry the point, each with its hue on --lc. Then the Your call strip: what the reader needs
-      to decide, or "Nothing to decide yet" and why. The side card holds the method in three numbered steps plus one line on what was not
-      done or is not proven. Never --txt2 or --txt3 here: shoot.mjs fails any overview text under 10:1 contrast. -->
+ <!-- The lead (2026-10-17): three or four bullets in ul.lead-lines, one line each (a single wrap at 1440 is the limit), each with its
+      one to three key words in <b>: names, numbers, verdicts. No paragraphs, no glosses of terms the reader already knows, bold for
+      emphasis and never an underline. Each bullet's dot takes its hue from --lc. Then the Your call strip: the decision in <b>, "or say
+      what to change", or "Nothing to decide yet" and why. The side card holds the method in two to four numbered steps with bold key
+      words, then a "Not tested:" line. Nothing follows the lead in the overview: no recap list or summary box that repeats it. Never
+      --txt2 or --txt3 here: shoot.mjs fails any overview text under 10:1 contrast. -->
  <div class="lead rv0" id="lead">
   <div class="lead-txt">
-   <p>Today, photo search (typing a few words to find a picture) runs on the AI model (the program that matches words to pictures) we set up in January. Measured on our own library in April, it put the right photo in the first ten results <span class="hl" style="--lc:var(--c5)">6 times in 10</span>.</p>
-   <p>We ran the same 200 real searches through the new model. It found the right photo <span class="hl" style="--lc:var(--c2)">8 times in 10</span>, again a count from the run. From its price per search we worked out it would cost <span class="hl" style="--lc:var(--c3)">about $4 more a month</span>; that is a calculation, not a bill.</p>
-   <p class="ask"><svg class="i"><use href="#i-arrow"/></svg><span><b>Your call:</b> switch this month or wait. Pick yes or no by Friday.</span></p>
+   <ul class="lead-lines" aria-label="Key points">
+    <li style="--lc:var(--c2)">The new model found the right photo <b>8 times in 10</b>, against <b>6 in 10</b> today.</li>
+    <li style="--lc:var(--c3)">It would cost <b>about $4 more a month</b> (worked out from its price, not a bill).</li>
+    <li style="--lc:var(--c5)"><b>No downtime</b>: the switch is one setting, and <b>switching back</b> takes a minute.</li>
+   </ul>
+   <p class="ask"><svg class="i"><use href="#i-arrow"/></svg><span><b>Your call:</b> <b>switch this month</b>, or say what to change.</span></p>
   </div>
   <aside class="how-card" aria-label="How we checked">
    <h3>How we checked</h3>
@@ -69,29 +72,11 @@
    <p class="nb"><b>Not tested:</b> searches typed in other languages.</p>
   </aside>
  </div>
- <!-- The opening: four to six one-line bullets right after the lead. Each starts with its key number or phrase in <b>, styled like the lead
-      highlights: weight 600 and a thin underline in the bullet's hue (--lc), never a filled background. The icon chip is optional;
-      <span class="oi dot"></span> gives a plain coloured dot. These bullets are the takeaways. No label, badge, verdict tag, eyebrow,
-      paragraph or stat tiles. -->
- <div class="ov-grid">
-  <ul class="opening" aria-label="Key points">
-   <li data-tk="0" style="--lc:var(--c1)"><span class="oi"><svg class="i"><use href="#i-db"/></svg></span><span class="ot"><b>Key number</b> what it counts and why it matters, in one line.</span></li>
-   <li data-tk="1" style="--lc:var(--c2)"><span class="oi"><svg class="i"><use href="#i-user"/></svg></span><span class="ot"><b>Key phrase</b> the point, in words a non-technical reader gets.</span></li>
-   <li data-tk="2" style="--lc:var(--c3)"><span class="oi"><svg class="i"><use href="#i-layout"/></svg></span><span class="ot"><b>Another number</b> one line, no jargon, no label in front.</span></li>
-   <li data-tk="3" style="--lc:var(--c4)"><span class="oi"><svg class="i"><use href="#i-alert"/></svg></span><span class="ot"><b>The risk</b> what could go wrong, said plainly.</span></li>
-   <li data-tk="4" style="--lc:var(--c5)"><span class="oi"><svg class="i"><use href="#i-compass"/></svg></span><span class="ot"><b>What to do</b> the next step, four to six bullets in all.</span></li>
-  </ul>
-  <figure class="fg rv0" id="fig-lmap" data-ask="LAYERS_MAP" style="margin-top:0">
-   <div class="fg-h"><span class="fgno">Fig. 0.1</span><h3>Where each point lands</h3><span class="sp"></span><span class="hint">Hover or click a chip</span></div>
-   <div class="lmap" id="lmap"></div>
-   <figcaption>Layers A and C hold most of the findings.</figcaption>
-  </figure>
- </div>
 </section>
 
 <div class="panels">
-<!-- Length (2026-10-08, first screen 2026-10-10, no chapter cap 2026-10-11): title, lead statement, Your call strip and side card fully
-     visible at 1440 by 900, with the bullets above starting on that first screen. After that, as many chapters as the content needs,
+<!-- Length (2026-10-08, first screen 2026-10-10, no chapter cap 2026-10-11, lead bullets 2026-10-17): title, lead bullets, Your call
+     strip and side card fully visible at 1440 by 900. After that, as many chapters as the content needs,
      each earning its place, none that restates another. Captions 12 words or fewer. Detail goes in collapsible parts or the appendix
      (section id="appendix"). -->
 <!-- ═════════ 01 FIRST CHAPTER ═════════ -->

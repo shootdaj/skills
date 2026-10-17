@@ -25,14 +25,14 @@ text-to-diagram map), and `{{HUMANIZER_SKILL}}` (every visible string follows it
 
 ## Structure (pyramid)
 Sticky top bar: title, chapter tabs with light and count (scroll-spy, click scrolls), Expand all / Collapse all, theme toggle.
-00 Overview: plain title (the question or decision, 24 to 28 px) · lead statement (two or three plain paragraphs at 19 px, full text colour, three to five calm highlights, a Your call strip, a "How we checked" side card) · four to six one-line bullets, each led by a key number or phrase in the same calm style · layer map beside them. No eyebrow, label, verdict, other paragraph or stat tiles (the report recipe's opening rule, 2026-10-08 and 2026-10-10).
+00 Overview: plain title (the question or decision, 24 to 28 px) · lead: three or four one-line bullets at 19 px, full text colour, one to three key words in bold each (never underlined), no paragraphs · a Your call strip · a "How we checked" side card. Nothing after the lead repeats it: no recap list or box, eyebrow, label, verdict, other paragraph or stat tiles (the report recipe's opening rule, 2026-10-08 and 2026-10-17).
 {{CHAPTER_LIST_WITH_FIGURES}}
 Chapters 01 onward are collapsible panels (animated height); 00 to 02 open by default.
 Every figure: number, one-line caption of 12 words or fewer, tooltip, click detail, keyboard focus.
 Length: the report recipe's length rules hold (first screen short and scannable, then as many chapters as the content needs, detail collapsible).
 
 ## Motion (motion.dev, visible but calm)
-Load: top bar, title and lead statement, the opening bullets spring in one by one, figures stagger.
+Load: top bar, title and lead, the lead bullets spring in one by one, figures stagger.
 Scroll: `inView` reveals; strokes draw in; lights start when their section enters. Chips: sliding pill. Theme toggle: {{THEME_TRANSITION}}.
 Lights animate only on the active tab count and missing cells. Reduced motion respected; page works if Motion fails.
 

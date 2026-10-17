@@ -1,4 +1,4 @@
-/* report recipe component CSS: lights, ruler, top bar, tabs, overview (opening bullets, layer map), panels, figures, chips, shared diagram marks,
+/* report recipe component CSS: lights, ruler, top bar, tabs, overview (lead bullets, Your call, side card), panels, figures, chips, shared diagram marks,
    overlays, entrance states, responsive rules, palette picker, then the LED diet and toned-fill overrides. Keep this order.
    Figure-specific CSS (stack, sequence, treemap, grid, timelines) goes in b3-figures.css, one block per figure. */
 /* ── base ── */
@@ -75,43 +75,24 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .hero{padding:26px 0 8px}
 /* title: a normal page heading, 24 to 28 px at 1440 (never over 32), 600 to 700, never italic or display type (2026-10-08) */
 .title{margin:6px 0 14px;font:700 clamp(22px,1.8vw,28px)/1.25 var(--f);font-style:normal;letter-spacing:-.005em;color:var(--txt)}
-/* lead statement (2026-10-10): two or three plain paragraphs at 19 px (18 px under 900), line height 1.7, about 66ch, weight 400, full text
-   colour. Never --txt2 or --txt3 anywhere in the opening: shoot.mjs fails any overview text under 10:1. Three to five .hl phrases: weight 600
-   and a thin 2 px underline in the phrase's hue (--lc) at 70%, no fill. Then the Your call strip (.ask) and the side card (.how-card) on the right. */
-.lead{display:grid;grid-template-columns:minmax(0,1.75fr) minmax(0,1fr);gap:28px;align-items:start;margin:0 0 26px}
+/* lead (2026-10-17): three or four bullets in ul.lead-lines, 19 px (18 px under 900), full text colour, a dot in each bullet's hue (--lc),
+   one to three key words per bullet in bold (700), never an underline. Never --txt2 or --txt3 anywhere in the opening: shoot.mjs fails any
+   overview text under 10:1. Then the Your call strip (.ask) and the side card (.how-card) on the right. Nothing follows the lead. */
+.lead{display:grid;grid-template-columns:minmax(0,2.6fr) minmax(0,1fr);gap:28px;align-items:start;margin:0 0 26px}
 .lead p{margin:0 0 16px;max-width:66ch;font:400 19px/1.7 var(--f);font-style:normal;letter-spacing:var(--track);word-spacing:var(--word);color:var(--txt)}
-.lead .hl{--lc:var(--c4);font-weight:600;color:var(--txt);text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--lc) 70%,transparent);text-decoration-thickness:2px;text-underline-offset:5px}
+.lead-lines{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:6px}
+.lead-lines li{--lc:var(--c4);position:relative;padding-left:18px;font:400 19px/1.55 var(--f);letter-spacing:var(--track);word-spacing:var(--word);color:var(--txt)}
+.lead-lines li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;border-radius:50%;background:var(--lc)}
+.lead-lines b,.lead .ask b,.how b,.how-card .nb b{font-weight:700;color:var(--txt);text-decoration:none}
 .lead .ask{display:flex;gap:10px;align-items:flex-start;margin-top:6px;padding:10px 14px;border-radius:10px;background:var(--s1);border-left:3px solid var(--c4);font-size:17px;line-height:1.55}
 .lead .ask .i{flex:0 0 18px;width:18px;height:18px;margin-top:3px;color:var(--c4)}
-.lead .ask b{color:var(--txt)}
 .how-card{padding:18px 18px 16px;border-radius:14px;background:var(--s1);border:1px solid var(--line)}
 .how-card h3{margin:0 0 12px;font:650 15px/1.3 var(--f);color:var(--txt)}
 .how{list-style:none;margin:0 0 14px;padding:0;display:grid;gap:10px}
 .how li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start;font:400 16px/1.45 var(--f);color:var(--txt)}
-.how b{font-weight:650}
 .how .hn{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;border:2px solid var(--c1);color:var(--txt);font:700 13px var(--mono)}
 .how-card .nb{margin:0;max-width:none;padding-top:12px;border-top:1px solid var(--line);font:400 15.5px/1.5 var(--f);color:var(--txt)}
-@media (max-width:900px){.lead{grid-template-columns:1fr;gap:16px}.lead p{font-size:18px}}
-/* the opening: four to six one-line bullets after the lead, key phrase first in the same calm style as the lead highlights (no fill).
-   No label, badge, eyebrow, paragraph or stat tiles above or beside them (2026-10-08). The bullets are the takeaways; the layer map sits beside them. */
-.ov-grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:20px;align-items:start;margin-bottom:10px}
-.opening{list-style:none;margin:0;padding:0;display:grid;gap:8px}
-.opening li{--lc:var(--c4);display:grid;grid-template-columns:30px minmax(0,1fr);gap:12px;align-items:center;padding:7px 10px;border-radius:10px;font:400 16px/1.45 var(--f);letter-spacing:var(--track);word-spacing:var(--word);color:var(--txt);transition:background .2s}
-.opening .oi{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:color-mix(in srgb,var(--lc) 30%,var(--s1));color:var(--txt)}
-.opening .oi svg{width:16px;height:16px}
-.opening .oi.dot{width:12px;height:12px;justify-self:center;background:var(--lc)}
-.opening b{font-weight:600;color:var(--txt);margin-right:2px;text-decoration:underline;text-decoration-color:color-mix(in srgb,var(--lc) 70%,transparent);text-decoration-thickness:2px;text-underline-offset:5px}
-.opening li.hot{background:var(--s2)}
-.lmap{display:grid;gap:8px}
-.lm-row{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;background:var(--s2);border:1px solid var(--line)}
-.lm-l{font:700 14px/1.2 var(--f)}
-.lm-l small{display:block;font:500 12.5px/1.3 var(--f);color:var(--txt2);margin-top:3px;overflow-wrap:anywhere}
-.lm-t{display:flex;flex-wrap:wrap;gap:6px}
-.lm-chip{min-height:44px;border-radius:var(--pill);border:1px solid var(--line2);background:var(--s1);color:var(--txt);font:500 13px var(--f);padding:0 14px;cursor:pointer;display:inline-flex;gap:8px;align-items:center;transition:transform .3s var(--spring),border-color .15s,background .15s}
-.lm-chip b{font:600 12px var(--mono);color:var(--red-txt)}
-.lm-chip span{max-width:24ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.lm-chip:hover,.lm-chip.hot{transform:translateY(-2px);border-color:var(--red)}
-.lm-chip:active{transform:scale(.95)}
+@media (max-width:900px){.lead{grid-template-columns:1fr;gap:16px}.lead p,.lead-lines li{font-size:18px}}
 
 /* ── panels ── */
 .panels{padding:8px 0 40px}
@@ -232,11 +213,10 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
 /* entrance states (only when motion runs) */
 .anim #top{opacity:0}
 .anim .rv0{opacity:0}
-.anim .opening li{opacity:0}
+.anim .lead-lines li{opacity:0}
 
 /* ── responsive ── */
 @media (max-width:1180px){
-  .ov-grid{grid-template-columns:1fr}
   .stack-grid{grid-template-columns:1fr}
   .rd{grid-template-columns:1fr}
   .pair,.pair.w57,.pair.w75{grid-template-columns:1fr}
@@ -254,12 +234,12 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
   .ab-b dl{grid-template-columns:1fr;gap:2px}
   .ab-b dd{margin-bottom:8px}
   .fg{padding:14px 12px}
-  .lm-row{grid-template-columns:1fr}
   .grid5{grid-template-columns:minmax(96px,1.2fr) repeat(6,minmax(0,1fr));gap:4px}
   .cell{min-height:50px}
   .cell .w{display:none}
 }
-@media (max-width:560px){.rkey{columns:1}}
+/* phone (2026-10-17): the header title clipped under the buttons at 390, so only the mark shows; the link keeps its aria-label */
+@media (max-width:560px){.rkey{columns:1}.top-row .brand > span:not(.mk){display:none}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 
 /* palette picker */
@@ -286,9 +266,6 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
 .chip[aria-pressed="true"],.chip[aria-pressed="true"] .c{color:var(--ink)}
 .chips .pind{background:var(--pl,var(--c4))}
 .chips.noslide .chip[aria-pressed="true"]{background:var(--lc)}
-.lm-chip{border-color:color-mix(in srgb,var(--lc,var(--c4)) 70%,transparent)}
-.lm-chip:hover,.lm-chip.hot{background:var(--lc,var(--c4));color:var(--ink);border-color:transparent}
-.lm-chip:hover b,.lm-chip.hot b{color:var(--ink)}
 
 /* ═══ LED diet: static everywhere except the active tab count and missing readiness cells ═══ */
 .live .led.on.ok,.live .led.on.part,.live .led.on.miss,.live .led.on.new::after,.live .sled,.live .sbeacon,.pl.new .ptop,.live .tml.ghost{animation:none!important}
@@ -299,8 +276,6 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
 #readiness.live .cell.missing svg.ci{animation:ledBlink 2s steps(2,jump-none) infinite!important}
 .pl.new .ptop{filter:drop-shadow(0 0 10px var(--red-glow))}
 
-.lm-chip b,.lm-chip:hover b,.lm-chip.hot b{color:var(--ink);background:var(--lc,var(--c4));padding:2px 7px;border-radius:6px}
-.lm-chip:hover b,.lm-chip.hot b{background:rgba(43,34,64,.14)}
 
 /* ═══ large categorical fills toned: ~32% hue into the surface, full hue on outlines/labels ═══ */
 .tmg[style*="--lc"]{background:color-mix(in srgb,var(--lc) 30%,var(--s1));border:1px solid var(--lc)}

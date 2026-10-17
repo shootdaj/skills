@@ -35,8 +35,8 @@ Use this table as the starting map. The right column names the block shape the f
 
 | Text that usually appears | Replace with | Block shape |
 | --- | --- | --- |
-| Findings, a summary, a verdict | Four to six one-line opening bullets, each led by a highlighted key number or phrase, plus a layer map that pins each to a layer | `LAYERS_MAP: [{layer, takeaways[]}]` |
-| Headline numbers, KPIs, a row of stats | Never stat tiles. The number leads an opening bullet, or a real figure shows it in context | the figure's own block |
+| Findings, a summary, a verdict | Three or four one-line lead bullets with their key words in bold; detail goes into a real figure in a chapter, never a recap box | text in `ul.lead-lines`, no data block |
+| Headline numbers, KPIs, a row of stats | Never stat tiles. The number goes in a lead bullet, or a real figure shows it in context | the figure's own block |
 | Architecture paragraphs | Exploded stack or layered system graph | `SYSTEMS: {nodes[{id,label,layer,state}], links[[from,to,state,label]]}` |
 | Call flow description | Swimlane sequence | `SEQ: [{n, from, to, label, state}]` |
 | Readiness prose | Grid with lights plus stacked bars | `READINESS: {layers[], cols[], counts[[ready,partial,missing,na]], cells}` |

@@ -10,8 +10,8 @@ Timings from the reference `boot()`; all through `Motion.animate`, all skipped w
 | --- | --- |
 | 0 ms | Top bar fades and drops in (400 ms) |
 | 100 ms | Tabs stagger in, 30 ms apart |
-| 150 ms | Title, lead statement and layer map figure rise in, 120 ms apart |
-| 800 ms | Opening bullets spring in, 80 ms apart |
+| 150 ms | Title and lead rise in, 120 ms apart |
+| 800 ms | Lead bullets spring in, 80 ms apart |
 | 850 ms | Any number marked `data-count` counts up over 1.1 s, comma-formatted when marked |
 | 3200 ms | Failsafe: anything still at opacity 0 is forced visible and the `anim` class is removed |
 
@@ -52,4 +52,4 @@ Every light sits next to a word or an icon. A light alone is a defect.
 - `HAS()` is `!!window.Motion && !reduced`. Every animation goes through `anim()`, which returns a resolved promise when `HAS()` is false, so the page renders complete and static without Motion.
 - `prefers-reduced-motion: reduce` also disables CSS transitions and animations globally in the stylesheet.
 - `<html class="anim">` is added in the head script only when motion will run; entrance states in CSS are scoped to `.anim`, so a page without Motion never hides content.
-- Verification aborts the Motion CDN request in one run and checks that every opening bullet is visible.
+- Verification aborts the Motion CDN request in one run and checks that every lead bullet is visible.

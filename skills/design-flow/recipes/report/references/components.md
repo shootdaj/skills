@@ -9,7 +9,7 @@ Every figure the report style has used, what it encodes, and how it was built. T
 | Status light | One state: ok, part, miss, new, off | `.led` CSS, `led()` helper | Blinks only where the budget allows | `.led` rules in `b-style.css` |
 | Chapter tabs | The section list with a light and a count each | Generated from `section[data-no]` | Scroll-spy, click scrolls and opens the chapter | `#tabs`, `spy()`, `go()` |
 | Collapsible panel | A chapter | `.panel > .ph + .pb > .pbi` | Animated height, chevron, `inert` when closed, Expand all and Collapse all | `setOpen()` |
-| Opening bullets and layer map | Four to six one-line findings, each led by a highlighted key number or phrase, and which layer each belongs to | `ul.opening li` with `.oi` (icon or dot) and `b`, `.lmap`, `.lm-chip` | Hover a chip lights its bullet, click jumps to it | `fig-lmap` (the reference build still has the older cards) |
+| Lead bullets | Three or four one-line findings with their key words in bold, then the Your call strip and the How we checked card | `div.lead` with `ul.lead-lines li` and `b`, `p.ask`, `aside.how-card` | Text only; the bullets spring in on load | the starter's `#lead` (the reference build still has the older cards) |
 | Chips with sliding pill | A filter with counts | `.chips[data-slide] .chip[aria-pressed]` | Pressed state slides between chips with a spring | `press()`, `slide()` |
 | Tooltip | The fact behind a mark | `#tip` | Pointer and keyboard focus | `tipOn()`, `tipD()` |
 | Detail panel | The evidence behind a click | `.fg-d` | Fades in on update | `detail()` |
