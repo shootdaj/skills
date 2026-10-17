@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ship PR"
+  short_description: "One change to live: plan, real-use tests, PR, land"
+  default_prompt: "Use $ship-pr to take this change from plan to a tested, merged and live PR."
