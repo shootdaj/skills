@@ -1,0 +1,77 @@
+/* Obsidian spotlight: tokens. Source: Scout (Luminatlas), from the glossary d1.
+   Dark is the default; <html data-theme="light"> switches to light. Components read tokens only, never hex.
+   Fonts: https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800&family=Geist+Mono:wght@400;500;600;700&display=swap */
+:root, :root[data-theme="dark"] {
+  /* surfaces, one step lighter each, and hairlines */
+  --bg: #08090C; --s1: #0F1116; --s2: #14171E; --s3: #1B1F28; --s4: #232834;
+  --line: #1E222B; --line-2: #2A2F3A; --outline: #3A4050;
+  --glass: color-mix(in srgb, var(--bg) 84%, transparent);
+  /* text: primary, secondary, muted, faint (faint is for placeholders and rules, not reading) */
+  --text: #EDEFF3; --text-2: #C3C8D2; --muted: #8A919E; --faint: #5C6370;
+  /* accent: electric blue; text on it is near black */
+  --accent: #4F8CFF; --accent-ink: #08090C;
+  --accent-soft: color-mix(in srgb, var(--accent) 18%, transparent);
+  --mark: color-mix(in srgb, var(--accent) 34%, transparent);
+  /* elevation */
+  --shadow-1: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.35);
+  --shadow-2: 0 10px 30px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.4);
+  --shadow: 0 18px 44px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+  --shadow-4: 0 30px 80px rgba(0,0,0,.7), 0 4px 12px rgba(0,0,0,.5);
+  /* strength of the cursor glow a card throws in its own hue */
+  --glow-a: 16%;
+  /* twelve meaning hues, neon on near black: one per category, area or series */
+  --h-blue: #4D9BFF; --h-violet: #A98BFF; --h-amber: #FFB443; --h-teal: #2DD4BF;
+  --h-pink: #FF6BB5; --h-orange: #FF6A3D; --h-cyan: #5EC8E0; --h-lime: #B8E63A;
+  --h-gold: #E8C547; --h-coral: #FF8A80; --h-green: #4ADE80; --h-magenta: #E255FF;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #F7F8FA; --s1: #FFFFFF; --s2: #EEF0F4; --s3: #E4E7ED; --s4: #D9DDE5;
+  --line: #E1E4EA; --line-2: #CFD4DD; --outline: #B9BFCB;
+  --glass: color-mix(in srgb, var(--bg) 86%, transparent);
+  --text: #14171E; --text-2: #2E3440; --muted: #5B6270; --faint: #8A919E;
+  --accent: #1F5FE0; --accent-ink: #FFFFFF;
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, transparent);
+  --mark: color-mix(in srgb, var(--accent) 22%, transparent);
+  --shadow-1: 0 1px 2px rgba(20,23,30,.08), 0 6px 18px rgba(20,23,30,.08);
+  --shadow-2: 0 10px 30px rgba(20,23,30,.12), 0 2px 6px rgba(20,23,30,.06);
+  --shadow: 0 18px 44px rgba(20,23,30,.14), 0 2px 6px rgba(20,23,30,.08);
+  --shadow-4: 0 30px 80px rgba(20,23,30,.2), 0 4px 12px rgba(20,23,30,.1);
+  --glow-a: 12%;
+  --h-blue: #1A5FE0; --h-violet: #6B3FD6; --h-amber: #9A5A00; --h-teal: #0A7C70;
+  --h-pink: #C2187A; --h-orange: #C43B0E; --h-cyan: #0C6F8A; --h-lime: #4C7A00;
+  --h-gold: #8A6500; --h-coral: #C0392B; --h-green: #1B7F3F; --h-magenta: #A21CAF;
+  color-scheme: light;
+}
+:root {
+  /* states: exact, partial, miss */
+  --ok: var(--h-green); --part: var(--h-amber); --miss: var(--h-coral);
+  /* shape */
+  --r-s: 8px; --r: 12px; --r-l: 16px; --r-xl: 22px;
+  /* type: Geist and Geist Mono, upright only */
+  --font: "Geist", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  /* motion: Material-style standard curve, a long ease-out, a springy overshoot and a soft spring */
+  --ease: cubic-bezier(.2, 0, 0, 1);
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-in: cubic-bezier(.4, 0, 1, 1);
+  --spring: linear(0, .013 .8%, .05 1.7%, .19 3.6%, .64 8.6%, .83 11.2%, .96 13.6%, 1.03 16.1%, 1.05 18.7%, 1.03 24%, .99 30.5%, 1);
+  --spring-soft: linear(0, .2 4%, .5 9%, .8 15%, .96 22%, 1.01 30%, 1);
+  --t-fast: 120ms; --t: 220ms; --t-slow: 420ms;
+  --rise: 8px; /* fade-up distance for entrances */
+}
+
+/* Report recipe names. In a design-flow report, use this file in place of the starter's b1-tokens.css:
+   these map the starter's token names onto the look, so its components work unchanged. */
+:root {
+  --txt: var(--text); --txt2: var(--text-2); --txt3: var(--muted); --line2: var(--line-2);
+  --red: var(--accent); --red-txt: var(--accent); --red-tint: var(--accent-soft);
+  --red-glow: color-mix(in srgb, var(--accent) 55%, transparent);
+  --fill: var(--accent); --on-fill: var(--accent-ink); --on-red: var(--accent-ink);
+  --off: var(--muted); --on-led: var(--bg); --okf: var(--ok); --partf: var(--part); --missf: var(--miss); --newf: var(--h-coral);
+  /* the starter leads with --c4 (current tab, Your call strip, default chip): blue here */
+  --c1: var(--h-violet); --c2: var(--h-teal); --c3: var(--h-pink); --c4: var(--h-blue); --c5: var(--h-amber);
+  --ink: var(--accent-ink); --on-cat: var(--accent-ink);
+  --tip-bg: var(--s4); --tip-fg: var(--text); --pt: var(--s3); --ps: var(--s1); --pline: var(--line-2);
+  --f: var(--font); --track: 0em; --word: 0em; --pill: 999px; --gut: 24px; --maxw: 1240px; --top: 112px;
+}
