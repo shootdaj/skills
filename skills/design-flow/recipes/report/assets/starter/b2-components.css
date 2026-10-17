@@ -238,7 +238,8 @@ svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-widt
   .cell{min-height:50px}
   .cell .w{display:none}
 }
-@media (max-width:560px){.rkey{columns:1}}
+/* phone (2026-10-17): the header title clipped under the buttons at 390, so only the mark shows; the link keeps its aria-label */
+@media (max-width:560px){.rkey{columns:1}.top-row .brand > span:not(.mk){display:none}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 
 /* palette picker */
