@@ -18,16 +18,20 @@ creating or installing a skill.
 - Use `shootdaj/skills` as the publishing repository.
 - Put the primary package at `skills/<skill-name>/` in a local checkout whose
   `origin` points to `shootdaj/skills`.
-- Install the same package globally by linking it into each harness skill root.
+- Install the same package globally with Vercel's skills CLI from GitHub
+  (`npx -y skills add shootdaj/skills -g --skill <skill-name>`), on every machine.
+  Never hand-link a local checkout into a harness root; the checkout is only for
+  editing and pull requests.
 - Keep only `name` and `description` in shared `SKILL.md` frontmatter.
 - Add `agents/openai.yaml` for Codex UI metadata.
 - Work on a branch and open a pull request. Do not push directly to the default
   branch.
 - Do not ask questions when the request and examples already define the skill.
 - Never make a local-only skill copy when the request is to create or update a
-  reusable skill. Always: one shared source in `shootdaj/skills`, global harness
-  entries symlinked to it, target metadata added, every destination validated,
-  published through a branch and pull request (Anshul's global AGENTS.md rule).
+  reusable skill. Always: one shared source in `shootdaj/skills`, target metadata
+  added, published through a branch and pull request (Anshul's global AGENTS.md
+  rule), then installed with the skills CLI on every machine and every
+  destination validated.
 
 ## 1. Define the skill
 
@@ -152,19 +156,31 @@ Run the strongest available checks:
 
 Fix failures before calling the skill complete.
 
-## 6. Install globally
+## 6. Install globally (after the pull request merges)
 
-Use the target roots in the harness reference. Create missing root directories,
-then link each `<root>/<skill-name>` to the primary repository package.
+The skills CLI installs from GitHub's default branch, so install once the pull
+request is merged, on every machine (the MacBook and the Mac Ultra). Follow
+"Install with the skills CLI" in the harness reference:
 
-After installation, verify all four destinations:
+- new skill: `npx -y skills add shootdaj/skills -g -y -a claude-code codex cursor hermes-agent --skill <skill-name>`;
+- updated skill: `npx -y skills update -g -y <skill-name>`;
+- always with telemetry off (`DISABLE_TELEMETRY=1 DO_NOT_TRACK=1`).
 
-- exist;
-- resolve to the intended source;
-- expose a readable `SKILL.md`;
-- contain no dangling links.
+Forward-test before merge from the branch checkout path; never install from a
+local path, because local-path installs are skipped by `update`.
+
+After installation, verify on each machine that every destination:
+
+- exists and resolves to `~/.agents/skills/<skill-name>`;
+- exposes a readable `SKILL.md` identical to `origin/master`;
+- shows source `shootdaj/skills` in `npx -y skills ls -g --json` (its agent list
+  names only Claude Code and Hermes Agent; Codex and Cursor read
+  `~/.agents/skills` directly, so their absence there is expected);
+- has no dangling links and no duplicate copy in `~/.codex/skills/`.
 
 Do not replace an existing non-matching destination without explicit approval.
+Move a hand-made link or copy of the same skill to a backup folder (never
+delete it) before installing.
 
 ## 7. Publish (always, through a branch and pull request)
 
@@ -186,7 +202,8 @@ on GitHub.
 Report separately:
 
 - **Created:** primary package path and files.
-- **Installed:** each verified global destination.
+- **Installed:** each verified global destination per machine, or "pending
+  merge" until the pull request is merged.
 - **Validated:** checks and forward-test result.
 - **Published:** commit, branch, and pull-request URL.
 - **Not done:** anything blocked, skipped, or awaiting approval.

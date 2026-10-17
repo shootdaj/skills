@@ -5,12 +5,12 @@ Cursor, and Hermes.
 
 ## Compatibility matrix
 
-| Harness | Global root | Required package entry | Target notes |
-|---|---|---|---|
-| Claude Code | `~/.claude/skills/` | `SKILL.md` | Use the portable workflow and standard frontmatter. |
-| OpenAI Codex | `~/.codex/skills/` | `SKILL.md` | Add `agents/openai.yaml` for UI metadata. |
-| Cursor | `~/.cursor/skills/` | `SKILL.md` | Add a Cursor adapter only when invocation or tool mapping differs. |
-| Hermes | `~/.hermes/skills/` | `SKILL.md` | Minimal shared frontmatter is preferred; add Hermes metadata only in a verified dedicated variant. |
+| Harness | Global location (skills CLI) | CLI agent id | Required package entry | Target notes |
+|---|---|---|---|---|
+| Claude Code | `~/.claude/skills/<name>` → `~/.agents/skills/<name>` (symlink) | `claude-code` | `SKILL.md` | Use the portable workflow and standard frontmatter. |
+| OpenAI Codex | `~/.agents/skills/<name>` (read directly) | `codex` | `SKILL.md` | Add `agents/openai.yaml` for UI metadata. Keep no copy in `~/.codex/skills/`, or Codex sees it twice. |
+| Cursor | `~/.agents/skills/<name>` (read directly) | `cursor` | `SKILL.md` | Add a Cursor adapter only when invocation or tool mapping differs. |
+| Hermes | `~/.hermes/skills/<name>` → `~/.agents/skills/<name>` (symlink) | `hermes-agent` | `SKILL.md` | Minimal shared frontmatter is preferred; add Hermes metadata only in a verified dedicated variant. |
 
 ## Shared frontmatter
 
@@ -75,28 +75,48 @@ Target-specific translation only.
 If a target would execute another target's adapter incorrectly, create a
 dedicated variant instead of combining the adapters.
 
-## Safe global installation
+## Install with the skills CLI
 
-Let `SOURCE` be the absolute path to `skills/<skill-name>` in the publishing
-checkout. For each target root:
+Skills from `shootdaj/skills` are installed with Vercel's skills CLI
+(`npx skills`, npm package `skills`), straight from GitHub. GitHub is the
+registry: the CLI clones the repo's default branch, keeps one canonical copy
+per skill in `~/.agents/skills/`, links it into each harness, and records the
+source and hash in `~/.agents/.skill-lock.json`. Run every command on every
+machine (the MacBook and the Mac Ultra) so they stay identical.
 
-1. Create the root if missing.
-2. Inspect `DEST=<root>/<skill-name>`.
-3. If `DEST` is already a link to `SOURCE`, leave it unchanged.
-4. If `DEST` exists and differs, stop and show the conflict.
-5. Otherwise create a relative or absolute symbolic link to `SOURCE`.
+Always turn telemetry off. Without it, installs report the repo and skill names
+to skills.sh, which lists them publicly.
 
-Typical destinations:
+```bash
+export DISABLE_TELEMETRY=1 DO_NOT_TRACK=1
 
-```text
-~/.claude/skills/<skill-name>
-~/.codex/skills/<skill-name>
-~/.cursor/skills/<skill-name>
-~/.hermes/skills/<skill-name>
+# new skill (after its pull request merges)
+npx -y skills add shootdaj/skills -g -y -a claude-code codex cursor hermes-agent --skill <skill-name>
+
+# a merged change to an installed skill
+npx -y skills update -g -y <skill-name>
+
+# what is installed, and from where
+npx -y skills ls -g --json
 ```
 
-Verify with `readlink`, `test -r <destination>/SKILL.md`, and a dangling-link
-check. Do not silently convert an existing copied skill into a link.
+Before installing, inspect each destination in the table above:
+
+1. If it is missing, or already resolves to `~/.agents/skills/<skill-name>`,
+   continue.
+2. If it is a hand-made link into a checkout, or a copy of the same skill, move
+   it to a backup folder (never delete it), then install.
+3. If it is a different skill with the same name, stop and show the conflict.
+
+Never install from a local path (`npx skills add ./skills/<name>`): local-path
+installs are skipped by `update`, so they drift.
+
+Verify on each machine: the destination resolves to
+`~/.agents/skills/<skill-name>`; `test -r <destination>/SKILL.md`; the
+installed `SKILL.md` matches `git show origin/master:skills/<skill-name>/SKILL.md`;
+`npx -y skills ls -g --json` shows source `shootdaj/skills` (it lists only Claude
+Code and Hermes Agent as agents; Codex and Cursor read `~/.agents/skills`
+directly, so that is expected); and there are no dangling links.
 
 ## Validation checklist
 
@@ -107,6 +127,7 @@ check. Do not silently convert an existing copied skill into a link.
 - References are linked directly from `SKILL.md`.
 - Bundled scripts execute successfully.
 - `agents/openai.yaml` matches the skill.
-- All installed destinations resolve to the primary package.
+- All installed destinations resolve to `~/.agents/skills/<skill-name>`, installed
+  by the skills CLI from `shootdaj/skills` on every machine.
 - The Git diff contains only intended files.
 - The remote branch or pull request exists after publishing.
