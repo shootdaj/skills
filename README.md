@@ -35,7 +35,7 @@ npx skills update -g
 | **dj-set-builder** | Phased set order by Camelot walk with rising energy/BPM, blend partners, waveform peaks, `.m3u8` export. |
 | **dj-lexicon-playlists** | Lexicon Local API playlists with verified counts, NFC-safe file matching, safe Lexicon → rekordbox sync (Modified, never Full), USB export notes. |
 | **dj-vibe-report** | The "am I good for tonight" page: playable playlists with key/BPM/energy, transitions, waveforms, blend preview, checklist; published to here.now. |
-| **report-publisher** | Build and publish polished HTML reports. Includes the image-led `visual-product-shortlist` template, which is the default for shopping and product comparisons. |
+| **report-publisher** | Build and publish polished HTML reports. Its shopping default, the image-led Visual Product Shortlist, now lives in design-flow as the product-shortlist recipe (look `material-feed`); its report look is design-flow's `material-report`. |
 | **lazada-shopping** | Research Lazada Thailand in the user's logged-in browser, compare live listings and cart items, and publish a scored visual shortlist with photos and direct links. |
 | **recap** | Fast "catch me up / where are we" status when returning to a project after time away. |
 | **capcut-draft-builder** | Generate a working CapCut desktop draft from a timeline/EDL so an exact edit can be recreated in CapCut. |
@@ -55,9 +55,8 @@ npx skills update -g
 | **agent-briefs** | What every subagent brief says: agents never watch CI (push, report the run ID, stop; the main thread watches) and long tasks save progressively. Moved out of the global AGENTS.md. |
 | **design-flow** | Design engine: infers what it can, asks the rest at one of three levels (quick, medium, detailed), shows an inspiration picker you can skip, builds as many designs as you ask for (two or more open the design room), verifies with Playwright, publishes per the calling door's profile. |
 | **anshul-design** | Personal door on top of design-flow: sets the personal profile. Copy it to make your own flavour. The Aya flavour (`helix-design-anshul`) lives in AyaHelix/skills. |
-| **anshul-ui-standards-v2** | House mechanics the engine applies. Same rules as `anshul-ui-standards` minus the fixed Material chassis and report palette. v1 stays for older work. |
+| **anshul-ui-standards-v2** | House mechanics the engine applies: usability, theming, interaction, data visualization, motion and screenshot verification. The look, Material or another, comes from the engine. |
 | **azure-static-publish** | Publish or redeploy a static folder to Azure Static Web Apps behind SSO, with owner-suffixed names, owner tags and a sandbox subscription. Ships with a one-command script; pairs with the `azure-publisher` Claude Code subagent. |
-| **anshul-ui-standards** | Apply Anshul’s Material-grade UI house rules for structure, theming, interaction, data visualization, motion, and screenshot verification. |
 | **apple-design** | Apply Apple’s fluid-interface principles to web UI: interruptible springs, direct manipulation, momentum, materials, typography, and accessibility. |
 
 > The last several are vendored copies of third-party skills for portability across my machines; they carry their upstream authors' credit and licenses.

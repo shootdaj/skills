@@ -1,0 +1,131 @@
+/* Material feed: tokens. Source: recipes/product-shortlist/assets/starter/index.html
+   (report-publisher's Visual Product Shortlist, Material 3 Standard Feed, Template A, validated 2026-08-06).
+   Dark is the default; <html data-theme="light"> switches to light. Components read tokens only, never hex.
+   Fonts: https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,300..900&family=Roboto:wght@400;500;700&display=swap
+   Icons: https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..600,0..1,0 */
+:root, :root[data-theme="dark"] {
+  --surface: #141218;
+  --surface-dim: #141218;
+  --surface-bright: #3B383E;
+  --surface-container-lowest: #0F0D13;
+  --surface-container-low: #1D1B20;
+  --surface-container: #211F26;
+  --surface-container-high: #2B2930;
+  --surface-container-highest: #36343B;
+  --on-surface: #E6E0E9;
+  --on-surface-variant: #CAC4D0;
+  --primary: #D0BCFF;
+  --on-primary: #381E72;
+  --primary-container: #4F378B;
+  --on-primary-container: #EADDFF;
+  --secondary: #CCC2DC;
+  --on-secondary: #332D41;
+  --secondary-container: #4A4458;
+  --on-secondary-container: #E8DEF8;
+  --tertiary: #EFB8C8;
+  --on-tertiary: #492532;
+  --tertiary-container: #633B48;
+  --on-tertiary-container: #FFD8E4;
+  --error: #F2B8B5;
+  --on-error: #601410;
+  --error-container: #8C1D18;
+  --on-error-container: #F9DEDC;
+  --success: #81C995;
+  --on-success: #0F3D22;
+  --success-container: #1E4D2F;
+  --on-success-container: #C4EED0;
+  --warning: #FDD663;
+  --on-warning: #3F2E00;
+  --warning-container: #5C4300;
+  --on-warning-container: #FFE08F;
+  --outline: #938F99;
+  --outline-variant: #49454F;
+  --scrim: rgb(0 0 0 / .55);
+  --elevation-1: 0 1px 2px rgb(0 0 0 / .40), 0 1px 3px 1px rgb(0 0 0 / .25);
+  --elevation-2: 0 1px 2px rgb(0 0 0 / .42), 0 2px 6px 2px rgb(0 0 0 / .28);
+  --elevation-3: 0 4px 8px 3px rgb(0 0 0 / .32), 0 1px 3px rgb(0 0 0 / .40);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 55%, transparent);
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --surface: #FEF7FF;
+  --surface-dim: #DED8E1;
+  --surface-bright: #FEF7FF;
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-low: #F7F2FA;
+  --surface-container: #F3EDF7;
+  --surface-container-high: #ECE6F0;
+  --surface-container-highest: #E6E0E9;
+  --on-surface: #1D1B20;
+  --on-surface-variant: #49454F;
+  --primary: #6750A4;
+  --on-primary: #FFFFFF;
+  --primary-container: #EADDFF;
+  --on-primary-container: #21005D;
+  --secondary: #625B71;
+  --on-secondary: #FFFFFF;
+  --secondary-container: #E8DEF8;
+  --on-secondary-container: #1D192B;
+  --tertiary: #7D5260;
+  --on-tertiary: #FFFFFF;
+  --tertiary-container: #FFD8E4;
+  --on-tertiary-container: #31111D;
+  --error: #B3261E;
+  --on-error: #FFFFFF;
+  --error-container: #F9DEDC;
+  --on-error-container: #410E0B;
+  --success: #146C2E;
+  --on-success: #FFFFFF;
+  --success-container: #C4EED0;
+  --on-success-container: #072711;
+  --warning: #7A5900;
+  --on-warning: #FFFFFF;
+  --warning-container: #FFE08F;
+  --on-warning-container: #261A00;
+  --outline: #79747E;
+  --outline-variant: #CAC4D0;
+  --scrim: rgb(0 0 0 / .40);
+  --elevation-1: 0 1px 2px rgb(0 0 0 / .30), 0 1px 3px 1px rgb(0 0 0 / .15);
+  --elevation-2: 0 1px 2px rgb(0 0 0 / .30), 0 2px 6px 2px rgb(0 0 0 / .15);
+  --elevation-3: 0 4px 8px 3px rgb(0 0 0 / .15), 0 1px 3px rgb(0 0 0 / .30);
+  --focus-ring: 0 0 0 3px color-mix(in srgb, var(--primary) 45%, transparent);
+  color-scheme: light;
+}
+/* shape (M3 scale), 4/8dp spacing, state layer opacities, type */
+:root {
+  --shape-xs: 4px;
+  --shape-s: 8px;
+  --shape-m: 12px;
+  --shape-l: 16px;
+  --shape-xl: 28px;
+  --shape-full: 999px;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 24px; --sp-6: 32px; --sp-7: 48px; --sp-8: 64px;
+  --state-hover: .08;
+  --state-focus: .10;
+  --state-press: .12;
+  --disabled-content: .38;
+  --font-body: 'Roboto Flex', 'Roboto', sans-serif;
+}
+
+/* Report recipe names. In a design-flow report, use this file in place of the starter's b1-tokens.css:
+   these map the starter's token names onto the Material roles, so its components work unchanged. */
+:root {
+  --bg: var(--surface); --s1: var(--surface-container); --s2: var(--surface-container-high); --s3: var(--surface-container-highest);
+  --line: var(--outline-variant); --line2: var(--outline);
+  --txt: var(--on-surface); --txt2: var(--on-surface-variant); --txt3: var(--outline);
+  --red: var(--primary); --red-txt: var(--primary); --red-tint: color-mix(in srgb, var(--primary) 16%, transparent);
+  --red-glow: color-mix(in srgb, var(--primary) 55%, transparent);
+  --fill: var(--primary); --on-fill: var(--on-primary); --on-red: var(--on-primary);
+  --ok: var(--success); --part: var(--warning); --miss: var(--error);
+  --off: var(--outline); --on-led: var(--surface); --okf: var(--success); --partf: var(--warning); --missf: var(--error);
+  --c1: var(--primary); --c2: var(--tertiary); --c3: var(--success); --c4: var(--primary); --c5: var(--warning);
+  --ink: var(--on-primary); --on-cat: var(--on-primary);
+  --tip-bg: var(--surface-container-highest); --tip-fg: var(--on-surface);
+  --pt: var(--surface-container-high); --ps: var(--surface-container-low); --pline: var(--outline);
+  --shadow: var(--elevation-2);
+  --f: var(--font-body); --mono: "Roboto Mono", ui-monospace, monospace;
+  --r: var(--shape-m); --pill: var(--shape-full); --gut: 24px; --maxw: 1240px; --top: 112px;
+  --track: 0em; --word: 0em;
+  --ease: cubic-bezier(.2, 0, 0, 1); --spring: cubic-bezier(.34, 1.56, .64, 1);
+}

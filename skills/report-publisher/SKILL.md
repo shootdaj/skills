@@ -33,13 +33,19 @@ format makes the choice explicit:
 
 - **Standard Pyramid** — verdict, headline metrics, takeaways, persistent
   navigation, and collapsible evidence. Best for audits, research, benchmarks,
-  status reports, post-mortems, and findings-heavy work.
+  status reports, post-mortems, and findings-heavy work. Its look is the
+  `design-flow` skill's **`material-report`** look (`directions/material-report.md`
+  plus the `directions/material-report/` folder).
 - **Visual Product Shortlist** — the default for shopping and product-comparison
   reports; the validated **Material 3 Standard Feed (Template A)** with a real app
   bar, functional filter chips, and a responsive ranked, image-led card grid.
   Cards carry scores, decision/cart badges, price/value, concise facts, verdict,
   and direct links. Best for shopping research, recommendations, vendor/venue
-  shortlists, and other discrete visual choices.
+  shortlists, and other discrete visual choices. It now lives in the
+  `design-flow` skill as the **product-shortlist recipe**
+  (`recipes/product-shortlist/RECIPE.md`, default look `material-feed`); build
+  it from there (through `anshul-design` in personal projects) and publish it
+  with this skill.
 
 Make this a **non-blocking choice**. State the recommended template and say that
 you will use it if the user does not answer. When the environment supports a
@@ -113,7 +119,8 @@ must make the top recommendation obvious without adding an editorial preamble.
    detail into collapsible sections. For Visual Product Shortlist, decide the
    primary buy/keep/skip actions, rank the candidates, and reduce each item to one
    image, score, price/value, up to three facts, one-line verdict, and one CTA.
-   Use the validated Template A app-bar, filter-chip, and card-grid structure.
+   Follow `design-flow`'s product-shortlist recipe: the validated Template A
+   app-bar, filter-chip, and card-grid structure.
 
 3. **Decide what genuinely needs a visual.** Read `references/design-system.md`
    → "Charts: earn the ink" before adding any chart. A chart that just restates
@@ -122,19 +129,22 @@ must make the top recommendation obvious without adding an editorial preamble.
    stat tiles unless a graph reveals something text can't.
 
 4. **Have Claude build the HTML through the `frontend-design` skill, using the
-   selected template correctly.** Check `assets/templates/INDEX.md` for whether the asset
-   is a style reference or a layout template. For a style reference such as
-   `material-dark.html`, **lift its visual system** — theme tokens, tonal
+   selected template correctly.** Check `assets/templates/INDEX.md` for where each
+   template lives and whether it is a look or a layout. For the Standard Pyramid
+   look, `material-report` (`design-flow`'s `directions/material-report/`:
+   `tokens.css`, `look.css`, `ripple.js`, and `demo.html` showing every component),
+   **lift its visual system** — theme tokens, tonal
    surfaces, Material components (pill buttons, tiles, collapsible panels with the
    icon-button + ripple, the persistent nav, the D3 recipe), and interaction rules
    — and **build the structure around the actual report.** Do NOT copy the file and
    swap words: a benchmark, a research writeup, and a security review each need a
    different structure (different sections, maybe no severity tiles, a different or
    no chart). Design that structure for the content, then dress it in the reference's
-   style so it stays consistent with your other reports. For a layout template
-   such as `visual-product-shortlist.html`, preserve its card-led information
-   structure while replacing all example data, photos, links, labels, and accent
-   semantics with verified content. Always
+   style so it stays consistent with your other reports. For a Visual Product
+   Shortlist, start from the product-shortlist recipe's starter
+   (`design-flow`'s `recipes/product-shortlist/assets/starter/index.html`),
+   preserve its card-led information structure, and replace all example data,
+   photos, links, labels, and accent semantics with verified content. Always
    invoke the `frontend-design` skill for the visual build. It's the purpose-built skill for
    distinctive, production-grade UI and exists precisely to avoid the generic
    AI-template look a report should never have. Do not hand-roll the visual layer
@@ -182,14 +192,16 @@ must make the top recommendation obvious without adding an editorial preamble.
   plain HTML already reads well.
 - **Template rules are intentional.** Standard Pyramid uses the persistent nav
   and collapsible-detail system. Visual Product Shortlist uses the validated
-  Material 3 Standard Feed (Template A): app bar, working filter chips, responsive
+  Material 3 Standard Feed (Template A), now `design-flow`'s product-shortlist
+  recipe: app bar, working filter chips, responsive
   ranked cards, large photos, decision/cart chips, and direct CTAs. It deliberately
   omits report navigation, collapsibles, charts, methodology, and comparison tables.
 
 ## When to read the references
 
 - `assets/templates/INDEX.md` — before structuring the report. Template names,
-  types, selection guidance, and which structure to preserve.
+  where each now lives in `design-flow`, selection guidance, and which structure
+  to preserve.
 - `references/design-system.md` — before writing any HTML. Dark theme tokens,
   the pyramid layout, collapsible/`<details>` pattern, metadata strip, chart
   decision guide + D3 recipes, the animation/3D library menu, and how to use

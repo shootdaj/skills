@@ -1,11 +1,11 @@
 ---
 name: anshul-ui-standards-v2
-description: Anshul's UI house mechanics, version 2, used by the design-flow engine. Same rules as anshul-ui-standards (Material-grade usability, Apple-style fluid interaction, dark/light theming, interactivity minimums, data-viz/motion, screenshot self-verification) minus the fixed Material chassis and the fixed report palette, because the look comes from design-flow. Load through anshul-design or helix-design-anshul. Older work keeps using anshul-ui-standards.
+description: Anshul's UI house mechanics, used by the design-flow engine. Covers Material-grade usability, Apple-style fluid interaction, dark/light theming, interactivity minimums, data-viz/motion and screenshot self-verification. The look (chassis and palette) comes from design-flow, so no chassis or report palette is fixed. Load through anshul-design or helix-design-anshul.
 ---
 
 # Anshul UI Standards v2 — house mechanics
 
-Version 2 of `anshul-ui-standards`, for pages built through `design-flow`. The look (palette, type, shape, motion signature, component forms) comes from the chosen direction; these rules govern how the page behaves. Binding rules for every page, mock, dashboard, and report. Load `frontend-design` for aesthetic boldness, `ui-ux-pro-max` for UX/a11y depth, and `apple-design` for fluid, physical interaction and motion. When rules conflict: **this file wins**.
+House mechanics for pages built through `design-flow`. The look (palette, type, shape, motion signature, component forms) comes from the chosen direction; these rules govern how the page behaves. Binding rules for every page, mock, dashboard, and report. Load `frontend-design` for aesthetic boldness, `ui-ux-pro-max` for UX/a11y depth, and `apple-design` for fluid, physical interaction and motion. When rules conflict: **this file wins**.
 
 ## Claude Opus 5.5 owns frontend design
 
@@ -19,7 +19,7 @@ Version 2 of `anshul-ui-standards`, for pages built through `design-flow`. The l
 - Every page has a real chassis from the chosen look: a top bar or rail, clear zones, a consistent card or panel grid, obvious containment.
 - Consistent radii, one elevation scale, a 4/8px spacing grid. The look sets the values; this rule says they must be consistent.
 - Distinctive/expressive elements (21st.dev / Dribbble caliber) live **inside** that chassis — never floating-element soup on a bare background.
-- Material Design 3 is one valid chassis, not the default. `design-flow` picks the chassis with the user.
+- Material Design 3 is one valid chassis (the `material-report` and `material-feed` looks), not the default. `design-flow` picks the chassis with the user.
 
 ## 2. Material usability mechanics (the non-negotiable chassis)
 

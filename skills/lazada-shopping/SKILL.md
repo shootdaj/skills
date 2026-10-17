@@ -6,7 +6,8 @@ description: >
   compare Lazada products, inspect relevant items already in their Lazada cart,
   check current prices or shipping, evaluate near-identical variants, or produce
   shopping recommendations with photos and direct links. For multi-product work,
-  default to a published Visual Product Shortlist report with scored verdicts.
+  default to a published product shortlist (design-flow's product-shortlist
+  recipe, the Visual Product Shortlist) with scored verdicts.
   Trigger even when the user simply says "find me one on Lazada," "check my cart,"
   "which of these should I buy," or names a product category plus Lazada.
 ---
@@ -25,17 +26,14 @@ Before acting:
 1. Read and follow `browse-with-chrome`. Use the native Chrome connector and the
    existing logged-in profile. If the user's latest message explicitly names a
    different browser surface, that explicit choice wins.
-2. For a multi-product report, read and follow `report-publisher`. Use its
-   **Visual Product Shortlist — Material 3 Standard Feed (Template A)** as the
-   mandatory Lazada default.
-3. Real Claude Code on the **Opus 5.5 model** owns the report frontend and must use
-   `frontend-design`. In Claude Code, stay on Opus 5.5 and use `frontend-design`
-   directly. In Codex, read and follow `use-claude` and invoke Claude Code with
-   `--model claude-opus-5-5`. In Cursor or Hermes, use the configured Claude
-   Opus 5.5 route.
-   If no Claude route is available, report the blocker rather than silently
-   building the report frontend with another model. Codex may prepare verified
-   data, orchestrate, publish, and inspect the result.
+2. For a multi-product report, build it with `anshul-design`, which routes
+   shopping to `design-flow`'s **product-shortlist recipe**: the validated
+   Visual Product Shortlist (Material 3 Standard Feed, Template A) in the
+   `material-feed` look, the mandatory Lazada default. The recipe owns the
+   layout; this skill owns the shopping content (step 7).
+3. The report frontend follows the model rule in `anshul-ui-standards-v2`, which
+   the recipe loads: real Claude Code on Opus 5.5, or report the blocker. Codex
+   may prepare verified data, orchestrate, publish, and inspect the result.
 
 ## Default scope and safety
 
@@ -149,27 +147,26 @@ for verification, but keep the published report visually concise.
 ### 7. Publish the shopping report
 
 For multi-product research, comparisons, or cart reviews, default to a permanent
-HTML report using `report-publisher` → **Visual Product Shortlist — Material 3
-Standard Feed (Template A)**. All Lazada reports use this structure unless the
-user explicitly chooses another template. If the user explicitly asks for only a
-quick answer, a full report is optional.
+HTML shortlist built through `anshul-design` → `design-flow`'s
+**product-shortlist recipe** (the Visual Product Shortlist, in the
+`material-feed` look). The recipe owns the layout: app bar, theme toggle, filter
+chips, the ranked image-led card grid and minimal prose. All Lazada reports use
+it unless the user explicitly chooses another look or format. If the user
+explicitly asks for only a quick answer, a full report is optional.
 
-The report should normally contain 4–8 strong candidates and must be image-led:
+The Lazada content that fills the recipe:
 
-- a real Material 3 top app bar with Lazada Thailand, absolute checked date, and
-  a persistent light/dark toggle (dark by default);
-- working filter chips for All, Buy, Keep, Consider, Skip, and In cart;
-- a responsive ranked card grid with one large uncropped photo per candidate;
-- score, delivered total, no more than three useful fact chips, and one short
-  verdict;
-- an obvious **Top pick** state on the #1 card plus Buy/Keep/Consider/Skip chips;
-- **IN YOUR CART** badges for every relevant cart candidate;
-- one obvious **View on Lazada** button pointing to the exact product page;
-- minimal prose: no duplicate table, methodology section, chart, navigation, or
-  long explanation unless the user explicitly asks for detail.
+- normally 4–8 strong candidates, ranked by the score from step 6;
+- the app bar names Lazada Thailand and the absolute checked date;
+- filter chips for All, Buy, Keep, Consider, Skip, and In cart;
+- per card: the score, the delivered total, no more than three useful fact chips,
+  one short verdict, and its Buy/Keep/Consider/Skip decision;
+- the #1 card marked **Top pick**;
+- **IN YOUR CART** on every relevant cart candidate, and on no other;
+- one **View on Lazada** button pointing to the exact product page.
 
-Delegate the frontend to Claude Opus 5.5 with the verified product dataset and exact URLs.
-Publish permanently through here.now, then open the live URL in Chrome.
+Hand the recipe the verified product dataset and exact URLs. Publish permanently
+through here.now, then open the live URL in Chrome.
 
 ### 8. Verify from the user's perspective
 

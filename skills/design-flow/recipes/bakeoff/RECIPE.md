@@ -35,7 +35,7 @@ Skip it when the user already named a direction; go straight to the report recip
 ## Rules
 
 - Content is fixed. A variant that changes a number or drops a table fails.
-- From scratch. No house chassis, no Material idiom, no default fonts. Icons are inline SVG or Lucide, never emoji.
+- From scratch. No house chassis, no default fonts, no Material idiom unless the variant's direction is a Material look (`material-report`, `material-feed`). Icons are inline SVG or Lucide, never emoji.
 - Motion must be noticeable and named: load choreography, scroll reveals, count-ups, chart draw-in, spring press, animated collapse, scroll progress, animated theme swap.
 - At least ten working interactive elements per variant. A dead control is a defect.
 - Every variant verifies itself with Playwright before reporting: 1440 and 800, both themes, zero console errors, 12 px floor, no horizontal scroll.

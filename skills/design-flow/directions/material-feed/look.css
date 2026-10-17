@@ -1,0 +1,181 @@
+/* Material feed: components. Source: the same starter, verbatim.
+   The first block (box-sizing, html/body, .page, .ms icon font) is the page base; skip it when the page has its own.
+   Then: the interactive base (.ia state layer, focus ring, 48px targets, .ripple), product bits (score chip, chips with
+   decision tones, fact chips, verdict, filled and tonal buttons, image link) and the M3 standard feed (app bar, icon
+   button, cart badge, chip row, 3/2/1 grid, card, rank dot, empty state). Pair with ripple.js. */
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: var(--font-body);
+  background: var(--surface-container-lowest);
+  color: var(--on-surface);
+  min-height: 100vh;
+}
+.page {
+  width: 100%; max-width: 1400px; margin: 0 auto;
+  background: var(--surface);
+  box-shadow: var(--elevation-1);
+  min-height: 100vh;
+  container-type: inline-size;
+  container-name: page;
+}
+.ms {
+  font-family: 'Material Symbols Rounded';
+  font-weight: normal; font-style: normal;
+  font-size: 24px; line-height: 1;
+  display: inline-block; vertical-align: middle;
+  letter-spacing: normal; text-transform: none;
+  white-space: nowrap; word-wrap: normal; direction: ltr;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  -webkit-font-smoothing: antialiased;
+}
+.ms.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+
+/* ---------- interactive base: state layer + ripple + focus + 48px targets ---------- */
+.ia {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  isolation: isolate;
+}
+.ia::after {
+  content: "";
+  position: absolute; inset: 0;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 120ms ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.ia:hover::after { opacity: var(--state-hover); }
+.ia:focus-visible::after { opacity: var(--state-focus); }
+.ia:active::after { opacity: var(--state-press); }
+.ia:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.ia:disabled { cursor: default; opacity: var(--disabled-content); }
+.ripple {
+  position: absolute; border-radius: 50%;
+  background: currentColor; opacity: .18;
+  transform: scale(0); pointer-events: none;
+  animation: ripple 480ms ease-out forwards;
+}
+@keyframes ripple { to { transform: scale(2.6); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .ripple { animation: none; opacity: 0; }
+  * { transition-duration: 1ms !important; animation-duration: 1ms !important; }
+}
+
+/* ---------- shared product bits ---------- */
+.price { font-weight: 700; font-variant-numeric: tabular-nums; }
+.score-chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: var(--primary-container); color: var(--on-primary-container);
+  border-radius: var(--shape-s); padding: 2px 8px;
+  font-size: 13px; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  min-height: 32px; padding: 0 var(--sp-3);
+  border-radius: var(--shape-s);
+  border: 1px solid var(--outline);
+  font-size: 14px; font-weight: 500;
+  color: var(--on-surface-variant);
+  background: transparent;
+}
+.chip .ms { font-size: 18px; }
+.chip.on { background: var(--secondary-container); color: var(--on-secondary-container); border-color: transparent; }
+.chip.tone-buy { background: var(--success-container); color: var(--on-success-container); border-color: transparent; }
+.chip.tone-keep { background: var(--primary-container); color: var(--on-primary-container); border-color: transparent; }
+.chip.tone-consider { background: var(--warning-container); color: var(--on-warning-container); border-color: transparent; }
+.chip.tone-skip { background: var(--error-container); color: var(--on-error-container); border-color: transparent; }
+.chip.cart { background: var(--tertiary-container); color: var(--on-tertiary-container); border-color: transparent; }
+.facts { display: flex; flex-wrap: wrap; gap: var(--sp-1); margin: 0; padding: 0; list-style: none; }
+.facts li {
+  font-size: 12px; color: var(--on-surface-variant);
+  background: var(--surface-container-high);
+  border-radius: var(--shape-xs); padding: 3px 8px;
+  font-variant-numeric: tabular-nums;
+}
+.verdict { font-size: 14px; color: var(--on-surface-variant); margin: 0; line-height: 1.45; }
+.btn-filled {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 var(--sp-5);
+  border-radius: var(--shape-full);
+  background: var(--primary); color: var(--on-primary);
+  font-size: 14px; font-weight: 600; text-decoration: none;
+}
+.btn-tonal {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  min-height: 48px; padding: 0 var(--sp-4);
+  border-radius: var(--shape-full);
+  background: var(--secondary-container); color: var(--on-secondary-container);
+  font-size: 14px; font-weight: 600;
+}
+.btn-tonal.incart { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+.img-link { display: block; position: relative; border-radius: inherit; }
+.img-link img { display: block; width: 100%; height: 100%; object-fit: cover; }
+
+/* ---------- M3 standard feed ---------- */
+.appbar {
+  display: flex; align-items: center; gap: var(--sp-3);
+  min-height: 64px; padding: 0 var(--sp-4);
+  background: var(--surface-container);
+  position: sticky; top: 0; z-index: 10;
+}
+.appbar h1 { font-size: 22px; font-weight: 500; margin: 0; flex: 1; font-family: 'Roboto Flex', Roboto, sans-serif; }
+.icon-btn {
+  min-width: 48px; min-height: 48px; border-radius: var(--shape-full);
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--on-surface-variant); position: relative;
+}
+.cart-badge {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--tertiary); color: var(--on-tertiary);
+  font-size: 11px; font-weight: 700; min-width: 16px; height: 16px;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  padding: 0 4px; font-variant-numeric: tabular-nums;
+}
+.chip-row {
+  display: flex; gap: var(--sp-2); flex-wrap: wrap;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface-container);
+  border-bottom: 1px solid var(--outline-variant);
+}
+.chip-row .chip { min-height: 40px; }
+.grid {
+  display: grid; gap: var(--sp-4); padding: var(--sp-4);
+  grid-template-columns: repeat(3, 1fr);
+}
+@container page (max-width: 900px) { .grid { grid-template-columns: repeat(2, 1fr); } }
+@container page (max-width: 560px) { .grid { grid-template-columns: 1fr; } }
+.card {
+  background: var(--surface-container-low);
+  border-radius: var(--shape-m);
+  overflow: hidden;
+  box-shadow: var(--elevation-1);
+  display: flex; flex-direction: column;
+  transition: box-shadow 160ms ease, transform 160ms ease;
+}
+.card:hover { box-shadow: var(--elevation-3); }
+.card .img-link { aspect-ratio: 4/3; border-radius: 0; }
+.card .body { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-2); flex: 1; }
+.card .titlerow { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--sp-2); }
+.card h2 { font-size: 16px; font-weight: 600; margin: 0; }
+.card .price { font-size: 18px; }
+.card .chips { display: flex; gap: var(--sp-1); flex-wrap: wrap; }
+.card .actions { display: flex; gap: var(--sp-2); margin-top: auto; padding-top: var(--sp-2); }
+.rankdot {
+  position: absolute; top: var(--sp-2); left: var(--sp-2);
+  background: var(--scrim); color: #fff;
+  border-radius: var(--shape-s); padding: 2px 8px;
+  font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums;
+}
+.empty {
+  grid-column: 1 / -1; text-align: center; padding: var(--sp-8) var(--sp-4);
+  color: var(--on-surface-variant);
+}
+.empty .ms { font-size: 48px; opacity: .6; }

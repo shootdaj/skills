@@ -1,0 +1,55 @@
+/* Material report: tokens. Source: demo.html in this folder (report-publisher's material-dark style reference).
+   Dark is the default and verbatim from the source; <html data-theme="light"> switches to light, which is derived
+   (Material 3 baseline for the same blue; the source is dark only). Components read tokens only, never hex.
+   Fonts: https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap */
+:root, :root[data-theme="dark"] {
+  --bg:#101014; --s1:#17171d; --s2:#1d1d24; --s3:#24242c; --s4:#2b2b34;
+  --outline:#3a3a45; --outline-v:#2c2c35;
+  --txt:#e6e1e9; --muted:#c6c2cc; --dim:#9b96a3;
+  --primary:#a8c7fa; --on-primary:#0b2a4a; --primary-c:#1e3a5f;
+  --crit:#ff5561; --high:#ffa05c; --med:#f5cf6b; --low:#6fdcb0;
+  --code:#0b0b0f;
+  --e1:0 1px 2px rgba(0,0,0,.5),0 1px 3px 1px rgba(0,0,0,.3);
+  --e2:0 1px 2px rgba(0,0,0,.5),0 2px 6px 2px rgba(0,0,0,.3);
+  --e3:0 4px 8px 3px rgba(0,0,0,.3),0 1px 3px rgba(0,0,0,.5);
+  --strong:#fff; --code-txt:#dfe3ea; --hover:rgba(255,255,255,.08);
+  --primary-c-hover:#254a75; --primary-hover:#bcd6ff;
+  color-scheme:dark;
+}
+:root[data-theme="light"] {
+  --bg:#F9F9FF; --s1:#FFFFFF; --s2:#EDEDF4; --s3:#E7E8EE; --s4:#E1E2E8;
+  --outline:#74777F; --outline-v:#C4C6D0;
+  --txt:#191C20; --muted:#44474F; --dim:#5C5F67;
+  --primary:#415F91; --on-primary:#FFFFFF; --primary-c:#D6E3FF;
+  --crit:#BA1A1A; --high:#A04100; --med:#8A6400; --low:#1E7A55;
+  --code:#F1F3F9;
+  --e1:0 1px 2px rgba(25,28,32,.12),0 1px 3px 1px rgba(25,28,32,.08);
+  --e2:0 1px 2px rgba(25,28,32,.14),0 2px 6px 2px rgba(25,28,32,.10);
+  --e3:0 4px 8px 3px rgba(25,28,32,.12),0 1px 3px rgba(25,28,32,.16);
+  --strong:#0E1116; --code-txt:#2B2F36; --hover:rgba(0,0,0,.06);
+  --primary-c-hover:#C2D4F7; --primary-hover:#35527F;
+  color-scheme:light;
+}
+/* type and the one shared easing */
+:root {
+  --sans:'Manrope',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+  --ease:cubic-bezier(.2,0,0,1);
+}
+
+/* Report recipe names. In a design-flow report, use this file in place of the starter's b1-tokens.css:
+   these map the starter's token names onto the look, so its components work unchanged. */
+:root {
+  --line: var(--outline-v); --line2: var(--outline);
+  --txt2: var(--muted); --txt3: var(--dim);
+  --red: var(--primary); --red-txt: var(--primary); --red-tint: var(--primary-c);
+  --red-glow: color-mix(in srgb, var(--primary) 55%, transparent);
+  --fill: var(--primary); --on-fill: var(--on-primary); --on-red: var(--on-primary);
+  --ok: var(--low); --part: var(--med); --miss: var(--crit);
+  --off: var(--dim); --on-led: var(--bg); --okf: var(--low); --partf: var(--med); --missf: var(--crit);
+  --c1: var(--primary); --c2: var(--low); --c3: var(--high); --c4: var(--primary); --c5: var(--med);
+  --ink: var(--on-primary); --on-cat: var(--on-primary);
+  --tip-bg: var(--s4); --tip-fg: var(--txt); --pt: var(--s3); --pline: var(--outline);
+  --shadow: var(--e2);
+  --f: var(--sans); --r: 18px; --pill: 999px; --gut: 24px; --maxw: 1240px; --top: 112px;
+  --track: 0em; --word: 0em; --spring: cubic-bezier(.34, 1.56, .64, 1);
+}

@@ -1,6 +1,6 @@
 ---
 name: design-flow
-description: The engine behind the anshul-design and helix-design-anshul doors. Use for any page, dashboard, report, tech design, mock or control surface, and to watch a design room for New design requests ("watch the room", "start the design room"). Infers what it can, asks the rest with checkbox questions at one of three levels (quick, medium, detailed), shows an inspiration picker you can skip in one tap, then builds as many full designs as you asked for. Two or more designs always open the design room (preview, compare, vote, pins, notes, New design). Verifies with Playwright and publishes the way the door's profile says. Load it through a door when one exists; on its own it uses profiles/default.md.
+description: The engine behind the anshul-design and helix-design-anshul doors. Use for any page, dashboard, report, product shortlist (shopping, buying research, product comparisons, cart reviews), tech design, mock or control surface, and to watch a design room for New design requests ("watch the room", "start the design room"). Infers what it can, asks the rest with checkbox questions at one of three levels (quick, medium, detailed), shows an inspiration picker you can skip in one tap, then builds as many full designs as you asked for. Two or more designs always open the design room (preview, compare, vote, pins, notes, New design). Verifies with Playwright and publishes the way the door's profile says. Load it through a door when one exists; on its own it uses profiles/default.md.
 ---
 
 # design-flow
@@ -52,7 +52,7 @@ Never ask what you can read.
 | Fact | Where to read it |
 | --- | --- |
 | Profile, when no door was used | git remote under github.com/AyaHelix means aya; otherwise personal |
-| Page kind | the request: report, tech design, dashboard, landing, app screen, mock |
+| Page kind | the request: report, tech design, dashboard, landing, app screen, mock; shopping, buying research, product comparisons, cart or wishlist reviews and other image-led shortlists of discrete choices are a product shortlist |
 | Dark or light | tokens or theme files already in the repo; else the look's `first` |
 | Palette in use | an existing tokens.css or theme file; reuse it unless asked to change |
 | Last look used | `~/.design-flow/state.json`, key `last.<profile>.<pageKind>`; never offer it first |
@@ -131,6 +131,7 @@ Recipe by page kind, for every design:
 | Page kind | Recipe |
 | --- | --- |
 | Report or tech design | the report recipe, `recipes/report/RECIPE.md` (or the profile's `report_recipe` skill when it is installed), with the chosen look's tokens in place of its default. Reports carry the Ask panel (a Claude chat about the page through here.now proxy routes) unless built with `ASK=off`; see `recipes/report/references/ask-panel.md` |
+| Product shortlist | the product-shortlist recipe, `recipes/product-shortlist/RECIPE.md`, in the `material-feed` look unless the user picks another; one design built straight away, no questions or picker unless the user asks for options |
 | App screen or mock | the `ui_kit` skill when the profile has one; otherwise core mechanics plus the look |
 | Dashboard, landing, other | core mechanics plus the look; `frontend-design` for boldness when installed |
 
@@ -214,13 +215,14 @@ Copy `directions/_template.md`, fill both themes, fonts with the Google Fonts qu
 
 | Path | Holds |
 | --- | --- |
-| `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle. `anshul-ui-standards` (v1) stays untouched for older work |
+| `anshul-ui-standards-v2` (sibling skill) | the mechanics: usability, theming cascade, dataviz and motion, verification, tokens, theme toggle |
 | `directions/` | one file per look, eleven to start, plus `_template.md`; a look whose JSON has a `files` key also has a folder of exact CSS and JS that builders copy in |
 | `assets/room/` | the design room template: `index.html` (preview in device frames, compare as grid, pair or duel, blind mode, per-element votes, pins, notes, export, Expand and Full screen, New design with progress and ETA), `_vote/` (`hub-bridge.js`, `vote.js`, `server.py`, README), `make-room.py` (scaffolds a room, `room.js`, `_requests/designs.js` and a `BRIEF.md` skeleton) |
 | `assets/lib/` | `playwright.mjs`: the shared loader every script here uses (find or install `@playwright/test`, Chrome or Chromium, `launch` and `launchPersistent`); import it from any new script instead of `createRequire` |
 | `assets/requests/` | `request-form.js` (New design form, localStorage only; `make-room.py` copies it into a room's `_vote/`), `browser-watch.mjs` (opens the room in a Claude-driven Chrome window and bridges its queue to files), `requests_api.py` (the request queue the room's `server.py` imports), `requests_server.py` / `watch-requests.sh` (older file-queue path, optional) |
 | `assets/inspire/` | `sources.json` (6 galleries scraped: Dribbble, Behance, 21st.dev, Awwwards, SaaS Landing Page, Lapa Ninja; 7 more as Browse links), `inspire.mjs` (scrape to a local board), `picker.html` (the picker) |
 | `recipes/report/` | the report recipe (`RECIPE.md`), its references, the starter parts, `assets/shoot.mjs`, and the Ask panel's `assets/ask-build.mjs` and `assets/ask-test.mjs`; bundled so no other skill is needed |
+| `recipes/product-shortlist/` | the product-shortlist recipe (`RECIPE.md`) and its validated starter page (`assets/starter/index.html`), the shopping default, in the `material-feed` look |
 | `recipes/flow3d/` | the 3D flow figure (`RECIPE.md`): `flow3d.js` (one include plus a config: places, paths, flow, camera tour, labels, map, point cloud, flat fallback, video), starters for data, time and map flows, and a HyperFrames composition for video |
 | `recipes/bakeoff/` | the bake-off recipe (`RECIPE.md`), brief templates, directions, builder prompt, vote widget and ballot |
 | `profiles/default.md` | used when no door is loaded |

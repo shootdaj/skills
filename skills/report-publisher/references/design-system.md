@@ -151,8 +151,9 @@ One nav, always present, no duplicate list in the document flow.
 
 ### 2b. Visual Product Shortlist profile
 
-Use `assets/templates/visual-product-shortlist.html` for image-led comparisons
-of discrete choices. It keeps the answer-first principle but replaces the long
+Use the `design-flow` skill's product-shortlist recipe
+(`recipes/product-shortlist/RECIPE.md`, starter `assets/starter/index.html`,
+look `material-feed`) for image-led comparisons of discrete choices. It keeps the answer-first principle but replaces the long
 analytical body with a fast visual decision surface:
 
 ```text
