@@ -14,6 +14,7 @@ Nothing goes to him "to test" until the agent has exercised it on the exact URL,
 - The hand-off is a published proof report, not a message.
 - Build it with the `anshul-design` skill (the design-flow engine); use the latest version of that skill.
 - Publish it permanently to here.now through the `report-publisher` path. Never a claude.ai artifact, never a hand-rolled page.
+- Only you by default, Ask panel on: restrict the page to the owner and keep the panel (design-flow `recipes/report/references/publish.md`). He opens it after signing in to here.now. Public, or no panel, only when he says so for that page.
 - It shows every step he is about to do, working on the surface he will use: a full-width screenshot or a recording (GIF/video) of the real run, the URL under each, and a one-line caption of what he will see.
 - No report, no hand-off.
 

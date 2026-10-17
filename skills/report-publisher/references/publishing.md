@@ -104,11 +104,31 @@ Expect `200`. If it's not 200, the site isn't live — investigate (finalize ste
 may have failed; the here-now skill notes a site isn't live until finalize
 succeeds) before telling the user it's done.
 
+## Step 5b — Make it Only you (default)
+
+Every report is private to the owner unless the user says this page should be
+public. Right after the 200 check, restrict it with both allowlists empty
+(owner-only on a personal account), then prove the gate from outside:
+
+```bash
+KEY=$(tr -d '[:space:]' < ~/.herenow/credentials)   # never print it
+curl -sS -X PATCH "https://here.now/api/v1/publish/SLUG/access" -H "Authorization: Bearer $KEY" \
+  -H 'content-type: application/json' -d '{"mode":"restricted","allowedEmails":[],"allowedDomains":[]}'
+curl -sS -o /dev/null -w '%{http_code}\n' "https://SLUG.here.now/"   # 401 within ~1 min
+```
+
+Retry the last line for up to two minutes; the change takes 10 to 60 seconds to
+reach the edge. Expect `401`. If the page has an Ask panel, also POST `{}` to
+`/api/claude-count` and expect here.now's 401 `access_restricted`, not Anthropic
+JSON. The owner opens it after signing in to here.now ("Continue with Google" or
+"Email me a link"). Details and the measured codes: design-flow's
+`recipes/report/references/publish.md`.
+
 ## Step 6 — Tell the user
 
 - Give the live `siteUrl` from this run.
 - State permanence honestly:
-  - authenticated → "Published permanently to your here.now account: <url>"
+  - authenticated → "Published permanently to your here.now account, Only you: <url>"
   - anonymous → "Live at <url> — but this expires in 24h. Claim it to keep it:
     <claim_url> (the claim token is shown once and can't be recovered)."
 - One line on what's in the report. Don't dump the local build path or the state
