@@ -78,8 +78,9 @@ const log = Q('.ask-log', panel), ta = Q('textarea', panel), sendBtn = Q('.ask-s
 const SUGG = ['Which look should I use for a launch page?', 'Which looks are calm but colourful?', 'Ink or Swiss broadsheet for a tech doc?', 'Make me something between Plum and Toy blocks'];
 sugg.innerHTML = SUGG.map(s => `<button class="chip" type="button">${E(s)}</button>`).join('');
 sugg.onclick = e => { const b = e.target.closest('.chip'); if (b) { ta.value = b.textContent; send(); } };
-function open() { panel.hidden = false; D.body.classList.add('ask-open'); requestAnimationFrame(() => panel.classList.add('on')); renderAll(); probe(); setTimeout(() => ta.focus(), 60); }
-function close() { panel.classList.remove('on'); D.body.classList.remove('ask-open'); setTimeout(() => { panel.hidden = true; }, 260); Q('#askBtn').focus(); }
+const relayout = () => setTimeout(() => dispatchEvent(new Event('resize')), 30);
+function open() { panel.hidden = false; D.body.classList.add('ask-open'); relayout(); requestAnimationFrame(() => panel.classList.add('on')); renderAll(); probe(); setTimeout(() => ta.focus(), 60); }
+function close() { panel.classList.remove('on'); D.body.classList.remove('ask-open'); relayout(); setTimeout(() => { panel.hidden = true; }, 260); Q('#askBtn').focus(); }
 Q('#askBtn').addEventListener('click', () => panel.hidden ? open() : close());
 Q('[data-close]', panel).onclick = close;
 Q('[data-new]', panel).onclick = () => { if (running) running.abort(); T = { api: [], view: [], cost: 0 }; save(); renderAll(); setStatus(status === 'cap' ? null : status); };

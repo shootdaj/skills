@@ -269,6 +269,11 @@ async function run(w, theme) {
   // 7. Ask (proxy mocked)
   await tap(page, '#askBtn'); await page.waitForTimeout(700);
   ok(`${tag} ask: panel opens with no warning`, await page.isVisible('#ask.on') && !(await page.isVisible('#ask .ask-status.on')));
+  const sh = await page.$$eval('#ask .ask-sugg .chip', e => e.map(c => c.getBoundingClientRect().height));
+  ok(`${tag} ask: suggestion chips keep their size`, sh.length === 4 && Math.max(...sh) < 80, sh.map(Math.round));
+  if (!page._phone) { await page.waitForTimeout(400); const ov = await page.evaluate(() => { const a = document.querySelector('#ask').getBoundingClientRect().left; return [...document.querySelectorAll('main .tile, main .gcard')].filter(t => t.getBoundingClientRect().right > a + 1).length; });
+    ok(`${tag} ask: page docks beside the panel (no tile hidden under it)`, ov === 0, ov + ' tiles under the panel'); }
+  await shot(page, 'ask-open');
   await tap(page, '#ask .ask-sugg .chip'); await page.waitForTimeout(2500);
   const ans = await page.textContent('#ask .ask-log');
   ok(`${tag} ask: answer streams in with look chips`, /Aurora editorial/.test(ans) && await page.$$eval('#ask .ask-look', e => e.length) >= 1);

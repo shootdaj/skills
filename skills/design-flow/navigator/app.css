@@ -455,11 +455,13 @@ details.how .body { padding: 0 16px 16px; color: var(--text-2); font-size: 14px;
 }
 
 /* ── Ask panel ── */
-.ask { position: fixed; z-index: 75; right: 0; bottom: 0; top: 0; width: min(420px, 100vw); display: grid; grid-template-rows: auto auto 1fr auto auto; background: var(--s1); border-left: 1px solid var(--line-2); box-shadow: var(--shadow-4);
+.ask { position: fixed; z-index: 75; right: 0; bottom: 0; top: 0; width: min(420px, 100vw); display: grid; grid-template-rows: auto auto minmax(0, 1fr) auto auto; grid-template-areas: "h" "s" "l" "g" "f"; background: var(--s1); border-left: 1px solid var(--line-2); box-shadow: var(--shadow-4);
   transform: translateX(104%); transition: transform 420ms var(--ease-out); padding-bottom: env(safe-area-inset-bottom); }
 .ask[hidden] { display: none; }
 .ask.on { transform: none; }
 @media (max-width: 559px) { .ask { width: 100vw; top: 0; border-left: 0; } }
+/* named areas: the status row is display:none most of the time, and a hidden grid child would otherwise shift every row below it */
+.ask-h { grid-area: h; } .ask-status { grid-area: s; } .ask-log { grid-area: l; } .ask-sugg { grid-area: g; } .ask-f { grid-area: f; }
 .ask-h { display: flex; align-items: center; gap: 4px; padding: 8px 8px 8px 16px; border-bottom: 1px solid var(--line); padding-top: calc(8px + env(safe-area-inset-top)); }
 .ask-t { display: inline-flex; align-items: center; gap: 8px; margin-right: auto; font-size: 15px; }
 .ask-t .i { color: var(--accent); }
@@ -492,7 +494,7 @@ details.how .body { padding: 0 16px 16px; color: var(--text-2); font-size: 14px;
 .ask-f textarea { flex: 1; min-height: 44px; max-height: 140px; resize: none; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--line-2); background: var(--bg); color: var(--text); font-size: 15px; line-height: 1.4; }
 .ask-f textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
 .ask-send { flex: none; }
-@media (min-width: 1180px) { body.ask-open main { margin-right: 420px; } }
+@media (min-width: 1180px) { body.ask-open main { width: calc(100% - 420px); max-width: none; margin: 0 420px 0 0; } body.ask-open .strip-bar { margin-right: 0; } }
 @media (max-width: 899px) {
   .cmp-tools { display: grid; grid-template-columns: 1fr 1fr; padding-right: 64px; }
   .cmp-tools .hold-btn { grid-column: 1 / -1; }
