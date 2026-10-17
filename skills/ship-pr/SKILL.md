@@ -135,8 +135,9 @@ Send one scannable message:
 - "Say **merge N**."
 
 If anything is ❌, put it first, ask whether he accepts each gap, and end the
-message there: no "say merge N" in the same message. Ask for the merge in your
-next message, once he has accepted. When several PRs are open, add a short table: PR,
+message there. Don't mention merging anywhere in that message, not even
+"before I ask to merge". Ask for the merge in your next message, once he has
+accepted. When several PRs are open, add a short table: PR,
 what it does, tested, merge order.
 
 ## 10. Merge
