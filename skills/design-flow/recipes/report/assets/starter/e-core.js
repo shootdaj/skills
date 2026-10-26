@@ -131,3 +131,23 @@ const TXTW=(s,px)=>s.length*px;
   ['Glossary',[['Where it lives',v(B,'glossary')]]]];
  setHTML(host,groups.map(([h,rows])=>`<h4>${esc(h)}</h4><dl>${rows.map(([t,d])=>`<dt>${esc(t)}</dt><dd>${d}</dd>`).join('')}</dl>`).join(''));
  $$('a[href]',host).forEach(a=>{a.target='_blank';a.rel='noopener'})})();
+
+/* ── floating section rail: built from the sections and their figures; follows the scroll spy; click opens and scrolls  ── */
+(function(){if(typeof SECTS==='undefined'||!SECTS.length)return;
+ const rail=document.createElement('nav');rail.className='rail';rail.id='rail';rail.setAttribute('aria-label','Sections');
+ const PIN='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 17v5"/><path d="M9 11V5a3 3 0 0 1 6 0v6"/><path d="M5 11h14l-1.5 6h-11z"/></svg>';
+ let html=`<div class="rail-h"><span>On this page</span><button class="rail-pin" type="button" aria-pressed="false" aria-label="Keep the rail open">${PIN}</button></div>`;
+ SECTS.forEach(s=>{const figs=[...s.querySelectorAll('figure.fg')].map(f=>({id:f.id,no:(f.querySelector('.fgno')||{}).textContent||'',t:(f.querySelector('.fg-h h3')||{}).textContent||''}));
+  html+=`<button class="rail-s" type="button" data-id="${s.id}" style="--lc:var(--${s.dataset.hue||'c1'})"><span class="n">${esc(s.dataset.no)}</span><span class="t">${esc(s.dataset.title)}</span></button>`;
+  if(figs.length)html+=`<ul class="rail-f" data-for="${s.id}">${figs.map(f=>`<li><a href="#${f.id}"><b>${esc(f.no.replace('Fig. ',''))}</b><span>${esc(f.t)}</span></a></li>`).join('')}</ul>`});
+ setHTML(rail,html);document.body.appendChild(rail);
+ /* open = a real sidebar (content moves right); collapsed = numbers only, expands on hover. Wide screens open by default; the pin overrides and is remembered. */
+ const pin=rail.querySelector('.rail-pin');let pref=null;try{pref=localStorage.getItem(KEY+'-rail')||null}catch(e){}
+ const wantOpen=()=>pref==='open'?true:pref==='closed'?false:innerWidth>=1360;
+ const apply=()=>{const o=wantOpen()&&innerWidth>=1200;root.classList.toggle('rail-on',innerWidth>=1200);root.classList.toggle('rail-open',o);rail.classList.remove('pin');pin.setAttribute('aria-pressed',String(o));pin.setAttribute('aria-label',o?'Collapse the rail to numbers':'Keep the rail open');root.style.setProperty('--rail-top',Math.round(topH())+'px')};
+ pin.addEventListener('click',()=>{pref=wantOpen()?'closed':'open';try{localStorage.setItem(KEY+'-rail',pref)}catch(e){}apply()});
+ addEventListener('resize',apply);apply();
+ $$('.rail-s',rail).forEach(b=>b.addEventListener('click',()=>go(b.dataset.id)));
+ $$('.rail-f a',rail).forEach(a=>a.addEventListener('click',e=>{e.preventDefault();const id=a.getAttribute('href').slice(1);const fig=document.getElementById(id);const sec=fig&&fig.closest('.panel');if(sec)setOpen(sec,true,true);requestAnimationFrame(()=>{const y=fig.getBoundingClientRect().top+scrollY-topH()-10;scrollTo({top:y,behavior:reduced?'auto':'smooth'})})}));
+ function railSpy(){const cur=($('.tab[aria-current="true"]')||{}).dataset||{};$$('.rail-s',rail).forEach(b=>b.setAttribute('aria-current',String(b.dataset.id===cur.id)));$$('.rail-f',rail).forEach(u=>u.classList.toggle('on',u.dataset.for===cur.id))}
+ addEventListener('scroll',()=>requestAnimationFrame(railSpy),{passive:true});setTimeout(railSpy,300);railSpy()})();
